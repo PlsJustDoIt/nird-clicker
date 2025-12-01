@@ -1,0 +1,133 @@
+:root {
+	--bg-main: white;
+	--fg-main: black;
+	--bg-foot: white;
+	--fg-foot: black;
+	--bg-logos: inherit;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg-main: #051923;
+		--bg-foot: #222;
+		--fg-main: #ddd;
+		--fg-foot: #ddd;
+		--bg-logos: #ddd;
+	}
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	background-color: var(--bg-main);
+	color: var(--fg-main);
+}
+
+/*************************************************************************** */
+/**                                     a11y                                 */
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	**::after {
+		animation: none !important;
+		transform: none !important;
+		background-attachment: initial !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/****************************************************************
+                            Titre
+****************************************************************/
+body > header {
+	text-align: center;
+}
+
+body > header h1 {
+	font-size: 2em;
+	margin-top: 2em;
+}
+
+body > header b {
+	font-weight: bold;
+}
+
+body > header h2 {
+	font-size: 1em;
+	margin: 10px;
+}
+
+body > header p {
+	margin: 10px;
+}
+
+body > header li {
+	margin: 0.5em;
+}
+
+/****************************************************************
+                            Pied de page
+****************************************************************/
+footer {
+	position: fixed;
+	bottom: 0;
+
+	width: 92%;
+	margin: 0;
+	padding: 2vh 4%;
+
+	color: var(--fg-foot);
+	background-color: var(--bg-foot);
+}
+
+#nos-sponsors {
+	text-align: center;
+}
+
+#nos-sponsors ul {
+	display: flex;
+	align-items: center;
+	justify-content: space-evenly;
+	flex-wrap: wrap;
+	gap: 1em;
+
+	padding: 0;
+
+	list-style: none;
+}
+
+#nos-sponsors li {
+	aspect-ratio: 3 / 1;
+	min-height: 3em;
+	background-color: var(--bg-logos);
+	border-radius: 3px;
+	padding: 8px;
+}
+
+@media screen and (max-width: 500px) {
+	#nos-sponsors li {
+		min-width: 40%;
+	}
+}
+
+#nos-sponsors a {
+	display: block;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+	width: 100%;
+	height: 100%;
+
+	text-align: center;
+	transition: all ease-in 0.2s;
+	transform-origin: center;
+}
+
+#nos-sponsors a span {
+	opacity: 0;
+}
+
+#nos-sponsors a:hover {
+	transform: scale(1.05);
+}
