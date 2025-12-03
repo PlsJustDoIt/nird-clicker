@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 
 // Ne pas modifier le numéro du port ou vous allez entrer en conflit avec d'autres équipes
-const server = app.listen(8080, function () {
+const server = app.listen(45975, function () {
   console.log("C'est parti ! En attente de connexion sur le port 45975...");
   console.log("Se connecter à l'application en local : http://localhost:45975");
 });
