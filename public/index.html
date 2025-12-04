@@ -115,6 +115,15 @@
                 
                 <!-- Contenu Améliorations -->
                 <div id="upgrades-content" class="menu-content active">
+                    <div class="upgrades-header">
+                        <h2>🔧 Améliorations NIRD</h2>
+                        <div class="buy-mode-selector">
+                            <button class="buy-mode-btn active" data-mode="1" onclick="setBuyMode(1)">x1</button>
+                            <button class="buy-mode-btn" data-mode="10" onclick="setBuyMode(10)">x10</button>
+                            <button class="buy-mode-btn" data-mode="50" onclick="setBuyMode(50)">x50</button>
+                            <button class="buy-mode-btn" data-mode="max" onclick="setBuyMode('max')">MAX</button>
+                        </div>
+                    </div>
                     <div id="upgrades-list">
                         <!-- Les upgrades seront générées par JavaScript -->
                     </div>

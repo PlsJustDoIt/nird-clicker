@@ -467,14 +467,53 @@ body {
     font-weight: bold;
 }
 
-#upgrades-zone h2 {
-    color: var(--accent-secondary);
+/* Upgrades Header */
+.upgrades-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 1rem;
     position: sticky;
     top: 0;
     background: var(--bg-card);
     padding-bottom: 0.5rem;
     z-index: 10;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+#upgrades-zone h2 {
+    color: var(--accent-secondary);
+    margin: 0;
+}
+
+.buy-mode-selector {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.buy-mode-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    background: var(--bg-secondary);
+    color: var(--fg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.buy-mode-btn:hover {
+    background: rgba(0, 212, 170, 0.2);
+    border-color: var(--accent-primary);
+    color: var(--fg-main);
+}
+
+.buy-mode-btn.active {
+    background: var(--gradient-main);
+    color: #000;
+    border-color: var(--accent-primary);
 }
 
 #upgrades-list {
@@ -492,6 +531,10 @@ body {
     cursor: pointer;
     transition: all var(--transition-fast);
     border: 2px solid transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 .upgrade-item:hover {

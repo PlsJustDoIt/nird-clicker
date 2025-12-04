@@ -19,10 +19,19 @@ function updateUI() {
     updateVillageVisual();
 }
 
+// Variable pour tracker si on doit mettre à jour les upgrades
+let lastScoreForUpgrades = 0;
+
 // Mise à jour du score
 function updateScoreDisplay() {
     document.getElementById('score').textContent = formatNumber(gameState.score);
     document.getElementById('per-second').textContent = formatNumber(gameState.productionPerSecond);
+    
+    // Mettre à jour les upgrades si le score a significativement changé ou si mode MAX
+    if (buyMode === 'max' || Math.abs(gameState.score - lastScoreForUpgrades) > lastScoreForUpgrades * 0.05) {
+        updateUpgradesList();
+        lastScoreForUpgrades = gameState.score;
+    }
 }
 
 // Mise à jour des statistiques
@@ -113,7 +122,17 @@ function updateMissionsUI() {
     });
 }
 
-// Génération de la liste des upgrades avec multiplicateur
+// Mise à jour des boutons de mode d'achat
+function updateBuyModeButtons() {
+    document.querySelectorAll('.buy-mode-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.mode == buyMode) {
+            btn.classList.add('active');
+        }
+    });
+}
+
+// Génération de la liste des upgrades
 function updateUpgradesList() {
     const container = document.getElementById('upgrades-list');
     if (!container) return;
@@ -122,9 +141,19 @@ function updateUpgradesList() {
     // Upgrades de production
     UPGRADES.forEach(upgrade => {
         if (upgrade.unlocked) {
-            const quantity = getEffectiveQuantity(upgrade);
-            const totalCost = getTotalCostForQuantity(upgrade, quantity);
-            const canAfford = gameState.score >= getUpgradeCost(upgrade);
+            let displayCount = buyMode;
+            let cost;
+            
+            if (buyMode === 'max') {
+                const maxInfo = getMaxAffordable(upgrade);
+                displayCount = maxInfo.count || 0;
+                cost = maxInfo.totalCost || getUpgradeCost(upgrade);
+            } else {
+                displayCount = buyMode;
+                cost = getMultiUpgradeCost(upgrade, buyMode);
+            }
+            
+            const canAfford = gameState.score >= cost && displayCount > 0;
             
             const upgradeEl = document.createElement('div');
             upgradeEl.className = `upgrade-item ${canAfford ? 'can-afford' : 'cannot-afford'}`;
@@ -137,7 +166,7 @@ function updateUpgradesList() {
                     </div>
                     <p class="upgrade-desc">${upgrade.description}</p>
                     <div class="upgrade-footer">
-                        <span class="upgrade-cost">${quantity > 1 ? `${quantity}x ` : ''}${formatNumber(totalCost)} pts</span>
+                        <span class="upgrade-cost">${formatNumber(cost)} pts ${buyMode !== 1 ? `(x${displayCount})` : ''}</span>
                         <span class="upgrade-production">+${upgrade.baseProduction}/sec</span>
                     </div>
                     <p class="upgrade-tip">${upgrade.info}</p>
@@ -145,8 +174,7 @@ function updateUpgradesList() {
             `;
             
             upgradeEl.addEventListener('click', () => {
-                const qty = getEffectiveQuantity(upgrade);
-                buyUpgrade(upgrade.id, qty);
+                buyUpgrade(upgrade.id);
             });
             container.appendChild(upgradeEl);
         }
