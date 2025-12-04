@@ -142,19 +142,7 @@ const CLICK_UPGRADES = [
 ];
 
 // ============================================
-// SKINS POUR LE PC CLIQUABLE
-// ============================================
-const PC_SKINS = [
-    { id: 'default', name: '💻 PC Standard', emoji: '💻', cost: 0, owned: true },
-    { id: 'tux', name: '🐧 Tux le Manchot', emoji: '🐧', cost: 500, owned: false },
-    { id: 'raspberry', name: '🍓 Raspberry Pi', emoji: '🍓', cost: 1000, owned: false },
-    { id: 'server', name: '🖥️ Serveur Linux', emoji: '🖥️', cost: 2500, owned: false },
-    { id: 'retro', name: '📟 PC Rétro', emoji: '📟', cost: 5000, owned: false },
-    { id: 'robot', name: '🤖 Robot Libre', emoji: '🤖', cost: 10000, owned: false },
-    { id: 'earth', name: '🌍 Planète Verte', emoji: '🌍', cost: 25000, owned: false },
-    { id: 'rocket', name: '🚀 Fusée Open Source', emoji: '🚀', cost: 50000, owned: false },
-    { id: 'star', name: '⭐ Étoile du Libre', emoji: '⭐', cost: 100000, owned: false }
-];
+// PC_SKINS supprimé - utiliser SKINS à la place
 
 // ============================================
 // BOSS GAFAM
@@ -377,7 +365,7 @@ const ACHIEVEMENTS = [
     { id: 'quiz-master', name: 'Quiz Master', description: 'Répondez correctement à 5 quiz', condition: (state) => state.quizCorrect >= 5, unlocked: false, icon: '🧠' },
     { id: 'combo-master', name: 'Combo Master', description: 'Atteignez un combo de 50', condition: (state) => state.maxCombo >= 50, unlocked: false, icon: '⚡' },
     { id: 'prestige-1', name: 'Renaissance', description: 'Effectuez votre premier prestige', condition: (state) => state.prestigeCount >= 1, unlocked: false, icon: '🔄' },
-    { id: 'skin-collector', name: 'Collectionneur', description: 'Possédez 5 skins différents', condition: (state) => PC_SKINS.filter(s => s.owned).length >= 5, unlocked: false, icon: '🎨' },
+    { id: 'skin-collector', name: 'Collectionneur', description: 'Possédez 5 skins différents', condition: (state) => (state.skinsUnlocked && state.skinsUnlocked.length >= 5), unlocked: false, icon: '🎨' },
     { id: 'all-upgrades', name: 'Completionniste', description: 'Possédez toutes les améliorations de clic', condition: (state) => CLICK_UPGRADES.every(u => u.purchased), unlocked: false, icon: '✅' }
 ];
 

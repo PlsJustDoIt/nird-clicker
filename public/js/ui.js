@@ -211,35 +211,7 @@ function updateUpgradesList() {
         }
     });
     
-    // Séparateur - Skins
-    const skinSeparator = document.createElement('div');
-    skinSeparator.className = 'upgrade-separator';
-    skinSeparator.innerHTML = '<h3>🎨 Skins du PC</h3>';
-    container.appendChild(skinSeparator);
-    
-    // Skins
-    PC_SKINS.forEach(skin => {
-        const canAfford = skin.owned || gameState.score >= skin.cost;
-        const isEquipped = gameState.currentSkin === skin.id;
-        
-        const skinEl = document.createElement('div');
-        skinEl.className = `upgrade-item skin-item ${canAfford ? 'can-afford' : 'cannot-afford'} ${isEquipped ? 'equipped' : ''}`;
-        skinEl.innerHTML = `
-            <div class="upgrade-icon">${skin.emoji}</div>
-            <div class="upgrade-info">
-                <div class="upgrade-header">
-                    <span class="upgrade-name">${skin.name}</span>
-                    ${isEquipped ? '<span class="equipped-badge">✓ Équipé</span>' : ''}
-                </div>
-                <div class="upgrade-footer">
-                    <span class="upgrade-cost">${skin.owned ? 'Possédé' : formatNumber(skin.cost) + ' pts'}</span>
-                </div>
-            </div>
-        `;
-        
-        skinEl.addEventListener('click', () => buySkin(skin.id));
-        container.appendChild(skinEl);
-    });
+    // Skins déplacés dans l'onglet Skins
 }
 
 // Calculer la quantité effective selon le multiplicateur

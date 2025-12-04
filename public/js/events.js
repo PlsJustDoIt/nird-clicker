@@ -243,7 +243,9 @@ window.DEBUG = {
     unlockAll: () => {
         UPGRADES.forEach(u => u.unlocked = true);
         ACHIEVEMENTS.forEach(a => a.unlocked = true);
-        PC_SKINS.forEach(s => s.owned = true);
+        if (typeof SKINS !== 'undefined') {
+            gameState.skinsUnlocked = SKINS.map(s => s.id);
+        }
         updateUI();
         console.log('Tout débloqué !');
     },

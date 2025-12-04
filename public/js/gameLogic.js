@@ -337,12 +337,9 @@ function buyClickUpgrade(upgradeId) {
 
 // Acheter un skin
 function buySkin(skinId) {
-    // Chercher dans PC_SKINS ou SKINS
+    // Chercher dans SKINS
     let skin = null;
-    if (typeof PC_SKINS !== 'undefined') {
-        skin = PC_SKINS.find(s => s.id === skinId);
-    }
-    if (!skin && typeof SKINS !== 'undefined') {
+    if (typeof SKINS !== 'undefined') {
         skin = SKINS.find(s => s.id === skinId);
     }
     if (!skin) return false;
@@ -385,12 +382,9 @@ function buySkin(skinId) {
 
 // Appliquer un skin
 function applySkin(skinId) {
-    // Chercher dans PC_SKINS ou SKINS
+    // Chercher dans SKINS
     let skin = null;
-    if (typeof PC_SKINS !== 'undefined') {
-        skin = PC_SKINS.find(s => s.id === skinId);
-    }
-    if (!skin && typeof SKINS !== 'undefined') {
+    if (typeof SKINS !== 'undefined') {
         skin = SKINS.find(s => s.id === skinId);
     }
     
@@ -910,7 +904,7 @@ function saveGame() {
         upgrades: UPGRADES.map(u => ({ id: u.id, owned: u.owned, unlocked: u.unlocked })),
         clickUpgrades: CLICK_UPGRADES.map(u => ({ id: u.id, purchased: u.purchased })),
         achievements: ACHIEVEMENTS.map(a => ({ id: a.id, unlocked: a.unlocked })),
-        skins: PC_SKINS.map(s => ({ id: s.id, owned: s.owned })),
+        skinsUnlocked: gameState.skinsUnlocked,
         savedAt: Date.now()
     };
     
@@ -960,11 +954,14 @@ function loadGame() {
             }
             
             // Restaurer les skins
-            if (data.skins) {
-                data.skins.forEach(saved => {
-                    const skin = PC_SKINS.find(s => s.id === saved.id);
-                    if (skin) skin.owned = saved.owned;
-                });
+            if (data.skinsUnlocked) {
+                gameState.skinsUnlocked = data.skinsUnlocked;
+            } else if (data.skins) {
+                // Migration depuis l'ancien format
+                gameState.skinsUnlocked = data.skins.filter(s => s.owned).map(s => s.id);
+                if (!gameState.skinsUnlocked.includes('default')) {
+                    gameState.skinsUnlocked.unshift('default');
+                }
             }
             
             // Gains hors-ligne
