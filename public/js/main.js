@@ -1,12 +1,13 @@
 /**
  * NIRD Clicker - Point d'entrée principal
  * Initialisation et démarrage du jeu
+ * Version 2.0 avec toutes les features !
  * Licence MIT - GPT MEN'S - Nuit de l'Info 2025
  */
 
 // Attendre le chargement du DOM
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🖥️ NIRD Clicker - Initialisation...');
+    console.log('🖥️ NIRD Clicker v2.0 - Initialisation...');
     
     // Afficher un écran de chargement
     showLoadingScreen();
@@ -15,18 +16,148 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         initGame();
         initEventListeners();
+        initNewSystems();
         hideLoadingScreen();
         
         console.log('✅ NIRD Clicker - Prêt !');
         console.log('💡 Astuce : Tapez le Konami Code pour un bonus secret !');
+        console.log('🎮 Nouvelles features : Prestige, Quiz, Missions, Skins, Thèmes !');
         
-        // Message de bienvenue
+        // Message de bienvenue ou tutoriel
         if (!localStorage.getItem('nirdClicker_welcomed')) {
-            showWelcomeMessage();
+            showTutorial();
             localStorage.setItem('nirdClicker_welcomed', 'true');
+        } else {
+            // Afficher une astuce aléatoire
+            showRandomTip();
         }
+        
+        // Vérifier les gains hors-ligne
+        checkOfflineGains();
+        
     }, 500);
 });
+
+// Initialiser les nouveaux systèmes
+function initNewSystems() {
+    console.log('🔧 Initialisation des nouveaux systèmes...');
+    
+    // Appliquer le thème sauvegardé
+    if (gameState.currentTheme) {
+        applyTheme(gameState.currentTheme);
+    }
+    
+    // Appliquer le skin sauvegardé
+    if (gameState.currentSkin) {
+        applySkin(gameState.currentSkin);
+    }
+    
+    // Générer les missions quotidiennes
+    generateDailyMissions();
+    
+    // Mettre à jour l'affichage du prestige
+    updatePrestigeDisplay();
+    
+    // Initialiser les particules si activées
+    if (gameState.particlesEnabled) {
+        console.log('✨ Particules activées');
+    }
+    
+    // Charger le menu par défaut
+    switchMenuTab('upgrades');
+    
+    // Event listeners pour les nouveaux éléments
+    initNewEventListeners();
+    
+    console.log('✅ Nouveaux systèmes initialisés');
+}
+
+// Event listeners pour les nouvelles features
+function initNewEventListeners() {
+    // Tabs du menu
+    document.querySelectorAll('.menu-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabName = tab.dataset.tab;
+            switchMenuTab(tabName);
+        });
+    });
+    
+    // Bouton prestige
+    const prestigeBtn = document.getElementById('prestige-btn');
+    if (prestigeBtn) {
+        prestigeBtn.addEventListener('click', () => {
+            if (confirm('⚠️ PRESTIGE : Cela va réinitialiser votre progression mais vous obtiendrez des bonus permanents. Continuer ?')) {
+                performPrestige();
+            }
+        });
+    }
+    
+    // Boutons multiplicateur d'achat
+    document.querySelectorAll('.buy-amount-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const amount = btn.dataset.amount;
+            setBuyMultiplier(amount === 'max' ? 'max' : parseInt(amount));
+            
+            // Mise à jour visuelle
+            document.querySelectorAll('.buy-amount-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+    
+    // Bouton paramètres
+    const settingsBtn = document.getElementById('settings-btn');
+    if (settingsBtn) {
+        settingsBtn.addEventListener('click', showSettings);
+    }
+    
+    // Fermer les modales
+    document.querySelectorAll('.modal-close').forEach(btn => {
+        btn.addEventListener('click', () => {
+            btn.closest('.modal-overlay').classList.add('hidden');
+        });
+    });
+    
+    // Fermer en cliquant à l'extérieur
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+    });
+}
+
+// Changer d'onglet de menu
+function switchMenuTab(tabName) {
+    // Mettre à jour les tabs
+    document.querySelectorAll('.menu-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.tab === tabName);
+    });
+    
+    // Mettre à jour le contenu
+    document.querySelectorAll('.menu-content').forEach(content => {
+        content.classList.toggle('active', content.id === `${tabName}-content`);
+    });
+    
+    // Rafraîchir le contenu selon l'onglet
+    switch(tabName) {
+        case 'upgrades':
+            renderUpgrades();
+            break;
+        case 'prestige':
+            renderPrestigeUpgrades();
+            break;
+        case 'skins':
+            renderSkins();
+            break;
+        case 'missions':
+            renderMissions();
+            break;
+        case 'encyclopedia':
+            renderEncyclopedia();
+            break;
+    }
+}
 
 // Écran de chargement
 function showLoadingScreen() {
@@ -40,6 +171,7 @@ function showLoadingScreen() {
             <div class="loader-bar">
                 <div class="loader-progress"></div>
             </div>
+            <p style="font-size: 0.8em; margin-top: 1em; opacity: 0.7">v2.0 - Toutes les features !</p>
         </div>
     `;
     document.body.appendChild(loader);
@@ -53,13 +185,13 @@ function hideLoadingScreen() {
     }
 }
 
-// Message de bienvenue
-function showWelcomeMessage() {
-    const welcome = document.createElement('div');
-    welcome.className = 'welcome-modal';
-    welcome.innerHTML = `
+// Tutoriel interactif
+function showTutorial() {
+    const tutorial = document.createElement('div');
+    tutorial.className = 'welcome-modal tutorial';
+    tutorial.innerHTML = `
         <div class="welcome-content">
-            <h2>🖥️ Bienvenue dans NIRD Clicker !</h2>
+            <h2>🖥️ Bienvenue dans NIRD Clicker v2.0 !</h2>
             <p><strong>Votre mission :</strong> Libérer le numérique de l'emprise des Big Tech !</p>
             
             <div class="welcome-instructions">
@@ -72,12 +204,20 @@ function showWelcomeMessage() {
                     <span>Achetez des améliorations pour automatiser votre production</span>
                 </div>
                 <div class="instruction">
-                    <span class="instruction-icon">🪟</span>
-                    <span>Fermez les pop-ups Windows qui veulent vous bloquer !</span>
+                    <span class="instruction-icon">👹</span>
+                    <span>Affrontez les 5 Boss GAFAM : Microsoft, Google, Apple, Meta, Amazon</span>
                 </div>
                 <div class="instruction">
-                    <span class="instruction-icon">🏆</span>
-                    <span>Atteignez l'indépendance numérique totale !</span>
+                    <span class="instruction-icon">🎯</span>
+                    <span>Complétez des missions quotidiennes pour des bonus</span>
+                </div>
+                <div class="instruction">
+                    <span class="instruction-icon">🧠</span>
+                    <span>Répondez aux quiz NIRD pour gagner des récompenses</span>
+                </div>
+                <div class="instruction">
+                    <span class="instruction-icon">⭐</span>
+                    <span>Faites un Prestige pour des bonus permanents !</span>
                 </div>
             </div>
             
@@ -88,12 +228,76 @@ function showWelcomeMessage() {
                 </small>
             </p>
             
-            <button onclick="this.parentElement.parentElement.remove()">
+            <button onclick="this.parentElement.parentElement.remove(); gameState.tutorialComplete = true;">
                 🚀 Commencer la Résistance !
             </button>
         </div>
     `;
-    document.body.appendChild(welcome);
+    document.body.appendChild(tutorial);
+}
+
+// Afficher une astuce aléatoire
+function showRandomTip() {
+    if (typeof TIPS !== 'undefined' && TIPS.length > 0) {
+        const randomTip = TIPS[Math.floor(Math.random() * TIPS.length)];
+        const tipBanner = document.getElementById('tip-banner');
+        if (tipBanner) {
+            tipBanner.querySelector('.tip-text').textContent = randomTip;
+            tipBanner.classList.remove('hidden');
+            
+            // Fermer automatiquement après 10 secondes
+            setTimeout(() => {
+                tipBanner.classList.add('hidden');
+            }, 10000);
+        }
+    }
+}
+
+// Vérifier les gains hors-ligne
+function checkOfflineGains() {
+    const savedData = localStorage.getItem('nirdClicker_save');
+    if (savedData) {
+        const data = JSON.parse(savedData);
+        if (data.savedAt) {
+            const offlineTime = (Date.now() - data.savedAt) / 1000;
+            const multiplier = 1 + (gameState.prestigeLevel * 0.1); // Bonus prestige
+            const offlineGain = Math.floor(gameState.productionPerSecond * offlineTime * 0.1 * multiplier);
+            
+            if (offlineGain > 10 && offlineTime > 30) {
+                gameState.score += offlineGain;
+                gameState.totalScore += offlineGain;
+                
+                // Modal de gains hors-ligne
+                const offlineModal = document.createElement('div');
+                offlineModal.className = 'welcome-modal offline-gains';
+                offlineModal.innerHTML = `
+                    <div class="welcome-content">
+                        <h2>🌙 Gains Hors-Ligne</h2>
+                        <p>Pendant votre absence (${formatTime(offlineTime)}), vos militants ont continué le combat !</p>
+                        <div class="offline-reward">
+                            <span class="reward-amount">+${formatNumber(offlineGain)}</span>
+                            <span class="reward-label">Points de Souveraineté</span>
+                        </div>
+                        ${gameState.prestigeLevel > 0 ? `<p class="prestige-bonus">✨ Bonus Prestige x${(1 + gameState.prestigeLevel * 0.1).toFixed(1)}</p>` : ''}
+                        <button onclick="this.parentElement.parentElement.remove()">
+                            Super !
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(offlineModal);
+                
+                updateUI();
+            }
+        }
+    }
+}
+
+// Formater le temps
+function formatTime(seconds) {
+    if (seconds < 60) return `${Math.floor(seconds)} secondes`;
+    if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)} heures`;
+    return `${Math.floor(seconds / 86400)} jours`;
 }
 
 // Gestion de la visibilité de la page
@@ -101,32 +305,12 @@ document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
         // Sauvegarder quand on quitte
         saveGame();
-    } else {
-        // Recharger les gains hors-ligne au retour
-        const savedData = localStorage.getItem('nirdClicker_save');
-        if (savedData) {
-            const data = JSON.parse(savedData);
-            if (data.savedAt) {
-                const offlineTime = (Date.now() - data.savedAt) / 1000;
-                const offlineGain = Math.floor(gameState.productionPerSecond * offlineTime * 0.1);
-                
-                if (offlineGain > 10 && offlineTime > 30) {
-                    gameState.score += offlineGain;
-                    gameState.totalScore += offlineGain;
-                    showNotification(`🌙 +${formatNumber(offlineGain)} points pendant votre absence !`, 'offline');
-                    updateUI();
-                }
-            }
-        }
     }
 });
 
 // Empêcher la fermeture accidentelle
 window.addEventListener('beforeunload', (e) => {
     saveGame();
-    // Désactiver le message d'avertissement pour l'instant
-    // e.preventDefault();
-    // e.returnValue = '';
 });
 
 // Debug : exposer l'état pour le développement
@@ -138,7 +322,29 @@ window.DEBUG = {
         updateUI();
     },
     resetGame: resetGame,
-    triggerBoss: showBoss
+    triggerBoss: () => showBoss(GAFAM_BOSSES[gameState.currentBossIndex || 0]),
+    triggerQuiz: startQuiz,
+    addPrestige: (amount) => {
+        gameState.prestigePoints += amount;
+        updatePrestigeDisplay();
+    },
+    unlockAllSkins: () => {
+        SKINS.forEach(s => gameState.skinsUnlocked.push(s.id));
+        renderSkins();
+    },
+    completeAllMissions: () => {
+        gameState.dailyMissions.forEach(m => m.completed = true);
+        renderMissions();
+    },
+    showTip: showRandomTip,
+    switchTheme: applyTheme,
+    getUpgrades: () => gameState.upgrades,
+    setLevel: (level) => {
+        gameState.resistanceLevel = level;
+        updateVillageVisualization();
+    }
 };
 
 console.log('💡 Conseil développeur : utilisez window.DEBUG pour déboguer le jeu');
+console.log('📚 Commandes : DEBUG.getState(), DEBUG.addScore(n), DEBUG.triggerBoss(), DEBUG.triggerQuiz()');
+console.log('🎨 Thèmes : DEBUG.switchTheme("dark"|"light"|"retro"|"nature")');

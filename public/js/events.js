@@ -1,6 +1,6 @@
 /**
- * NIRD Clicker - Système d'événements
- * Gestion des événements aléatoires et spéciaux
+ * NIRD Clicker - Système d'événements (Version Complète)
+ * Gestion des événements aléatoires, milestones et easter eggs
  * Licence MIT - GPT MEN'S - Nuit de l'Info 2025
  */
 
@@ -50,6 +50,8 @@ function checkMilestoneEvents() {
 
 // Afficher une modal de milestone
 function showMilestoneModal(event) {
+    playSound('levelup');
+    
     const modal = document.createElement('div');
     modal.className = 'milestone-modal';
     modal.innerHTML = `
@@ -62,105 +64,203 @@ function showMilestoneModal(event) {
     `;
     document.body.appendChild(modal);
     
-    // Animation de confettis (simple)
     createConfetti();
 }
 
-// Confettis simples
+// Confettis améliorés
 function createConfetti() {
-    for (let i = 0; i < 50; i++) {
+    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff8800', '#88ff00'];
+    
+    for (let i = 0; i < 100; i++) {
         setTimeout(() => {
             const confetti = document.createElement('div');
             confetti.className = 'confetti';
             confetti.style.left = Math.random() * 100 + 'vw';
-            confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
-            confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDuration = (2 + Math.random() * 3) + 's';
+            confetti.style.width = (5 + Math.random() * 10) + 'px';
+            confetti.style.height = confetti.style.width;
             document.body.appendChild(confetti);
             
-            setTimeout(() => confetti.remove(), 4000);
-        }, i * 50);
+            setTimeout(() => confetti.remove(), 5000);
+        }, i * 30);
     }
 }
 
-// Combo de clics
-let clickCombo = 0;
-let lastClickTime = 0;
-const COMBO_TIMEOUT = 500; // ms
+// Bonus de combo (au-delà du système de base)
+function checkComboBonuses(combo) {
+    if (combo === 10) {
+        const bonus = 50;
+        gameState.score += bonus;
+        gameState.totalScore += bonus;
+        playSound('achievement');
+        showNotification(`🔥 Combo x10 ! +${bonus} points !`, 'combo');
+    } else if (combo === 25) {
+        const bonus = 200;
+        gameState.score += bonus;
+        gameState.totalScore += bonus;
+        playSound('achievement');
+        showNotification(`🔥🔥 Combo x25 ! +${bonus} points !`, 'combo');
+        checkDailyMissions();
+    } else if (combo === 50) {
+        const bonus = 1000;
+        gameState.score += bonus;
+        gameState.totalScore += bonus;
+        playSound('achievement');
+        showNotification(`🔥🔥🔥 MEGA COMBO ! +${bonus} points !`, 'combo');
+    } else if (combo === 100) {
+        const bonus = 5000;
+        gameState.score += bonus;
+        gameState.totalScore += bonus;
+        playSound('prestige');
+        showNotification(`💀 COMBO LÉGENDAIRE ! +${bonus} points !`, 'combo');
+        createConfetti();
+    }
+}
 
-function trackClickCombo() {
-    const now = Date.now();
-    
-    if (now - lastClickTime < COMBO_TIMEOUT) {
-        clickCombo++;
+// Override handleClick pour ajouter les événements
+const _originalHandleClick = typeof handleClick !== 'undefined' ? handleClick : null;
+
+if (_originalHandleClick) {
+    const enhancedHandleClick = function() {
+        _originalHandleClick();
+        checkMilestoneEvents();
         
-        if (clickCombo === 10) {
-            showNotification('🔥 Combo x10 ! Bonus +50 !', 'combo');
-            gameState.score += 50;
-            gameState.totalScore += 50;
-        } else if (clickCombo === 25) {
-            showNotification('🔥🔥 Combo x25 ! Bonus +200 !', 'combo');
-            gameState.score += 200;
-            gameState.totalScore += 200;
-        } else if (clickCombo === 50) {
-            showNotification('🔥🔥🔥 MEGA COMBO ! Bonus +1000 !', 'combo');
-            gameState.score += 1000;
-            gameState.totalScore += 1000;
-        } else if (clickCombo >= 100) {
-            showNotification('💀 COMBO LÉGENDAIRE ! Bonus +5000 !', 'combo');
-            gameState.score += 5000;
-            gameState.totalScore += 5000;
-            clickCombo = 0; // Reset après le combo légendaire
+        // Bonus de combo
+        if (gameState.currentCombo > 0 && [10, 25, 50, 100].includes(gameState.currentCombo)) {
+            checkComboBonuses(gameState.currentCombo);
         }
-    } else {
-        clickCombo = 1;
-    }
+    };
     
-    lastClickTime = now;
+    // Remplacer handleClick
+    window.handleClick = enhancedHandleClick;
 }
-
-// Intégrer le combo au clic
-const originalHandleClick = handleClick;
-handleClick = function() {
-    originalHandleClick();
-    trackClickCombo();
-    checkMilestoneEvents();
-};
 
 // Easter eggs
 const KONAMI_CODE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
 let konamiIndex = 0;
 
+// Code secret "NIRD"
+const NIRD_CODE = ['KeyN', 'KeyI', 'KeyR', 'KeyD'];
+let nirdIndex = 0;
+
+// Code secret "LINUX"
+const LINUX_CODE = ['KeyL', 'KeyI', 'KeyN', 'KeyU', 'KeyX'];
+let linuxIndex = 0;
+
 document.addEventListener('keydown', (e) => {
+    // Konami Code
     if (e.code === KONAMI_CODE[konamiIndex]) {
         konamiIndex++;
         if (konamiIndex === KONAMI_CODE.length) {
             activateKonamiCode();
             konamiIndex = 0;
         }
+    } else if (e.code === KONAMI_CODE[0]) {
+        konamiIndex = 1;
     } else {
         konamiIndex = 0;
+    }
+    
+    // NIRD Code
+    if (e.code === NIRD_CODE[nirdIndex]) {
+        nirdIndex++;
+        if (nirdIndex === NIRD_CODE.length) {
+            activateNirdCode();
+            nirdIndex = 0;
+        }
+    } else if (e.code === NIRD_CODE[0]) {
+        nirdIndex = 1;
+    } else {
+        nirdIndex = 0;
+    }
+    
+    // LINUX Code
+    if (e.code === LINUX_CODE[linuxIndex]) {
+        linuxIndex++;
+        if (linuxIndex === LINUX_CODE.length) {
+            activateLinuxCode();
+            linuxIndex = 0;
+        }
+    } else if (e.code === LINUX_CODE[0]) {
+        linuxIndex = 1;
+    } else {
+        linuxIndex = 0;
     }
 });
 
 function activateKonamiCode() {
-    showNotification('🎮 KONAMI CODE ACTIVÉ ! +10000 points !', 'easter-egg');
+    playSound('prestige');
+    showNotification('🎮 KONAMI CODE ACTIVÉ ! +10000 points !', 'achievement');
     gameState.score += 10000;
     gameState.totalScore += 10000;
     updateUI();
     createConfetti();
 }
 
-// Mode nuit automatique
-function checkNightMode() {
-    const hour = new Date().getHours();
-    if (hour >= 22 || hour < 6) {
-        document.body.classList.add('night-mode');
-        if (!localStorage.getItem('nightModeNotified')) {
-            showNotification('🌙 Mode nuit activé pour vos yeux !', 'info');
-            localStorage.setItem('nightModeNotified', 'true');
-        }
-    }
+function activateNirdCode() {
+    playSound('achievement');
+    showNotification('🌱 CODE NIRD ! Double production pendant 30s !', 'achievement');
+    gameState.activeEffects.push({
+        type: 'production_doubled',
+        endTime: Date.now() + 30000
+    });
+    calculateProductionPerSecond();
+    createConfetti();
 }
 
-// Vérifier le mode nuit au chargement
-setTimeout(checkNightMode, 2000);
+function activateLinuxCode() {
+    playSound('achievement');
+    const bonus = gameState.productionPerSecond * 60;
+    showNotification(`🐧 VIVE LINUX ! +${formatNumber(bonus)} points !`, 'achievement');
+    gameState.score += bonus;
+    gameState.totalScore += bonus;
+    updateUI();
+    createConfetti();
+}
+
+// Auto-save indicator
+setInterval(() => {
+    const lastSaveAgo = Math.floor((Date.now() - gameState.lastSave) / 1000);
+    const autoSaveIndicator = document.getElementById('auto-save-indicator');
+    if (autoSaveIndicator) {
+        autoSaveIndicator.textContent = `💾 Sauvegardé il y a ${lastSaveAgo}s`;
+    }
+}, 1000);
+
+// Debug console
+window.DEBUG = {
+    getState: () => gameState,
+    addScore: (amount) => {
+        gameState.score += amount;
+        gameState.totalScore += amount;
+        updateUI();
+        console.log(`+${amount} points ajoutés`);
+    },
+    triggerBoss: () => showBoss(),
+    triggerQuiz: () => showQuiz(),
+    resetGame: () => resetGame(),
+    unlockAll: () => {
+        UPGRADES.forEach(u => u.unlocked = true);
+        ACHIEVEMENTS.forEach(a => a.unlocked = true);
+        PC_SKINS.forEach(s => s.owned = true);
+        updateUI();
+        console.log('Tout débloqué !');
+    },
+    setPrestige: (level) => {
+        gameState.prestigeLevel = level;
+        calculateProductionPerSecond();
+        updateUI();
+        console.log(`Niveau de prestige: ${level}`);
+    },
+    giveMax: () => {
+        gameState.score = 999999999;
+        gameState.totalScore = 999999999;
+        updateUI();
+        console.log('Score maxé !');
+    }
+};
+
+console.log('%c🖥️ NIRD Clicker - Console Debug', 'font-size: 20px; color: #00d4aa;');
+console.log('%cUtilisez window.DEBUG pour accéder aux commandes de débogage.', 'color: #aaa;');
+console.log('%cExemple: window.DEBUG.addScore(1000)', 'color: #888; font-style: italic;');
