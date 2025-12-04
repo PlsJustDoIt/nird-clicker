@@ -1,64 +1,156 @@
 <!DOCTYPE html>
-
-<html>
-
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" type="text/css" href="./styles/style.css">
-    <title>GPT MEN'S | Nuit de l'Info Besançon</title>
+    <meta name="description" content="NIRD Clicker - Libérez le numérique ! Un jeu incrémental pour sensibiliser à la souveraineté numérique.">
+    <title>NIRD Clicker - La Résistance s'organise | GPT MEN'S</title>
+    <link rel="stylesheet" href="./styles/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
-    <header>
-        <h1>Bienvenue sur la page de l'équipe <b>GPT MEN'S</b></h1>
-        <p>Page par défaut générée par l'OFNI pour la Nuit de l'Info</p>
-        <p>Si cette page reste vide, c'est probablement que l'équipe héberge son projet ailleurs !</p>
-    </header>
+    <div id="app">
+        <!-- Header avec score -->
+        <header id="game-header">
+            <div class="logo">
+                <h1>🖥️ NIRD Clicker</h1>
+                <p class="subtitle">La Résistance Numérique s'organise !</p>
+            </div>
+            <div class="score-display">
+                <div class="main-score">
+                    <span id="score">0</span>
+                    <span class="score-label">Points de Souveraineté</span>
+                </div>
+                <div class="score-per-sec">
+                    <span id="per-second">0</span>/sec
+                </div>
+            </div>
+        </header>
 
-    <footer id="nos-sponsors">
-			<h2>Nos sponsors</h2>
-			<span>Merci à eux ! 🍕</span>
+        <!-- Zone principale du jeu -->
+        <main id="game-container">
+            <!-- Zone de clic (gauche) -->
+            <section id="click-zone">
+                <div id="click-area">
+                    <div id="main-clicker" title="Cliquez pour libérer des octets !">
+                        <div class="pc-icon">💻</div>
+                        <div class="click-effect"></div>
+                    </div>
+                    <p class="click-instruction">Cliquez pour installer Linux !</p>
+                    <div id="click-multiplier">
+                        +<span id="click-power">1</span> par clic
+                    </div>
+                </div>
 
-			<ul>
-	<li>
-		<a href="https://www.redbull.com/fr-fr" target="_blank"
-			style="background-image: url(./images/redbull.svg);">
-			<span>Redbull</span>
-		</a>
-	<li>
-		<a href="https://episteme-bde.fr/" target="_blank"
-			style="background-image: url(./images/logo-episteme.png);">
-			<span>Episteme</span>
-		</a>
-	</li>
-	<li>
-		<a href="https://www.flexio.fr/" target="_blank"
-			style="background-image: url(./images/logo-Flexio.png);">
-			<span>Flexio</span>
-		</a>
-	</li>
-	<li>
-		<a href="https://maincare.com" target="_blank" style="background-image: url(./images/logo-maincare.svg);">
-			<span>MainCare</span>
-		</a>
-	</li>
-	<li>
-		<a href="https://www.smartesting.com/" target="_blank"
-			style="background-image: url(./images/logo-smartesting.webp);">
-			<span>Smartesting</span>
-		</a>
-	</li>
-	<li>
-		<a href="https://www.umlp.fr/" target="_blank"
-			style="background-image: url(./images/ufrst.png);">
-			<span>UFR-ST</span>
-		</a>
-	</li>
-</ul>
+                <!-- Statistiques -->
+                <div id="stats-panel">
+                    <h3>📊 Statistiques</h3>
+                    <div class="stat-item">
+                        <span>Total de clics :</span>
+                        <span id="total-clicks">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>PC Libérés :</span>
+                        <span id="pc-liberated">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Niveau Village :</span>
+                        <span id="village-level">1</span>
+                    </div>
+                </div>
 
-		</footer>
+                <!-- Jauge de résistance -->
+                <div id="resistance-gauge">
+                    <h3>🛡️ Jauge de Résistance</h3>
+                    <div class="gauge-container">
+                        <div id="gauge-fill" style="width: 0%"></div>
+                    </div>
+                    <p id="gauge-label">Village Débutant</p>
+                </div>
+            </section>
+
+            <!-- Zone des upgrades (droite) -->
+            <section id="upgrades-zone">
+                <h2>🔧 Améliorations NIRD</h2>
+                <div id="upgrades-list">
+                    <!-- Les upgrades seront générées par JavaScript -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Zone d'événements/messages -->
+        <div id="event-banner" class="hidden">
+            <span id="event-text"></span>
+        </div>
+
+        <!-- Modal Boss Windows -->
+        <div id="boss-modal" class="hidden">
+            <div class="boss-content">
+                <div class="boss-header">
+                    <span class="windows-logo">🪟</span>
+                    <span>Mise à jour Windows obligatoire</span>
+                </div>
+                <div class="boss-body">
+                    <p>Windows veut redémarrer votre ordinateur...</p>
+                    <p class="boss-instruction">Cliquez 20 fois pour fermer !</p>
+                    <div class="boss-progress">
+                        <div id="boss-progress-bar"></div>
+                    </div>
+                    <span id="boss-clicks-left">20</span> clics restants
+                </div>
+                <button id="boss-click-btn">❌ FERMER</button>
+            </div>
+        </div>
+
+        <!-- Footer avec sponsors -->
+        <footer id="nos-sponsors">
+            <h2>Nos sponsors</h2>
+            <span>Merci à eux ! 🍕</span>
+            <ul>
+                <li>
+                    <a href="https://www.redbull.com/fr-fr" target="_blank" style="background-image: url(./images/redbull.svg);">
+                        <span>Redbull</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://episteme-bde.fr/" target="_blank" style="background-image: url(./images/logo-episteme.png);">
+                        <span>Episteme</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.flexio.fr/" target="_blank" style="background-image: url(./images/logo-Flexio.png);">
+                        <span>Flexio</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://maincare.com" target="_blank" style="background-image: url(./images/logo-maincare.svg);">
+                        <span>MainCare</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.smartesting.com/" target="_blank" style="background-image: url(./images/logo-smartesting.webp);">
+                        <span>Smartesting</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.umlp.fr/" target="_blank" style="background-image: url(./images/ufrst.png);">
+                        <span>UFR-ST</span>
+                    </a>
+                </li>
+            </ul>
+        </footer>
+
+        <!-- Notifications flottantes -->
+        <div id="floating-notifications"></div>
+    </div>
+
+    <!-- Scripts du jeu -->
+    <script src="./js/gameData.js"></script>
+    <script src="./js/gameLogic.js"></script>
+    <script src="./js/ui.js"></script>
+    <script src="./js/events.js"></script>
+    <script src="./js/main.js"></script>
 </body>
-
 </html>

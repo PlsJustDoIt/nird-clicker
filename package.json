@@ -1,10 +1,16 @@
 {
-  "name": "gpt-men-s",
+  "name": "nird-clicker",
+  "version": "1.0.0",
+  "description": "NIRD Clicker - La Résistance s'organise - Jeu de type Cookie Clicker pour la Nuit de l'Info",
   "main": "index.js",
   "scripts": {
-    "start": "node ."
+    "start": "node index.js",
+    "dev": "node index.js"
   },
   "dependencies": {
-    "express": "^4.17.1"
-  }
+    "express": "^4.18.2"
+  },
+  "license": "MIT",
+  "author": "GPT MEN'S - Nuit de l'Info 2025",
+  "keywords": ["nird", "clicker", "incremental-game", "nuit-info", "souverainete-numerique"]
 }
