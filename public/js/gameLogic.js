@@ -71,19 +71,75 @@ function handleClick() {
     // Mise à jour UI
     updateScoreDisplay();
     updateStatsDisplay();
+    
+    // Mise à jour des upgrades en mode MAX (toutes les 10 clics pour performance)
+    if (buyMode === 'max' && gameState.totalClicks % 10 === 0) {
+        updateUpgradesList();
+    }
 }
 
-// Acheter une upgrade
-function buyUpgrade(upgradeId) {
+// Mode d'achat actuel (1, 10, 50, 'max')
+let buyMode = 1;
+
+// Changer le mode d'achat
+function setBuyMode(mode) {
+    buyMode = mode;
+    updateBuyModeButtons();
+    updateUpgradesList();
+}
+
+// Calculer le coût total pour acheter N upgrades
+function getMultiUpgradeCost(upgrade, count) {
+    let totalCost = 0;
+    for (let i = 0; i < count; i++) {
+        totalCost += Math.floor(upgrade.baseCost * Math.pow(COST_MULTIPLIER, upgrade.owned + i));
+    }
+    return totalCost;
+}
+
+// Calculer combien d'upgrades on peut acheter avec le score actuel
+function getMaxAffordable(upgrade) {
+    let count = 0;
+    let totalCost = 0;
+    let tempOwned = upgrade.owned;
+    
+    while (true) {
+        const nextCost = Math.floor(upgrade.baseCost * Math.pow(COST_MULTIPLIER, tempOwned));
+        if (totalCost + nextCost > gameState.score) break;
+        totalCost += nextCost;
+        tempOwned++;
+        count++;
+        if (count > 1000) break; // Sécurité
+    }
+    
+    return { count, totalCost };
+}
+
+// Acheter une upgrade (avec support multi-achat)
+function buyUpgrade(upgradeId, forceCount = null) {
     const upgrade = UPGRADES.find(u => u.id === upgradeId);
     if (!upgrade) return false;
     
-    const cost = getUpgradeCost(upgrade);
+    let count = forceCount || buyMode;
+    let totalCost;
     
-    if (gameState.score >= cost) {
-        gameState.score -= cost;
-        upgrade.owned++;
-        gameState.totalUpgrades++;
+    if (count === 'max') {
+        const maxInfo = getMaxAffordable(upgrade);
+        count = maxInfo.count;
+        totalCost = maxInfo.totalCost;
+    } else {
+        totalCost = getMultiUpgradeCost(upgrade, count);
+    }
+    
+    if (count === 0) {
+        showNotification('Pas assez de points !', 'error');
+        return false;
+    }
+    
+    if (gameState.score >= totalCost) {
+        gameState.score -= totalCost;
+        upgrade.owned += count;
+        gameState.totalUpgrades += count;
         
         calculateProductionPerSecond();
         checkUnlocks();
@@ -91,7 +147,11 @@ function buyUpgrade(upgradeId) {
         updateUI();
         
         // Notification
-        showNotification(`${upgrade.icon} ${upgrade.name} acheté !`, 'success');
+        if (count > 1) {
+            showNotification(`${upgrade.icon} ${upgrade.name} x${count} acheté !`, 'success');
+        } else {
+            showNotification(`${upgrade.icon} ${upgrade.name} acheté !`, 'success');
+        }
         
         return true;
     } else {
@@ -163,6 +223,11 @@ function startGameLoop() {
             checkUnlocks();
             checkAchievements();
             updateScoreDisplay();
+            
+            // Toujours mettre à jour les upgrades en mode MAX
+            if (buyMode === 'max') {
+                updateUpgradesList();
+            }
         }
     }, 1000);
     
