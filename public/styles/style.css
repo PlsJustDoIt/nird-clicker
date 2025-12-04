@@ -57,6 +57,7 @@ body {
 /* Header */
 #game-header {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 2rem;
@@ -1255,6 +1256,9 @@ body {
 .quick-menu {
     display: flex;
     gap: 0.5rem;
+    order: 1;
+    width: 100%;
+    justify-content: center;
 }
 
 .menu-btn {
