@@ -337,6 +337,10 @@ body {
     cursor: pointer;
     transition: all var(--transition-fast);
     border: 2px solid transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 .upgrade-item:hover {
