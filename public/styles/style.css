@@ -1285,43 +1285,6 @@ body {
     margin-top: 0.3rem;
 }
 
-/* Buy Multiplier Buttons */
-#buy-multiplier {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 1rem;
-    background: var(--bg-card);
-    border-radius: var(--border-radius);
-    margin-top: 1rem;
-}
-
-#buy-multiplier span {
-    color: var(--fg-secondary);
-    font-size: 0.9rem;
-}
-
-.multiplier-btn {
-    padding: 0.5rem 1rem;
-    border: 2px solid var(--accent-secondary);
-    background: transparent;
-    color: var(--accent-secondary);
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all var(--transition-fast);
-}
-
-.multiplier-btn:hover {
-    background: rgba(0, 160, 255, 0.2);
-}
-
-.multiplier-btn.active {
-    background: var(--accent-secondary);
-    color: #000;
-}
-
 /* Combo Display */
 #combo-display {
     min-height: 2rem;

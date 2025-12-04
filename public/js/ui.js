@@ -862,15 +862,6 @@ function importSave() {
     input.click();
 }
 
-// Set buy multiplier
-function setBuyMultiplier(value) {
-    buyMultiplier = value;
-    document.querySelectorAll('.multiplier-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.mult == value);
-    });
-    updateUpgradesList();
-}
-
 // ============================================
 // INITIALISATION
 // ============================================
@@ -883,14 +874,6 @@ function initEventListeners() {
         if (e.target === document.getElementById('boss-modal')) {
             // Ne rien faire
         }
-    });
-    
-    // Boutons multiplicateur
-    document.querySelectorAll('.multiplier-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const mult = btn.dataset.mult;
-            setBuyMultiplier(mult === 'max' ? 'max' : parseInt(mult));
-        });
     });
     
     // Bouton Prestige
