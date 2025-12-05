@@ -618,6 +618,7 @@ function openEncyclopedia() {
     modal.innerHTML = `
         <div class="modal-content encyclopedia-content">
             <h2>📖 Encyclopédie NIRD</h2>
+            <button class="easter-egg-btn" title="???" onclick="openSnakeGame(); this.closest('.modal-overlay').remove();">?</button>
             <div class="encyclopedia-list">${entries}</div>
             <button onclick="this.parentElement.parentElement.remove()" class="close-btn">Fermer</button>
         </div>
@@ -1050,6 +1051,9 @@ function initEventListeners() {
     document.getElementById('stats-btn')?.addEventListener('click', openStatsMenu);
     document.getElementById('leaderboard-btn')?.addEventListener('click', openLeaderboard);
     
+    // Easter Egg - Snake Game
+    document.getElementById('easter-egg-btn')?.addEventListener('click', openSnakeGame);
+    
     // Raccourcis clavier
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Space' || e.code === 'Enter') {
@@ -1065,6 +1069,295 @@ function initEventListeners() {
             document.querySelectorAll('.modal-overlay').forEach(m => {
                 if (!m.id) m.remove();
             });
+            closeSnakeGame();
         }
     });
+}
+
+// ============================================
+// EASTER EGG - SNAKE GAME
+// ============================================
+let snakeGame = {
+    canvas: null,
+    ctx: null,
+    snake: [],
+    food: null,
+    direction: 'right',
+    nextDirection: 'right',
+    gameLoop: null,
+    score: 0,
+    highScore: 0,
+    gridSize: 15,
+    tileCount: 20,
+    isRunning: false
+};
+
+function openSnakeGame() {
+    const modal = document.getElementById('snake-modal');
+    modal.classList.remove('hidden');
+    
+    // Fermer l'encyclopédie
+    document.getElementById('encyclopedia-modal')?.classList.add('hidden');
+    
+    // Initialiser le canvas
+    snakeGame.canvas = document.getElementById('snake-canvas');
+    snakeGame.ctx = snakeGame.canvas.getContext('2d');
+    snakeGame.tileCount = snakeGame.canvas.width / snakeGame.gridSize;
+    
+    // Charger le high score
+    snakeGame.highScore = parseInt(localStorage.getItem('nirdClicker_snakeHighScore') || '0');
+    document.getElementById('snake-high-score').textContent = snakeGame.highScore;
+    
+    // Dessiner l'écran initial
+    drawSnakeGame();
+    
+    showNotification('🐍 Easter Egg découvert !', 'success');
+}
+
+function closeSnakeGame() {
+    const modal = document.getElementById('snake-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+    stopSnakeGame();
+}
+
+function startSnakeGame() {
+    // Reset du jeu
+    snakeGame.snake = [
+        { x: 10, y: 10 },
+        { x: 9, y: 10 },
+        { x: 8, y: 10 }
+    ];
+    snakeGame.direction = 'right';
+    snakeGame.nextDirection = 'right';
+    snakeGame.score = 0;
+    snakeGame.isRunning = true;
+    
+    document.getElementById('snake-score').textContent = '0';
+    document.getElementById('snake-start-btn').disabled = true;
+    document.getElementById('snake-start-btn').textContent = '🎮 En cours...';
+    
+    spawnFood();
+    
+    // Démarrer la boucle de jeu
+    if (snakeGame.gameLoop) clearInterval(snakeGame.gameLoop);
+    snakeGame.gameLoop = setInterval(updateSnakeGame, 120);
+    
+    // Ajouter les contrôles clavier
+    document.addEventListener('keydown', handleSnakeKeydown);
+}
+
+function stopSnakeGame() {
+    snakeGame.isRunning = false;
+    if (snakeGame.gameLoop) {
+        clearInterval(snakeGame.gameLoop);
+        snakeGame.gameLoop = null;
+    }
+    document.removeEventListener('keydown', handleSnakeKeydown);
+    
+    const startBtn = document.getElementById('snake-start-btn');
+    if (startBtn) {
+        startBtn.disabled = false;
+        startBtn.textContent = '🎮 Rejouer';
+    }
+}
+
+function handleSnakeKeydown(e) {
+    if (!snakeGame.isRunning) return;
+    
+    const keyMap = {
+        'ArrowUp': 'up', 'KeyW': 'up', 'KeyZ': 'up',
+        'ArrowDown': 'down', 'KeyS': 'down',
+        'ArrowLeft': 'left', 'KeyA': 'left', 'KeyQ': 'left',
+        'ArrowRight': 'right', 'KeyD': 'right'
+    };
+    
+    const newDir = keyMap[e.code];
+    if (newDir) {
+        setSnakeDirection(newDir);
+        e.preventDefault();
+    }
+}
+
+function setSnakeDirection(dir) {
+    if (!snakeGame.isRunning) return;
+    
+    const opposites = {
+        'up': 'down', 'down': 'up',
+        'left': 'right', 'right': 'left'
+    };
+    
+    // Ne pas permettre de faire demi-tour
+    if (opposites[dir] !== snakeGame.direction) {
+        snakeGame.nextDirection = dir;
+    }
+}
+
+function spawnFood() {
+    let validPosition = false;
+    while (!validPosition) {
+        snakeGame.food = {
+            x: Math.floor(Math.random() * snakeGame.tileCount),
+            y: Math.floor(Math.random() * snakeGame.tileCount)
+        };
+        
+        // Vérifier que la nourriture n'est pas sur le serpent
+        validPosition = !snakeGame.snake.some(seg => 
+            seg.x === snakeGame.food.x && seg.y === snakeGame.food.y
+        );
+    }
+}
+
+function updateSnakeGame() {
+    if (!snakeGame.isRunning) return;
+    
+    snakeGame.direction = snakeGame.nextDirection;
+    
+    // Calculer la nouvelle position de la tête
+    const head = { ...snakeGame.snake[0] };
+    
+    switch (snakeGame.direction) {
+        case 'up': head.y--; break;
+        case 'down': head.y++; break;
+        case 'left': head.x--; break;
+        case 'right': head.x++; break;
+    }
+    
+    // Vérifier les collisions avec les murs
+    if (head.x < 0 || head.x >= snakeGame.tileCount || 
+        head.y < 0 || head.y >= snakeGame.tileCount) {
+        gameOverSnake();
+        return;
+    }
+    
+    // Vérifier les collisions avec soi-même
+    if (snakeGame.snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+        gameOverSnake();
+        return;
+    }
+    
+    // Ajouter la nouvelle tête
+    snakeGame.snake.unshift(head);
+    
+    // Vérifier si on mange la nourriture
+    if (head.x === snakeGame.food.x && head.y === snakeGame.food.y) {
+        snakeGame.score++;
+        document.getElementById('snake-score').textContent = snakeGame.score;
+        spawnFood();
+        playSound('click');
+    } else {
+        // Retirer la queue si on n'a pas mangé
+        snakeGame.snake.pop();
+    }
+    
+    drawSnakeGame();
+}
+
+function drawSnakeGame() {
+    const ctx = snakeGame.ctx;
+    const size = snakeGame.gridSize;
+    
+    // Effacer le canvas
+    ctx.fillStyle = '#111';
+    ctx.fillRect(0, 0, snakeGame.canvas.width, snakeGame.canvas.height);
+    
+    // Dessiner la grille (subtile)
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    for (let i = 0; i <= snakeGame.tileCount; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * size, 0);
+        ctx.lineTo(i * size, snakeGame.canvas.height);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, i * size);
+        ctx.lineTo(snakeGame.canvas.width, i * size);
+        ctx.stroke();
+    }
+    
+    // Dessiner la nourriture (pomme)
+    if (snakeGame.food) {
+        ctx.font = `${size - 2}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🍎', 
+            snakeGame.food.x * size + size / 2, 
+            snakeGame.food.y * size + size / 2
+        );
+    }
+    
+    // Dessiner le serpent
+    snakeGame.snake.forEach((seg, i) => {
+        if (i === 0) {
+            // Tête avec emoji
+            ctx.font = `${size - 2}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🐍', seg.x * size + size / 2, seg.y * size + size / 2);
+        } else {
+            // Corps avec dégradé
+            const gradient = ctx.createRadialGradient(
+                seg.x * size + size / 2, seg.y * size + size / 2, 0,
+                seg.x * size + size / 2, seg.y * size + size / 2, size / 2
+            );
+            gradient.addColorStop(0, '#4ade80');
+            gradient.addColorStop(1, '#22c55e');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(seg.x * size + size / 2, seg.y * size + size / 2, size / 2 - 1, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    });
+    
+    // Message de démarrage si le jeu n'est pas en cours
+    if (!snakeGame.isRunning && snakeGame.snake.length === 0) {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.font = '16px Roboto, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Appuie sur Jouer !', snakeGame.canvas.width / 2, snakeGame.canvas.height / 2);
+    }
+}
+
+function gameOverSnake() {
+    stopSnakeGame();
+    
+    // Calculer les points gagnés (10 points par pomme)
+    const pointsEarned = snakeGame.score * 10;
+    
+    // Mettre à jour le high score
+    if (snakeGame.score > snakeGame.highScore) {
+        snakeGame.highScore = snakeGame.score;
+        localStorage.setItem('nirdClicker_snakeHighScore', snakeGame.highScore.toString());
+        document.getElementById('snake-high-score').textContent = snakeGame.highScore;
+    }
+    
+    // Ajouter les points au jeu principal
+    if (pointsEarned > 0) {
+        gameState.score += pointsEarned;
+        gameState.totalScore += pointsEarned;
+        updateUI();
+        saveGame();
+    }
+    
+    // Afficher le message de fin
+    const ctx = snakeGame.ctx;
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+    ctx.fillRect(0, 0, snakeGame.canvas.width, snakeGame.canvas.height);
+    
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = 'bold 24px Roboto, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Game Over!', snakeGame.canvas.width / 2, snakeGame.canvas.height / 2 - 30);
+    
+    ctx.fillStyle = '#4ade80';
+    ctx.font = '16px Roboto, sans-serif';
+    ctx.fillText(`Score: ${snakeGame.score} 🍎`, snakeGame.canvas.width / 2, snakeGame.canvas.height / 2 + 10);
+    
+    ctx.fillStyle = '#facc15';
+    ctx.fillText(`+${pointsEarned} Points de Souveraineté!`, snakeGame.canvas.width / 2, snakeGame.canvas.height / 2 + 40);
+    
+    if (pointsEarned > 0) {
+        showNotification(`🐍 Snake terminé ! +${pointsEarned} points !`, 'success');
+    }
 }

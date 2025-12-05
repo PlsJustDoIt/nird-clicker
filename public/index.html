@@ -230,8 +230,35 @@
             <div class="encyclopedia-content modal-content">
                 <h2>📖 Encyclopédie NIRD</h2>
                 <button class="modal-close">✕</button>
+                <button id="easter-egg-btn" class="easter-egg-btn" title="???">?</button>
                 <div id="encyclopedia-list">
                     <!-- Généré par JS -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal Snake Easter Egg -->
+        <div id="snake-modal" class="modal-overlay hidden">
+            <div class="snake-content modal-content">
+                <h2>🐍 Snake NIRD</h2>
+                <p class="snake-subtitle">Mange des 🍎 pour gagner des Points de Souveraineté !</p>
+                <button class="modal-close" onclick="closeSnakeGame()">✕</button>
+                <div class="snake-game-container">
+                    <canvas id="snake-canvas" width="300" height="300"></canvas>
+                    <div class="snake-controls">
+                        <div class="snake-score">Score: <span id="snake-score">0</span></div>
+                        <div class="snake-high-score">Record: <span id="snake-high-score">0</span></div>
+                    </div>
+                    <div class="snake-mobile-controls">
+                        <button class="snake-btn" onclick="setSnakeDirection('up')">▲</button>
+                        <div class="snake-btn-row">
+                            <button class="snake-btn" onclick="setSnakeDirection('left')">◀</button>
+                            <button class="snake-btn" onclick="setSnakeDirection('down')">▼</button>
+                            <button class="snake-btn" onclick="setSnakeDirection('right')">▶</button>
+                        </div>
+                    </div>
+                    <button id="snake-start-btn" class="snake-start-btn" onclick="startSnakeGame()">🎮 Jouer</button>
+                    <p class="snake-hint">Utilise les flèches ↑↓←→ ou ZQSD</p>
                 </div>
             </div>
         </div>
