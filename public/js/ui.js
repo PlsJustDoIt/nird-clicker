@@ -503,6 +503,21 @@ function showBoss(bossId = null) {
     
     modal.classList.remove('hidden');
     document.body.classList.add('modal-open'); // Bloquer le scroll
+    
+    // Empêcher les clics sur l'overlay de fermer le boss
+    modal.onclick = (e) => {
+        e.stopPropagation();
+    };
+    
+    // Faire apparaître le bouton skip après 3 secondes
+    bossTimers.skipButton = setTimeout(() => {
+        const skipBtn = document.getElementById('boss-skip-btn');
+        if (skipBtn) {
+            skipBtn.classList.remove('hidden');
+            skipBtn.onclick = () => closeBoss(false);
+        }
+    }, 3000);
+    
     playSound('boss');
 }
 
@@ -510,6 +525,7 @@ function generateBossHTML() {
     const mechanicHint = getMechanicHint(bossState.activeMechanic);
     
     return `
+        <button id="boss-skip-btn" class="boss-skip-btn hidden" title="Quitter le boss">✕</button>
         <div class="boss-header" style="background-color: ${currentBoss.color}">
             <span class="boss-icon" id="boss-icon-main">${currentBoss.icon}</span>
             <h2>${currentBoss.name}</h2>
@@ -1780,11 +1796,16 @@ function initEventListeners() {
     // Clic principal
     document.getElementById('main-clicker').addEventListener('click', handleClick);
     
-    // Empêcher la fermeture du boss
+    // Empêcher la fermeture du boss en cliquant sur l'overlay
     document.getElementById('boss-modal').addEventListener('click', (e) => {
-        if (e.target === document.getElementById('boss-modal')) {
-            // Ne rien faire
-        }
+        // Bloquer tous les clics sur l'overlay (fond noir)
+        e.stopPropagation();
+        e.preventDefault();
+    });
+    
+    // Permettre les clics à l'intérieur du contenu du boss
+    document.querySelector('#boss-modal .boss-content, #boss-modal .modal-content')?.addEventListener('click', (e) => {
+        e.stopPropagation(); // Empêcher la propagation vers l'overlay
     });
     
     // Boutons multiplicateur

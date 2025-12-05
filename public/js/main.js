@@ -110,8 +110,11 @@ function initNewEventListeners() {
         });
     });
     
-    // Fermer en cliquant à l'extérieur
+    // Fermer en cliquant à l'extérieur (sauf pour le boss)
     document.querySelectorAll('.modal-overlay').forEach(modal => {
+        // Ne pas permettre de fermer le boss en cliquant à l'extérieur
+        if (modal.id === 'boss-modal') return;
+        
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.classList.add('hidden');

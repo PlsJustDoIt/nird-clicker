@@ -1195,6 +1195,7 @@ body.modal-open {
 }
 
 .boss-content {
+    position: relative;
     background: linear-gradient(135deg, #0078d4 0%, #004578 100%);
     padding: 2rem;
     border-radius: var(--border-radius);
@@ -2549,6 +2550,34 @@ body.modal-open {
 
 .boss-clicks {
     margin: 1rem 0;
+}
+
+/* Bouton skip (croix) qui apparaît après 3s */
+.boss-skip-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: var(--fg-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    z-index: 10;
+}
+
+.boss-skip-btn:hover {
+    background: rgba(255, 68, 68, 0.3);
+    border-color: var(--accent-danger);
+    color: var(--accent-danger);
+    transform: scale(1.1);
+}
+
+.boss-skip-btn.hidden {
+    display: none;
 }
 
 .boss-btn {
