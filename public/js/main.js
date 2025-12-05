@@ -104,12 +104,6 @@ function initNewEventListeners() {
         });
     });
     
-    // Bouton paramètres
-    const settingsBtn = document.getElementById('settings-btn');
-    if (settingsBtn) {
-        settingsBtn.addEventListener('click', showSettings);
-    }
-    
     // Fermer les modales
     document.querySelectorAll('.modal-close').forEach(btn => {
         btn.addEventListener('click', () => {

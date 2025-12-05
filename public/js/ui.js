@@ -416,21 +416,21 @@ function openSettingsMenu() {
             
             <div class="setting-item">
                 <span>🔊 Sons</span>
-                <button onclick="toggleSound()" id="sound-toggle" class="${gameState.soundEnabled ? 'active' : ''}">
+                <button id="sound-toggle-btn" class="${gameState.soundEnabled ? 'active' : ''}">
                     ${gameState.soundEnabled ? 'ON' : 'OFF'}
                 </button>
             </div>
             
             <div class="setting-item">
                 <span>✨ Particules</span>
-                <button onclick="toggleParticles()" id="particles-toggle" class="${gameState.particlesEnabled ? 'active' : ''}">
+                <button id="particles-toggle-btn" class="${gameState.particlesEnabled ? 'active' : ''}">
                     ${gameState.particlesEnabled ? 'ON' : 'OFF'}
                 </button>
             </div>
             
             <div class="setting-item">
                 <span>🎨 Thème</span>
-                <select onchange="setTheme(this.value)" id="theme-select">
+                <select id="theme-select">
                     ${THEMES.map(t => `<option value="${t.id}" ${gameState.currentTheme === t.id ? 'selected' : ''}>${t.name}</option>`).join('')}
                 </select>
             </div>
@@ -439,20 +439,52 @@ function openSettingsMenu() {
             
             <div class="setting-item">
                 <span>💾 Sauvegarde</span>
-                <button onclick="exportSave()">Exporter</button>
-                <button onclick="importSave()">Importer</button>
+                <button id="export-btn">Exporter</button>
+                <button id="import-btn">Importer</button>
             </div>
             
             <div class="setting-item danger">
                 <span>🗑️ Reset</span>
-                <button onclick="resetGame()" class="danger-btn">Recommencer</button>
+                <button id="reset-btn" class="danger-btn">Recommencer</button>
             </div>
             
-            <button onclick="this.parentElement.parentElement.remove()" class="close-btn">Fermer</button>
+            <button id="close-settings-btn" class="close-btn">Fermer</button>
         </div>
     `;
     
     document.body.appendChild(modal);
+    
+    // Event listeners
+    modal.querySelector('#sound-toggle-btn').addEventListener('click', () => {
+        gameState.soundEnabled = !gameState.soundEnabled;
+        const btn = modal.querySelector('#sound-toggle-btn');
+        btn.textContent = gameState.soundEnabled ? 'ON' : 'OFF';
+        btn.classList.toggle('active', gameState.soundEnabled);
+        saveGame();
+    });
+    
+    modal.querySelector('#particles-toggle-btn').addEventListener('click', () => {
+        gameState.particlesEnabled = !gameState.particlesEnabled;
+        const btn = modal.querySelector('#particles-toggle-btn');
+        btn.textContent = gameState.particlesEnabled ? 'ON' : 'OFF';
+        btn.classList.toggle('active', gameState.particlesEnabled);
+        saveGame();
+    });
+    
+    modal.querySelector('#theme-select').addEventListener('change', (e) => {
+        applyTheme(e.target.value);
+    });
+    
+    modal.querySelector('#export-btn').addEventListener('click', exportSave);
+    modal.querySelector('#import-btn').addEventListener('click', importSave);
+    modal.querySelector('#reset-btn').addEventListener('click', () => {
+        if (confirm('⚠️ Voulez-vous vraiment tout recommencer ?')) {
+            resetGame();
+        }
+    });
+    
+    modal.querySelector('#close-settings-btn').addEventListener('click', () => modal.remove());
+    
     modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.remove();
     });
@@ -879,42 +911,6 @@ function updatePrestigeDisplay() {
     }
     
     updatePrestigeButton();
-}
-
-// Settings modal amélioré
-function showSettings() {
-    const modal = document.getElementById('settings-modal');
-    if (modal) {
-        modal.classList.remove('hidden');
-        
-        // Mettre à jour les toggles
-        const soundToggle = document.getElementById('sound-toggle');
-        const particlesToggle = document.getElementById('particles-toggle');
-        
-        if (soundToggle) soundToggle.checked = gameState.soundEnabled;
-        if (particlesToggle) particlesToggle.checked = gameState.particlesEnabled;
-        
-        // Event listeners pour thèmes
-        document.querySelectorAll('.theme-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.theme === gameState.currentTheme);
-            btn.onclick = () => applyTheme(btn.dataset.theme);
-        });
-        
-        // Event listeners pour toggles
-        if (soundToggle) soundToggle.onchange = toggleSound;
-        if (particlesToggle) particlesToggle.onchange = toggleParticles;
-        
-        // Event listeners pour sauvegarde
-        document.getElementById('export-save')?.addEventListener('click', exportSave);
-        document.getElementById('import-save')?.addEventListener('click', importSave);
-        document.getElementById('reset-save')?.addEventListener('click', () => {
-            if (confirm('⚠️ Voulez-vous vraiment tout recommencer ?')) {
-                resetGame();
-            }
-        });
-    } else {
-        openSettingsMenu();
-    }
 }
 
 // Export/Import save
