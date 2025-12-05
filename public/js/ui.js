@@ -144,29 +144,15 @@ function updateUpgradesList() {
     // Vérifier si on doit recréer la liste ou juste mettre à jour
     const existingItems = container.querySelectorAll('.upgrade-item[data-upgrade-id]');
     const shouldRebuild = existingItems.length === 0 || 
-        existingItems.length !== (UPGRADES.filter(u => u.unlocked).length + CLICK_UPGRADES.filter(u => !u.purchased).length);
+        existingItems.length !== UPGRADES.filter(u => u.unlocked).length;
     
     if (shouldRebuild) {
         container.innerHTML = '';
         
-        // Upgrades de production
+        // Upgrades de production uniquement
         UPGRADES.forEach(upgrade => {
             if (upgrade.unlocked) {
                 const upgradeEl = createUpgradeElement(upgrade);
-                container.appendChild(upgradeEl);
-            }
-        });
-        
-        // Séparateur - Améliorations de clic
-        const clickSeparator = document.createElement('div');
-        clickSeparator.className = 'upgrade-separator';
-        clickSeparator.innerHTML = '<h3>⚡ Améliorations de clic</h3>';
-        container.appendChild(clickSeparator);
-        
-        // Upgrades de clic
-        CLICK_UPGRADES.forEach(upgrade => {
-            if (!upgrade.purchased) {
-                const upgradeEl = createClickUpgradeElement(upgrade);
                 container.appendChild(upgradeEl);
             }
         });
@@ -180,13 +166,32 @@ function updateUpgradesList() {
                 }
             }
         });
+    }
+    
+    // Mettre à jour les upgrades de clic dans leur propre tab
+    updateClickUpgradesList();
+}
+
+// Mise à jour de la liste des upgrades de clic (tab séparé)
+function updateClickUpgradesList() {
+    const container = document.getElementById('click-upgrades-list');
+    if (!container) return;
+    
+    const existingItems = container.querySelectorAll('.upgrade-item[data-click-upgrade-id]');
+    const shouldRebuild = existingItems.length === 0 || existingItems.length !== CLICK_UPGRADES.length;
+    
+    if (shouldRebuild) {
+        container.innerHTML = '';
         
         CLICK_UPGRADES.forEach(upgrade => {
-            if (!upgrade.purchased) {
-                const el = container.querySelector(`.upgrade-item[data-click-upgrade-id="${upgrade.id}"]`);
-                if (el) {
-                    updateClickUpgradeElement(el, upgrade);
-                }
+            const upgradeEl = createClickUpgradeElement(upgrade);
+            container.appendChild(upgradeEl);
+        });
+    } else {
+        CLICK_UPGRADES.forEach(upgrade => {
+            const el = container.querySelector(`.upgrade-item[data-click-upgrade-id="${upgrade.id}"]`);
+            if (el) {
+                updateClickUpgradeElement(el, upgrade);
             }
         });
     }
@@ -264,35 +269,54 @@ function updateUpgradeElement(el, upgrade) {
 
 // Créer un élément d'upgrade de clic
 function createClickUpgradeElement(upgrade) {
-    const canAfford = gameState.score >= upgrade.cost;
+    const isPurchased = upgrade.purchased;
+    const canAfford = !isPurchased && gameState.score >= upgrade.cost;
     
     const upgradeEl = document.createElement('div');
-    upgradeEl.className = `upgrade-item click-upgrade ${canAfford ? 'can-afford' : 'cannot-afford'}`;
+    upgradeEl.className = `upgrade-item click-upgrade ${isPurchased ? 'purchased' : (canAfford ? 'can-afford' : 'cannot-afford')}`;
     upgradeEl.setAttribute('data-click-upgrade-id', upgrade.id);
     upgradeEl.innerHTML = `
-        <div class="upgrade-icon">⚡</div>
+        <div class="upgrade-icon">${upgrade.icon}</div>
         <div class="upgrade-info">
             <div class="upgrade-header">
                 <span class="upgrade-name">${upgrade.name}</span>
+                ${isPurchased ? '<span class="upgrade-status">ACTIVÉ</span>' : ''}
             </div>
             <p class="upgrade-desc">${upgrade.description}</p>
             <div class="upgrade-footer">
-                <span class="upgrade-cost">${formatNumber(upgrade.cost)} pts</span>
+                <span class="upgrade-cost">${isPurchased ? 'Acheté' : formatNumber(upgrade.cost) + ' pts'}</span>
+                <span class="upgrade-bonus">+${upgrade.bonus} par clic</span>
             </div>
         </div>
     `;
     
-    upgradeEl.addEventListener('click', () => buyClickUpgrade(upgrade.id));
+    if (!isPurchased) {
+        upgradeEl.addEventListener('click', () => buyClickUpgrade(upgrade.id));
+    }
     
     return upgradeEl;
 }
 
 // Mettre à jour un élément d'upgrade de clic existant
 function updateClickUpgradeElement(el, upgrade) {
-    const canAfford = gameState.score >= upgrade.cost;
+    const isPurchased = upgrade.purchased;
+    const canAfford = !isPurchased && gameState.score >= upgrade.cost;
     
+    el.classList.toggle('purchased', isPurchased);
     el.classList.toggle('can-afford', canAfford);
-    el.classList.toggle('cannot-afford', !canAfford);
+    el.classList.toggle('cannot-afford', !isPurchased && !canAfford);
+    
+    // Mettre à jour le statut si acheté
+    const headerEl = el.querySelector('.upgrade-header');
+    if (headerEl && isPurchased && !headerEl.querySelector('.upgrade-status')) {
+        headerEl.innerHTML = `
+            <span class="upgrade-name">${upgrade.name}</span>
+            <span class="upgrade-status">ACTIVÉ</span>
+        `;
+    }
+    
+    const costEl = el.querySelector('.upgrade-cost');
+    if (costEl) costEl.textContent = isPurchased ? 'Acheté' : formatNumber(upgrade.cost) + ' pts';
 }
 
 // Calculer la quantité effective selon le multiplicateur

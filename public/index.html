@@ -101,15 +101,16 @@
             <section id="upgrades-zone">
                 <!-- Tabs de menu -->
                 <div class="menu-tabs">
-                    <button class="menu-tab active" data-tab="upgrades">🔧 Améliorations</button>
+                    <button class="menu-tab active" data-tab="upgrades">🔧 Production</button>
+                    <button class="menu-tab" data-tab="clicks">⚡ Clics</button>
                     <button class="menu-tab" data-tab="prestige">⭐ Prestige</button>
                     <button class="menu-tab" data-tab="skins">🎨 Skins</button>
                 </div>
                 
-                <!-- Contenu Améliorations -->
+                <!-- Contenu Améliorations de Production -->
                 <div id="upgrades-content" class="menu-content active">
                     <div class="upgrades-header">
-                        <h2>🔧 Améliorations NIRD</h2>
+                        <h2>🔧 Améliorations de Production</h2>
                         <div class="buy-mode-selector">
                             <button class="buy-mode-btn active" data-mode="1" onclick="setBuyMode(1)">x1</button>
                             <button class="buy-mode-btn" data-mode="10" onclick="setBuyMode(10)">x10</button>
@@ -119,6 +120,16 @@
                     </div>
                     <div id="upgrades-list">
                         <!-- Les upgrades seront générées par JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Contenu Améliorations de Clic -->
+                <div id="clicks-content" class="menu-content">
+                    <div class="upgrades-header">
+                        <h2>⚡ Améliorations de Clic</h2>
+                    </div>
+                    <div id="click-upgrades-list">
+                        <!-- Les upgrades de clic seront générées par JavaScript -->
                     </div>
                 </div>
                 

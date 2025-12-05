@@ -31,7 +31,7 @@ const UPGRADES = [
         baseProduction: 1,
         owned: 0,
         unlocked: true,
-        icon: '👨‍🎓'
+          icon: '👨‍🎓'
     },
     {
         id: 'install-party',
@@ -276,6 +276,7 @@ const CLICK_UPGRADES = [
         id: 'souris-ergonomique',
         name: '🖱️ Souris Ergonomique',
         description: '+1 point par clic',
+        icon: '🖱️',
         cost: 50,
         bonus: 1,
         purchased: false
@@ -284,6 +285,7 @@ const CLICK_UPGRADES = [
         id: 'clavier-mecanique',
         name: '⌨️ Clavier Mécanique Libre',
         description: '+2 points par clic',
+        icon: '⌨️',
         cost: 250,
         bonus: 2,
         purchased: false
@@ -292,6 +294,7 @@ const CLICK_UPGRADES = [
         id: 'trackball-pro',
         name: '🎱 Trackball Pro',
         description: '+4 points par clic',
+        icon: '🎱',
         cost: 800,
         bonus: 4,
         purchased: false
@@ -301,6 +304,7 @@ const CLICK_UPGRADES = [
         id: 'script-automatisation',
         name: '📜 Script d\'Automatisation',
         description: '+8 points par clic',
+        icon: '📜',
         cost: 3000,
         bonus: 8,
         purchased: false
@@ -309,6 +313,7 @@ const CLICK_UPGRADES = [
         id: 'macro-avancee',
         name: '🔁 Macro Avancée',
         description: '+15 points par clic',
+        icon: '🔁',
         cost: 10000,
         bonus: 15,
         purchased: false
@@ -317,6 +322,7 @@ const CLICK_UPGRADES = [
         id: 'bot-ethique',
         name: '🤖 Bot Éthique Open Source',
         description: '+30 points par clic',
+        icon: '🤖',
         cost: 40000,
         bonus: 30,
         purchased: false
@@ -326,6 +332,7 @@ const CLICK_UPGRADES = [
         id: 'ia-locale',
         name: '🧠 IA Locale LLaMA',
         description: '+60 points par clic',
+        icon: '🧠',
         cost: 150000,
         bonus: 60,
         purchased: false
@@ -334,6 +341,7 @@ const CLICK_UPGRADES = [
         id: 'reseau-neuronal',
         name: '🕸️ Réseau Neuronal Libre',
         description: '+120 points par clic',
+        icon: '🕸️',
         cost: 600000,
         bonus: 120,
         purchased: false
@@ -342,6 +350,7 @@ const CLICK_UPGRADES = [
         id: 'agi-open-source',
         name: '💫 AGI Open Source',
         description: '+250 points par clic',
+        icon: '💫',
         cost: 2500000,
         bonus: 250,
         purchased: false
@@ -351,6 +360,7 @@ const CLICK_UPGRADES = [
         id: 'qubit-libre',
         name: '⚛️ Qubit Libre',
         description: '+500 points par clic',
+        icon: '⚛️',
         cost: 10000000,
         bonus: 500,
         purchased: false
@@ -359,6 +369,7 @@ const CLICK_UPGRADES = [
         id: 'processeur-quantique',
         name: '🔮 Processeur Quantique Open',
         description: '+1000 points par clic',
+        icon: '🔮',
         cost: 50000000,
         bonus: 1000,
         purchased: false
@@ -367,6 +378,7 @@ const CLICK_UPGRADES = [
         id: 'superposition-temporelle',
         name: '🌌 Superposition Temporelle',
         description: '+2500 points par clic',
+        icon: '🌌',
         cost: 500000000,
         bonus: 2500,
         purchased: false
