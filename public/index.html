@@ -10,14 +10,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="theme-dark">
     <div id="app">
-        <!-- Header avec score -->
+        <!-- Header avec score et menus -->
         <header id="game-header">
             <div class="logo">
                 <h1>🖥️ NIRD Clicker</h1>
                 <p class="subtitle">La Résistance Numérique s'organise !</p>
             </div>
+            <!-- Menu rapide -->
+            <nav class="quick-menu">
+                <button id="leaderboard-btn" class="menu-btn" title="Leaderboard">🏅</button>
+                <button id="stats-btn" class="menu-btn" title="Statistiques">📊</button>
+                <button id="achievements-btn" class="menu-btn" title="Succès">🏆</button>
+                <button id="encyclopedia-btn" class="menu-btn" title="Encyclopédie">📖</button>
+                <button id="settings-btn" class="menu-btn" title="Options">⚙️</button>
+            </nav>
             <div class="score-display">
                 <div class="main-score">
                     <span id="score">0</span>
@@ -26,6 +34,7 @@
                 <div class="score-per-sec">
                     <span id="per-second">0</span>/sec
                 </div>
+                <span id="prestige-info" class="prestige-info"></span>
             </div>
         </header>
 
@@ -42,6 +51,8 @@
                     <div id="click-multiplier">
                         +<span id="click-power">1</span> par clic
                     </div>
+                    <!-- Affichage du combo -->
+                    <div id="combo-display"></div>
                 </div>
 
                 <!-- Statistiques -->
@@ -61,29 +72,80 @@
                     </div>
                 </div>
 
-                <!-- Jauge de résistance -->
+                <!-- Jauge de résistance avec visuel -->
                 <div id="resistance-gauge">
                     <h3>🛡️ Jauge de Résistance</h3>
                     <div class="gauge-container">
                         <div id="gauge-fill" style="width: 0%"></div>
                     </div>
                     <p id="gauge-label">Village Débutant</p>
+                    <div id="village-visual"></div>
+                </div>
+
+                <!-- Missions quotidiennes -->
+                <div id="daily-missions">
+                    <h3>🎯 Missions du jour</h3>
+                    <!-- Généré par JS -->
+                </div>
+
+                <!-- Bouton Prestige -->
+                <div id="prestige-zone">
+                    <button id="prestige-btn" disabled>🔄 Prestige (100K requis)</button>
+                    <p class="prestige-desc">Reset + bonus permanent</p>
                 </div>
             </section>
 
             <!-- Zone des upgrades (droite) -->
             <section id="upgrades-zone">
-                <div class="upgrades-header">
-                    <h2>🔧 Améliorations NIRD</h2>
-                    <div class="buy-mode-selector">
-                        <button class="buy-mode-btn active" data-mode="1" onclick="setBuyMode(1)">x1</button>
-                        <button class="buy-mode-btn" data-mode="10" onclick="setBuyMode(10)">x10</button>
-                        <button class="buy-mode-btn" data-mode="50" onclick="setBuyMode(50)">x50</button>
-                        <button class="buy-mode-btn" data-mode="max" onclick="setBuyMode('max')">MAX</button>
+                <!-- Tabs de menu -->
+                <div class="menu-tabs">
+                    <button class="menu-tab active" data-tab="upgrades">🔧 Améliorations</button>
+                    <button class="menu-tab" data-tab="prestige">⭐ Prestige</button>
+                    <button class="menu-tab" data-tab="skins">🎨 Skins</button>
+                    <button class="menu-tab" data-tab="missions">🎯 Missions</button>
+                </div>
+                
+                <!-- Contenu Améliorations -->
+                <div id="upgrades-content" class="menu-content active">
+                    <div class="upgrades-header">
+                        <h2>🔧 Améliorations NIRD</h2>
+                        <div class="buy-mode-selector">
+                            <button class="buy-mode-btn active" data-mode="1" onclick="setBuyMode(1)">x1</button>
+                            <button class="buy-mode-btn" data-mode="10" onclick="setBuyMode(10)">x10</button>
+                            <button class="buy-mode-btn" data-mode="50" onclick="setBuyMode(50)">x50</button>
+                            <button class="buy-mode-btn" data-mode="max" onclick="setBuyMode('max')">MAX</button>
+                        </div>
+                    </div>
+                    <div id="upgrades-list">
+                        <!-- Les upgrades seront générées par JavaScript -->
                     </div>
                 </div>
-                <div id="upgrades-list">
-                    <!-- Les upgrades seront générées par JavaScript -->
+                
+                <!-- Contenu Prestige -->
+                <div id="prestige-content" class="menu-content">
+                    <div class="prestige-header">
+                        <h3>⭐ Points de Prestige : <span id="prestige-points-display">0</span></h3>
+                        <p>Multiplicateur actuel : x<span id="prestige-multiplier">1.0</span></p>
+                    </div>
+                    <div id="prestige-upgrades-list">
+                        <!-- Généré par JS -->
+                    </div>
+                </div>
+                
+                <!-- Contenu Skins -->
+                <div id="skins-content" class="menu-content">
+                    <h3>🎨 Personnalisation du Clicker</h3>
+                    <div id="skins-list">
+                        <!-- Généré par JS -->
+                    </div>
+                </div>
+                
+                <!-- Contenu Missions -->
+                <div id="missions-content" class="menu-content">
+                    <h3>🎯 Missions Quotidiennes</h3>
+                    <div id="missions-list">
+                        <!-- Généré par JS -->
+                    </div>
                 </div>
             </section>
         </main>
@@ -92,23 +154,105 @@
         <div id="event-banner" class="hidden">
             <span id="event-text"></span>
         </div>
+        
+        <!-- Astuce du jour -->
+        <div id="tip-banner" class="hidden">
+            <span class="tip-icon">💡</span>
+            <span class="tip-text">Astuce...</span>
+            <button class="tip-close" onclick="this.parentElement.classList.add('hidden')">✕</button>
+        </div>
 
-        <!-- Modal Boss Windows -->
-        <div id="boss-modal" class="hidden">
-            <div class="boss-content">
+        <!-- Modal Boss GAFAM -->
+        <div id="boss-modal" class="modal-overlay hidden">
+            <div class="boss-content modal-content">
                 <div class="boss-header">
-                    <span class="windows-logo">🪟</span>
-                    <span>Mise à jour Windows obligatoire</span>
+                    <span id="boss-icon" class="boss-logo">🪟</span>
+                    <h2 id="boss-name">Windows Update</h2>
                 </div>
-                <div class="boss-body">
-                    <p>Windows veut redémarrer votre ordinateur...</p>
-                    <p class="boss-instruction">Cliquez 20 fois pour fermer !</p>
-                    <div class="boss-progress">
-                        <div id="boss-progress-bar"></div>
+                <p id="boss-message" class="boss-message">Windows veut redémarrer votre ordinateur...</p>
+                <div class="boss-progress">
+                    <div id="boss-progress-bar" class="progress-bar-fill"></div>
+                </div>
+                <p class="boss-clicks">Clics restants: <span id="boss-clicks-left">20</span></p>
+                <button id="boss-click-btn" class="boss-btn">❌ FERMER</button>
+            </div>
+        </div>
+        
+        <!-- Modal Quiz NIRD -->
+        <div id="quiz-modal" class="modal-overlay hidden">
+            <div class="quiz-content modal-content">
+                <h2>🧠 Quiz NIRD</h2>
+                <p id="quiz-question">Question...</p>
+                <div id="quiz-answers">
+                    <!-- Généré par JS -->
+                </div>
+                <div id="quiz-result" class="hidden">
+                    <p id="quiz-result-text"></p>
+                    <button id="quiz-close-btn">Continuer</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal Paramètres -->
+        <div id="settings-modal" class="modal-overlay hidden">
+            <div class="settings-content modal-content">
+                <h2>⚙️ Paramètres</h2>
+                <button class="modal-close">✕</button>
+                
+                <div class="settings-section">
+                    <h3>🎨 Thème</h3>
+                    <div class="theme-options">
+                        <button class="theme-btn" data-theme="dark">🌙 Sombre</button>
+                        <button class="theme-btn" data-theme="light">☀️ Clair</button>
+                        <button class="theme-btn" data-theme="retro">👾 Rétro</button>
+                        <button class="theme-btn" data-theme="nature">🌿 Nature</button>
                     </div>
-                    <span id="boss-clicks-left">20</span> clics restants
                 </div>
-                <button id="boss-click-btn">❌ FERMER</button>
+                
+                <div class="settings-section">
+                    <h3>🔊 Audio</h3>
+                    <label class="toggle-option">
+                        <input type="checkbox" id="sound-toggle" checked>
+                        <span>Sons activés</span>
+                    </label>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>✨ Effets</h3>
+                    <label class="toggle-option">
+                        <input type="checkbox" id="particles-toggle" checked>
+                        <span>Particules activées</span>
+                    </label>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>💾 Sauvegarde</h3>
+                    <button id="export-save" class="settings-btn">📤 Exporter</button>
+                    <button id="import-save" class="settings-btn">📥 Importer</button>
+                    <button id="reset-save" class="settings-btn danger">🗑️ Reset</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal Encyclopédie -->
+        <div id="encyclopedia-modal" class="modal-overlay hidden">
+            <div class="encyclopedia-content modal-content">
+                <h2>📖 Encyclopédie NIRD</h2>
+                <button class="modal-close">✕</button>
+                <div id="encyclopedia-list">
+                    <!-- Généré par JS -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal Succès -->
+        <div id="achievements-modal" class="modal-overlay hidden">
+            <div class="achievements-content modal-content">
+                <h2>🏆 Succès</h2>
+                <button class="modal-close">✕</button>
+                <div id="achievements-list">
+                    <!-- Généré par JS -->
+                </div>
             </div>
         </div>
 
