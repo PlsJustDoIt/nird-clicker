@@ -173,22 +173,29 @@ function updateUpgradesList() {
 }
 
 // Mise à jour de la liste des upgrades de clic (tab séparé)
+// Affiche : les achetées + les 3 prochaines non achetées
 function updateClickUpgradesList() {
     const container = document.getElementById('click-upgrades-list');
     if (!container) return;
     
+    // Filtrer : achetées + 3 prochaines non achetées
+    const purchased = CLICK_UPGRADES.filter(u => u.purchased);
+    const notPurchased = CLICK_UPGRADES.filter(u => !u.purchased);
+    const nextThree = notPurchased.slice(0, 3);
+    const visibleUpgrades = [...purchased, ...nextThree];
+    
     const existingItems = container.querySelectorAll('.upgrade-item[data-click-upgrade-id]');
-    const shouldRebuild = existingItems.length === 0 || existingItems.length !== CLICK_UPGRADES.length;
+    const shouldRebuild = existingItems.length !== visibleUpgrades.length;
     
     if (shouldRebuild) {
         container.innerHTML = '';
         
-        CLICK_UPGRADES.forEach(upgrade => {
+        visibleUpgrades.forEach(upgrade => {
             const upgradeEl = createClickUpgradeElement(upgrade);
             container.appendChild(upgradeEl);
         });
     } else {
-        CLICK_UPGRADES.forEach(upgrade => {
+        visibleUpgrades.forEach(upgrade => {
             const el = container.querySelector(`.upgrade-item[data-click-upgrade-id="${upgrade.id}"]`);
             if (el) {
                 updateClickUpgradeElement(el, upgrade);
