@@ -126,10 +126,7 @@ function updateStatsDisplay() {
     const prestigeInfo = document.getElementById('prestige-info');
     const prestigeTab = document.getElementById('prestige-tab');
     if (gameState.prestigeLevel > 0) {
-        if (prestigeInfo) {
-            prestigeInfo.textContent = `Prestige: ${gameState.prestigeLevel} (+${gameState.prestigeLevel * 10}%)`;
-            prestigeInfo.classList.add('visible');
-        }
+        
         if (prestigeTab) {
             prestigeTab.style.display = 'inline-block';
         }
