@@ -465,12 +465,20 @@ let bossMaxClicks = 0;
 let bossTimers = {};
 let bossState = {};
 
-function showBoss() {
+function showBoss(bossId = null) {
     // Nettoyer les anciens timers s'il y en avait
     clearAllBossTimers();
     
-    // Sélectionner un boss aléatoire
-    currentBoss = BOSS_TYPES[Math.floor(Math.random() * BOSS_TYPES.length)];
+    // Sélectionner un boss : par ID ou aléatoire
+    if (bossId) {
+        currentBoss = BOSS_TYPES.find(b => b.id === bossId);
+        if (!currentBoss) {
+            console.error(`Boss "${bossId}" non trouvé. Boss disponibles:`, BOSS_TYPES.map(b => b.id));
+            return;
+        }
+    } else {
+        currentBoss = BOSS_TYPES[Math.floor(Math.random() * BOSS_TYPES.length)];
+    }
     bossClicksRemaining = currentBoss.clicksRequired;
     bossMaxClicks = currentBoss.clicksRequired;
     bossState = {

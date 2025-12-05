@@ -313,6 +313,17 @@ window.DEBUG = {
     },
     resetGame: resetGame,
     triggerBoss: () => showBoss(),
+    // Triggers pour chaque boss spécifique
+    triggerBossWindows: () => showBoss('windows'),
+    triggerBossGoogle: () => showBoss('google'),
+    triggerBossFacebook: () => showBoss('facebook'),
+    triggerBossAmazon: () => showBoss('amazon'),
+    triggerBossApple: () => showBoss('apple'),
+    triggerBossTeams: () => showBoss('microsoft-teams'),
+    triggerBossTiktok: () => showBoss('tiktok'),
+    triggerBossNvidia: () => showBoss('nvidia'),
+    triggerBossMetaAI: () => showBoss('meta-ai'),
+    triggerBossSkynet: () => showBoss('skynet-gafam'),
     triggerQuiz: showQuiz,
     addPrestige: (amount) => {
         gameState.prestigePoints += amount;
@@ -334,3 +345,4 @@ window.DEBUG = {
 console.log('💡 Conseil développeur : utilisez window.DEBUG pour déboguer le jeu');
 console.log('📚 Commandes : DEBUG.getState(), DEBUG.addScore(n), DEBUG.triggerBoss(), DEBUG.triggerQuiz()');
 console.log('🎨 Thèmes : DEBUG.switchTheme("dark"|"light"|"retro"|"nature")');
+console.log('👾 Boss : DEBUG.triggerBossWindows(), DEBUG.triggerBossGoogle(), DEBUG.triggerBossFacebook(), etc.');
