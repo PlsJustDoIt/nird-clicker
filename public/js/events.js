@@ -534,6 +534,7 @@ if (window.DEBUG) {
 }
 
 // Rendre les fonctions accessibles globalement pour les onclick HTML
+window.closeMilestoneModal = closeMilestoneModal;
 window.closeFacebookAttack = closeFacebookAttack;
 window.triggerFacebookAttack = triggerFacebookAttack;
 window.startFacebookVideo = startFacebookVideo;
