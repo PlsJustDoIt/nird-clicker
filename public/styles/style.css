@@ -1935,6 +1935,11 @@ body {
     position: relative;
     z-index: 2001;
     box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7), 0 0 30px var(--accent-primary);
+    animation: none !important;
+}
+
+.tutorial-highlight .pc-icon {
+    animation: none !important;
 }
 
 /* Tips notification */

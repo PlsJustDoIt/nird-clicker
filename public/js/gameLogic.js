@@ -746,7 +746,7 @@ function applyTheme(themeId) {
 // ============================================
 function startTutorial() {
     const steps = [
-        { target: '.pc-icon', message: '👆 Cliquez sur le PC pour gagner des points de souveraineté !' },
+        { target: '#main-clicker', message: '👆 Cliquez sur le PC pour gagner des points de souveraineté !' },
         { target: '.upgrades-zone', message: '🛒 Achetez des améliorations pour produire automatiquement !' },
         { target: '.resistance-gauge', message: '📊 Faites évoluer votre village vers l\'indépendance numérique !' },
         { target: '.stats-panel', message: '📈 Suivez vos statistiques ici. Bon jeu ! 🎮' }
