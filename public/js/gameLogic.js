@@ -597,7 +597,33 @@ function scheduleQuiz() {
     }, QUIZ_INTERVAL);
 }
 
+/**
+ * Fonction publique pour déclencher un quiz
+ * Utilise le système de queue pour éviter les conflits avec les boss
+ */
 function showQuiz() {
+    if (currentQuiz) return;
+    
+    // Vérifier si un événement est en cours (boss, autre quiz, milestone)
+    if (typeof isEventActive === 'function' && isEventActive()) {
+        if (typeof queueEvent === 'function') {
+            queueEvent('quiz');
+        }
+        return;
+    }
+    
+    // Marquer qu'un événement est en cours
+    if (typeof isEventInProgress !== 'undefined') {
+        isEventInProgress = true;
+    }
+    
+    _showQuizInternal();
+}
+
+/**
+ * Fonction interne pour afficher le quiz (appelée par la queue ou directement)
+ */
+function _showQuizInternal() {
     if (currentQuiz) return;
     
     const question = QUIZ_QUESTIONS[Math.floor(Math.random() * QUIZ_QUESTIONS.length)];
@@ -664,6 +690,11 @@ function closeQuiz() {
     document.body.classList.remove('modal-open'); // Réactiver le scroll
     const modal = document.querySelector('.quiz-modal');
     if (modal) modal.remove();
+    
+    // Traiter la queue d'événements
+    if (typeof onEventComplete === 'function') {
+        onEventComplete();
+    }
 }
 
 // ============================================

@@ -64,12 +64,23 @@ function showMilestoneModal(event) {
             <h2>${event.title}</h2>
             <p>${event.message}</p>
             <div class="milestone-celebration">🎉🎊🎉</div>
-            <button onclick="document.body.classList.remove('modal-open'); this.parentElement.parentElement.remove()">Continuer</button>
+            <button onclick="closeMilestoneModal(this.parentElement.parentElement)">Continuer</button>
         </div>
     `;
     document.body.appendChild(modal);
     
     createConfetti();
+}
+
+// Fermer la modal de milestone et traiter la queue
+function closeMilestoneModal(modal) {
+    document.body.classList.remove('modal-open');
+    if (modal) modal.remove();
+    
+    // Traiter la queue d'événements
+    if (typeof onEventComplete === 'function') {
+        onEventComplete();
+    }
 }
 
 // Confettis améliorés

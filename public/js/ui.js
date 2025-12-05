@@ -7,6 +7,87 @@
 // Variable pour le multiplicateur d'achat
 let buyMultiplier = 1;
 
+// ============================================
+// SYSTÈME DE QUEUE D'ÉVÉNEMENTS
+// Évite les conflits entre boss et quiz
+// ============================================
+let eventQueue = [];
+let isEventInProgress = false;
+
+/**
+ * Vérifie si un événement (boss ou quiz) est actuellement actif
+ */
+function isEventActive() {
+    // Vérifier si un boss est actif
+    const bossModal = document.getElementById('boss-modal');
+    const isBossActive = bossModal && !bossModal.classList.contains('hidden');
+    
+    // Vérifier si un quiz est actif
+    const quizModal = document.querySelector('.quiz-modal');
+    const isQuizActive = quizModal !== null;
+    
+    // Vérifier si un milestone est actif
+    const milestoneModal = document.querySelector('.milestone-modal');
+    const isMilestoneActive = milestoneModal !== null;
+    
+    return isBossActive || isQuizActive || isMilestoneActive || isEventInProgress;
+}
+
+/**
+ * Ajoute un événement à la queue s'il n'y en a pas déjà du même type
+ */
+function queueEvent(type, data = null) {
+    // Éviter les doublons du même type
+    const hasSameType = eventQueue.some(e => e.type === type);
+    if (!hasSameType) {
+        eventQueue.push({ type, data });
+        console.log(`📋 Événement "${type}" ajouté à la queue. File d'attente: ${eventQueue.length}`);
+    }
+}
+
+/**
+ * Traite le prochain événement dans la queue
+ */
+function processEventQueue() {
+    // Attendre un court délai pour laisser les modales se fermer proprement
+    setTimeout(() => {
+        if (eventQueue.length === 0) {
+            console.log('📋 Queue d\'événements vide.');
+            return;
+        }
+        
+        if (isEventActive()) {
+            console.log('📋 Un événement est encore actif, attente...');
+            return;
+        }
+        
+        const event = eventQueue.shift();
+        console.log(`📋 Traitement de l'événement "${event.type}". Restants: ${eventQueue.length}`);
+        
+        isEventInProgress = true;
+        
+        switch(event.type) {
+            case 'boss':
+                _showBossInternal(event.data);
+                break;
+            case 'quiz':
+                _showQuizInternal();
+                break;
+            default:
+                console.warn('Type d\'événement inconnu:', event.type);
+                isEventInProgress = false;
+        }
+    }, 300);
+}
+
+/**
+ * Appelé quand un événement se termine
+ */
+function onEventComplete() {
+    isEventInProgress = false;
+    processEventQueue();
+}
+
 // Mise à jour complète de l'interface
 function updateUI() {
     updateScoreDisplay();
@@ -465,7 +546,23 @@ let bossMaxClicks = 0;
 let bossTimers = {};
 let bossState = {};
 
+/**
+ * Fonction publique pour déclencher un boss
+ * Utilise le système de queue pour éviter les conflits
+ */
 function showBoss(bossId = null) {
+    if (isEventActive()) {
+        queueEvent('boss', bossId);
+        return;
+    }
+    isEventInProgress = true;
+    _showBossInternal(bossId);
+}
+
+/**
+ * Fonction interne pour afficher le boss (appelée par la queue)
+ */
+function _showBossInternal(bossId = null) {
     // Nettoyer les anciens timers s'il y en avait
     clearAllBossTimers();
     
@@ -1090,6 +1187,9 @@ function failBoss(message) {
     // Cleanup
     document.removeEventListener('keydown', handlePatternKey);
     currentBoss = null;
+    
+    // Traiter la queue d'événements
+    onEventComplete();
 }
 
 function clearAllBossTimers() {
@@ -1158,6 +1258,9 @@ function closeBoss(victory = true) {
     }
     
     currentBoss = null;
+    
+    // Traiter la queue d'événements
+    onEventComplete();
 }
 
 // ============================================
