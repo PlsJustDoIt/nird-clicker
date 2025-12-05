@@ -1,2 +1,7 @@
 node_modules/
 .DS_Store
+
+# Environment files (contient des mots de passe)
+.env
+!.env.example
+!.env.production

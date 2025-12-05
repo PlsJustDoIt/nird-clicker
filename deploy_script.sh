@@ -26,18 +26,29 @@ fail() {
 # ---------------------------------------------------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------------------------------------------------
-# Si votre projet utilise PHP natif, alors il n'y a rien à faire. Ce script n'a rien de spécial à faire
-# echo "J'ai perdu (https://fr.wikipedia.org/wiki/Le_Jeu_(divertissement)"
-
+# Configuration pour nodeJS avec leaderboard MySQL
 # ---------------------------------------------------------------------------------------------------------------------
-# Si votre projet utilise nodeJS, décommenter la suite
-# export NVM_DIR="/custom-git-hooks/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || fail "Impossible de charger nvm"
-# nvm use default || fail "Impossible de passer à la bonne version de node ($(nvm alias default))"
 
-# echo "C'est parti pour \`npm install --production\` !"
-# npm install --production || fail "npm install raté"
+export NVM_DIR="/custom-git-hooks/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || fail "Impossible de charger nvm"
+nvm use default || fail "Impossible de passer à la bonne version de node ($(nvm alias default))"
 
-# echo "Redémarrage du serveur pm2 \`server-gpt-men-s\`"
-# # Needs sudo because server has been started as root
-# sudo /custom-git-hooks/.nvm/versions/node/v18.12.1/bin/pm2 --silent restart "server-gpt-men-s" || fail "Redémarrage du serveur échoué "
+# Configuration de l'environnement de production
+echo "Configuration de l'environnement de production..."
+if [ -f ".env.production" ]; then
+    cp .env.production .env || fail "Impossible de copier .env.production vers .env"
+    echo "✅ Fichier .env de production configuré"
+else
+    fail "❌ Fichier .env.production manquant !"
+fi
+
+# Installation des dépendances
+echo "C'est parti pour \`npm install --production\` !"
+npm install --production || fail "npm install raté"
+
+# Redémarrage du serveur pm2
+echo "Redémarrage du serveur pm2 \`server-gpt-men-s\`"
+# Needs sudo because server has been started as root
+sudo /custom-git-hooks/.nvm/versions/node/v18.12.1/bin/pm2 --silent restart "server-gpt-men-s" || fail "Redémarrage du serveur échoué"
+
+echo "🚀 Déploiement terminé avec succès !"
