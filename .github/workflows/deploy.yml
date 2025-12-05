@@ -2,14 +2,8 @@ name: 🚀 Deploy NIRD Clicker
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   workflow_dispatch:
-
-env:
-  SERVER_USER: leo
-  SERVER_HOST: 86.219.194.18
-  SERVER_PATH: /var/www/nird-clicker
-  PM2_APP_NAME: nird-clicker
 
 jobs:
   deploy:
@@ -27,7 +21,7 @@ jobs:
           cache: 'npm'
 
       - name: 📚 Install dependencies
-        run: npm ci --production
+        run: npm ci
 
       - name: 🏗️ Prepare deployment package
         run: |
@@ -38,34 +32,37 @@ jobs:
           cp package-lock.json dist/ 2>/dev/null || true
           cp ecosystem.config.cjs dist/
 
-      - name: 🔑 Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
+      - name: 🧹 Prepare server directory
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          command_timeout: 30m
+          script: |
+            mkdir -p /var/www/nird-clicker
+            echo "✅ Directory ready"
 
-      - name: 📤 Deploy to server
-        run: |
-          # Sync to temp directory first (no sudo needed)
-          ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "mkdir -p ~/nird-deploy-tmp"
-          rsync -avz --delete \
-            --exclude 'node_modules' \
-            --exclude '.git' \
-            --exclude '.env' \
-            dist/ ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:~/nird-deploy-tmp/
-          
-          # Move to final location with sudo & restart
-          ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF'
-            sudo rsync -av --delete ~/nird-deploy-tmp/ ${{ env.SERVER_PATH }}/
-            sudo chown -R leo:leo ${{ env.SERVER_PATH }}
-            cd ${{ env.SERVER_PATH }}
+      - name: 📤 Copy files to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "./dist/*"
+          target: "/var/www/nird-clicker/"
+          strip_components: 1
+
+      - name: 🔄 Install & Restart PM2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          command_timeout: 30m
+          script: |
+            cd /var/www/nird-clicker
             npm install --production
-            pm2 reload ${{ env.PM2_APP_NAME }} || pm2 start ecosystem.config.cjs
+            pm2 reload nird-clicker || pm2 start ecosystem.config.cjs
             pm2 save
-            rm -rf ~/nird-deploy-tmp
-          EOF
-
-      - name: ✅ Deployment complete
-        run: |
-          echo "🎉 Deployed successfully to https://nird-clicker.mehmetates.fr"
+            echo "🎉 Deployed successfully!"
