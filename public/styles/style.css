@@ -244,30 +244,40 @@ body {
     border-radius: 12px;
     overflow: hidden;
     position: relative;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 #gauge-fill {
     height: 100%;
     background: var(--gradient-main);
     border-radius: 12px;
-    transition: width var(--transition-normal);
+    transition: width 0.4s ease-out;
     position: relative;
+    overflow: hidden;
+    min-width: 0;
 }
 
 #gauge-fill::after {
     content: '';
     position: absolute;
     top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
-    animation: shimmer 2s infinite;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.2) 25%,
+        rgba(255, 255, 255, 0.4) 50%, 
+        rgba(255, 255, 255, 0.2) 75%,
+        transparent 100%
+    );
+    animation: gauge-shimmer 2s ease-in-out infinite;
 }
 
-@keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+@keyframes gauge-shimmer {
+    0% { left: -100%; }
+    100% { left: 200%; }
 }
 
 #gauge-label {
