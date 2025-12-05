@@ -1,0 +1,181 @@
+/**
+ * NIRD Clicker - Gamepad Support Styles
+ * Support manette Xbox, PlayStation, etc.
+ */
+
+/* Indicateur de connexion gamepad */
+#gamepad-indicator {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
+    border: 2px solid var(--accent-primary);
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(0, 212, 170, 0.3);
+}
+
+#gamepad-indicator.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#gamepad-indicator .gamepad-icon {
+    font-size: 1.5rem;
+    animation: gamepadPulse 1s ease-in-out infinite;
+}
+
+#gamepad-indicator .gamepad-text {
+    font-size: 0.9rem;
+    color: var(--accent-primary);
+    font-weight: bold;
+}
+
+/* Sélection d'upgrade avec gamepad */
+.upgrade-item.gamepad-selected {
+    border: 2px solid var(--accent-primary) !important;
+    box-shadow: 0 0 15px rgba(0, 212, 170, 0.5), inset 0 0 20px rgba(0, 212, 170, 0.1);
+    transform: scale(1.02);
+    background: linear-gradient(135deg, var(--bg-card), rgba(0, 212, 170, 0.1));
+}
+
+.upgrade-item.gamepad-selected::before {
+    content: '🎮';
+    position: absolute;
+    left: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    animation: gamepadBounce 0.5s ease infinite;
+}
+
+/* Aide gamepad */
+.gamepad-help {
+    text-align: left;
+    max-width: 400px;
+}
+
+.gamepad-help h3 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--accent-primary);
+}
+
+.gamepad-help-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.gamepad-help-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.gamepad-help-item .btn-icon {
+    font-size: 1.1rem;
+    min-width: 35px;
+    text-align: center;
+}
+
+/* Bouton d'aide gamepad dans les settings */
+#gamepad-help-btn {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#gamepad-help-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+}
+
+/* Status gamepad dans settings */
+.gamepad-status {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.gamepad-status-icon {
+    font-size: 1.5rem;
+}
+
+.gamepad-status-text {
+    flex: 1;
+}
+
+.gamepad-status-text .status-label {
+    font-size: 0.85rem;
+    color: var(--fg-secondary);
+}
+
+.gamepad-status-text .status-value {
+    font-weight: bold;
+}
+
+.gamepad-status-text .status-value.connected {
+    color: var(--accent-success);
+}
+
+.gamepad-status-text .status-value.disconnected {
+    color: var(--fg-secondary);
+}
+
+/* Vibration toggle */
+.gamepad-vibration-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+}
+
+/* Animation de clic gamepad sur le clicker */
+#main-clicker.gamepad-active {
+    animation: gamepadClick 0.1s ease;
+}
+
+/* Responsive gamepad */
+@media screen and (max-width: 768px) {
+    #gamepad-indicator {
+        bottom: 10px;
+        left: 10px;
+        padding: 0.5rem 1rem;
+    }
+    
+    #gamepad-indicator .gamepad-text {
+        display: none;
+    }
+    
+    .gamepad-help-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .upgrade-item.gamepad-selected::before {
+        left: -25px;
+        font-size: 1rem;
+    }
+}

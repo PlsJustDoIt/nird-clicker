@@ -1,0 +1,183 @@
+/**
+ * NIRD Clicker - Events & Notifications Styles
+ * Événements, notifications, banners, floating numbers
+ */
+
+/* Event Banner */
+#event-banner {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--gradient-main);
+    color: #000;
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius);
+    font-weight: bold;
+    z-index: 200;
+    animation: slideDown 0.3s ease;
+    box-shadow: 0 5px 30px rgba(0, 212, 170, 0.5);
+}
+
+#event-banner.hidden {
+    display: none;
+}
+
+/* Tip Banner */
+#tip-banner {
+    position: fixed;
+    bottom: 200px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, rgba(0, 160, 255, 0.9), rgba(0, 100, 200, 0.9));
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 150;
+    animation: slideUp 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 160, 255, 0.3);
+    max-width: 90%;
+}
+
+#tip-banner.hidden {
+    display: none;
+}
+
+#tip-banner .tip-icon {
+    font-size: 1.5rem;
+}
+
+#tip-banner .tip-text {
+    flex: 1;
+    font-size: 0.9rem;
+}
+
+#tip-banner .tip-close {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.2rem;
+    opacity: 0.7;
+    transition: opacity var(--transition-fast);
+}
+
+#tip-banner .tip-close:hover {
+    opacity: 1;
+}
+
+/* Floating Numbers */
+.floating-number {
+    position: absolute;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--accent-primary);
+    pointer-events: none;
+    animation: floatUp 1s ease forwards;
+    text-shadow: 0 0 10px var(--accent-primary);
+    z-index: 50;
+}
+
+.floating-message {
+    position: absolute;
+    font-size: 0.9rem;
+    color: var(--accent-secondary);
+    pointer-events: none;
+    animation: floatMessage 2s ease forwards;
+    white-space: nowrap;
+    z-index: 50;
+}
+
+/* Notifications */
+#floating-notifications {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 150;
+}
+
+.notification {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    animation: slideIn 0.3s ease;
+    max-width: 350px;
+    pointer-events: none;
+    user-select: none;
+}
+
+.notification-success {
+    background: rgba(68, 255, 68, 0.2);
+    border: 1px solid var(--accent-success);
+    color: var(--accent-success);
+}
+
+.notification-error {
+    background: rgba(255, 68, 68, 0.2);
+    border: 1px solid var(--accent-danger);
+    color: var(--accent-danger);
+}
+
+.notification-unlock {
+    background: rgba(255, 170, 0, 0.2);
+    border: 1px solid var(--accent-warning);
+    color: var(--accent-warning);
+}
+
+.notification-achievement,
+.notification-level-up {
+    background: var(--gradient-main);
+    color: #000;
+    font-weight: bold;
+}
+
+.notification-combo {
+    background: linear-gradient(135deg, #ff4444, #ff8800);
+    color: white;
+}
+
+.notification-offline {
+    background: rgba(100, 100, 255, 0.2);
+    border: 1px solid #6666ff;
+    color: #aaaaff;
+}
+
+.notification-tip {
+    background: rgba(0, 160, 255, 0.2);
+    border: 1px solid var(--accent-secondary);
+    color: var(--fg-main);
+    max-width: 400px;
+}
+
+.notification-mission {
+    background: rgba(255, 170, 0, 0.2);
+    border: 1px solid var(--accent-warning);
+    color: var(--accent-warning);
+}
+
+.notification-prestige {
+    background: linear-gradient(135deg, rgba(255, 170, 0, 0.3), rgba(255, 100, 0, 0.3));
+    border: 1px solid #ff8800;
+    color: white;
+}
+
+.notification.fade-out {
+    animation: fadeOut 0.5s ease forwards;
+}
+
+/* Confetti */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    border-radius: 50%;
+    animation: fall linear forwards;
+    z-index: 1500;
+}

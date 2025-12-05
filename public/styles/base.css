@@ -1,0 +1,101 @@
+/**
+ * NIRD Clicker - Base Styles
+ * Variables CSS, reset et utilitaires
+ */
+
+/* Variables CSS */
+:root {
+    --bg-main: #0a0a1a;
+    --bg-secondary: #12122a;
+    --bg-card: #1a1a3a;
+    --fg-main: #e0e0e0;
+    --fg-secondary: #a0a0a0;
+    --accent-primary: #00d4aa;
+    --accent-secondary: #00a0ff;
+    --accent-warning: #ffaa00;
+    --accent-danger: #ff4444;
+    --accent-success: #44ff44;
+    --gradient-main: linear-gradient(135deg, #00d4aa 0%, #00a0ff 100%);
+    --shadow-glow: 0 0 20px rgba(0, 212, 170, 0.3);
+    --border-radius: 12px;
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+}
+
+/* Reset & Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Empêcher la sélection de texte sur les éléments cliquables */
+button,
+.btn,
+.upgrade-card,
+.click-upgrade-card,
+.prestige-upgrade,
+.buy-multiplier-btn,
+.tab-btn,
+.close-btn,
+.clicker-container,
+.event-accept-btn,
+.event-decline-btn,
+.boss-attack-btn,
+.boss-skip-btn,
+.achievement-card,
+.leaderboard-tab {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Utility class - Hidden */
+.hidden {
+    display: none !important;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background: var(--bg-main);
+    color: var(--fg-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(0, 212, 170, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0, 160, 255, 0.1) 0%, transparent 50%);
+}
+
+/* Bloquer le scroll quand un modal/boss/event est actif */
+body.modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent-primary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-secondary);
+}
+
+/* Night Mode */
+.night-mode {
+    --bg-main: #000005;
+    --bg-secondary: #080810;
+    --bg-card: #101020;
+}

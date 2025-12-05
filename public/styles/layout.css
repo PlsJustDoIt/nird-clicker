@@ -1,0 +1,168 @@
+/**
+ * NIRD Clicker - Layout Styles
+ * Header, game container, structure générale
+ */
+
+/* App Container */
+#app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-bottom: 180px;
+}
+
+/* Header */
+#game-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: var(--bg-secondary);
+    border-bottom: 2px solid rgba(0, 212, 170, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo h1 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.5rem;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+}
+
+.logo .subtitle {
+    font-size: 0.85rem;
+    color: var(--fg-secondary);
+    margin-top: 0.3rem;
+}
+
+.score-display {
+    text-align: right;
+}
+
+.main-score {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.main-score #score {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 2rem;
+    color: var(--accent-primary);
+    text-shadow: 0 0 10px rgba(0, 212, 170, 0.5);
+}
+
+.score-label {
+    font-size: 0.75rem;
+    color: var(--fg-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.score-per-sec {
+    font-size: 1rem;
+    color: var(--accent-secondary);
+    margin-top: 0.3rem;
+}
+
+/* Main Game Container */
+#game-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    flex: 1;
+}
+
+/* Quick Menu */
+.quick-menu {
+    display: flex;
+    gap: 0.5rem;
+    order: 1;
+    width: 100%;
+    justify-content: center;
+}
+
+.menu-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: var(--bg-card);
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all var(--transition-fast);
+}
+
+.menu-btn:hover {
+    background: var(--accent-primary);
+    transform: scale(1.1);
+}
+
+/* Footer Sponsors */
+#nos-sponsors {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    padding: 1rem 2%;
+    border-top: 1px solid rgba(0, 212, 170, 0.2);
+    text-align: center;
+}
+
+#nos-sponsors h2 {
+    font-size: 0.9rem;
+    color: var(--fg-secondary);
+    margin-bottom: 0.25rem;
+}
+
+#nos-sponsors > span {
+    font-size: 0.75rem;
+    color: var(--fg-secondary);
+}
+
+#nos-sponsors ul {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0.5rem 0 0;
+    list-style: none;
+}
+
+#nos-sponsors li {
+    aspect-ratio: 3 / 1;
+    min-height: 2.5em;
+    background-color: white;
+    border-radius: 4px;
+    padding: 6px;
+}
+
+#nos-sponsors a {
+    display: block;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    width: 100%;
+    height: 100%;
+    transition: transform var(--transition-fast);
+}
+
+#nos-sponsors a span {
+    opacity: 0;
+    font-size: 0;
+}
+
+#nos-sponsors a:hover {
+    transform: scale(1.1);
+}
