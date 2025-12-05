@@ -276,6 +276,50 @@ console.log('%cExemple: window.DEBUG.addScore(1000)', 'color: #888; font-style: 
 let facebookAttackActive = false;
 let facebookAttackInterval = null;
 let facebookBonusGiven = false;
+let vibrationInterval = null;
+
+// Fonction pour faire vibrer le téléphone (si supporté)
+function vibratePhone(pattern) {
+    if ('vibrate' in navigator) {
+        navigator.vibrate(pattern);
+    }
+}
+
+// Démarre les vibrations pendant la vidéo
+function startVideoVibration() {
+    if (!('vibrate' in navigator)) return;
+    
+    // Vibration initiale intense (explosion nucléaire)
+    navigator.vibrate([200, 100, 200, 100, 400]);
+    
+    // Vibrations continues pendant la vidéo (simule les tremblements)
+    vibrationInterval = setInterval(() => {
+        // Pattern aléatoire pour simuler des secousses
+        const intensity = Math.random();
+        if (intensity > 0.7) {
+            // Forte vibration
+            navigator.vibrate([150, 50, 150]);
+        } else if (intensity > 0.3) {
+            // Vibration moyenne
+            navigator.vibrate([80, 40, 80]);
+        } else {
+            // Légère vibration
+            navigator.vibrate([40]);
+        }
+    }, 500);
+}
+
+// Arrête les vibrations
+function stopVideoVibration() {
+    if (vibrationInterval) {
+        clearInterval(vibrationInterval);
+        vibrationInterval = null;
+    }
+    // Arrêter toute vibration en cours
+    if ('vibrate' in navigator) {
+        navigator.vibrate(0);
+    }
+}
 
 function triggerFacebookAttack() {
     if (facebookAttackActive) return;
@@ -326,6 +370,9 @@ function startFacebookVideo() {
     video.volume = 1;
     video.play().catch(err => console.log('Video play error:', err));
     
+    // Démarrer les vibrations sur mobile 📳
+    startVideoVibration();
+    
     // Jouer le son d'alerte si disponible
     if (typeof playSound === 'function') {
         playSound('boss');
@@ -334,6 +381,8 @@ function startFacebookVideo() {
     // Quand la vidéo se termine -> fermeture automatique
     video.onended = () => {
         console.log('Vidéo terminée, fermeture auto...');
+        // Arrêter les vibrations
+        stopVideoVibration();
         // Donner le bonus avant de fermer
         if (!facebookBonusGiven) {
             facebookBonusGiven = true;
@@ -391,6 +440,9 @@ function closeFacebookAttack() {
     const videoScreen = document.getElementById('facebook-video-screen');
     
     if (!modal) return;
+    
+    // Arrêter les vibrations
+    stopVideoVibration();
     
     // Arrêter la vidéo
     if (video) {
