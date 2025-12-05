@@ -47,19 +47,23 @@ jobs:
 
       - name: 📤 Deploy to server
         run: |
-          # Sync files
+          # Sync to temp directory first (no sudo needed)
+          ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "mkdir -p ~/nird-deploy-tmp"
           rsync -avz --delete \
             --exclude 'node_modules' \
             --exclude '.git' \
             --exclude '.env' \
-            dist/ ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.SERVER_PATH }}/
+            dist/ ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:~/nird-deploy-tmp/
           
-          # Install & restart on server
+          # Move to final location with sudo & restart
           ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF'
+            sudo rsync -av --delete ~/nird-deploy-tmp/ ${{ env.SERVER_PATH }}/
+            sudo chown -R leo:leo ${{ env.SERVER_PATH }}
             cd ${{ env.SERVER_PATH }}
             npm install --production
             pm2 reload ${{ env.PM2_APP_NAME }} || pm2 start ecosystem.config.cjs
             pm2 save
+            rm -rf ~/nird-deploy-tmp
           EOF
 
       - name: ✅ Deployment complete
