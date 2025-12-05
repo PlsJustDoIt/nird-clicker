@@ -30,6 +30,28 @@
     box-sizing: border-box;
 }
 
+/* Empêcher la sélection de texte sur les éléments cliquables */
+button,
+.btn,
+.upgrade-card,
+.click-upgrade-card,
+.prestige-upgrade,
+.buy-multiplier-btn,
+.tab-btn,
+.close-btn,
+.clicker-container,
+.event-accept-btn,
+.event-decline-btn,
+.boss-attack-btn,
+.boss-skip-btn,
+.achievement-card,
+.leaderboard-tab {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 /* Utility class - Hidden */
 .hidden {
     display: none !important;
