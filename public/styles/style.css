@@ -276,8 +276,30 @@ body {
     border-radius: var(--border-radius);
     padding: 1.5rem;
     border: 1px solid rgba(0, 160, 255, 0.2);
-    max-height: calc(100vh - 300px);
+    height: calc(100vh - 300px);
+    min-height: 400px;
+    width: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+#upgrades-zone::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Opera */
+}
+
+.menu-content.active {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.menu-content.active::-webkit-scrollbar {
+    display: none;
 }
 
 /* Menu Tabs System */
@@ -314,10 +336,13 @@ body {
 
 .menu-content {
     display: none;
+    flex: 1;
+    overflow-y: auto;
 }
 
 .menu-content.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
     animation: fadeIn 0.3s ease;
 }
 
@@ -360,7 +385,6 @@ body {
 
 .prestige-upgrade-item:hover {
     border-color: #ffd700;
-    transform: translateX(5px);
 }
 
 .prestige-upgrade-item.purchased {
@@ -376,7 +400,7 @@ body {
 
 #skins-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
 }
 
@@ -543,7 +567,6 @@ body {
 }
 
 .upgrade-item:hover {
-    transform: translateX(5px);
     border-color: var(--accent-primary);
 }
 

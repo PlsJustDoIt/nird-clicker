@@ -912,40 +912,6 @@ function renderSkins() {
     });
 }
 
-function renderMissions() {
-    const container = document.getElementById('missions-list');
-    if (!container) return;
-    
-    container.innerHTML = '';
-    
-    if (!gameState.dailyMissions || gameState.dailyMissions.length === 0) {
-        container.innerHTML = '<p style="color: var(--fg-secondary)">Aucune mission disponible</p>';
-        return;
-    }
-    
-    gameState.dailyMissions.forEach(mission => {
-        const progress = Math.min(mission.progress || 0, mission.target);
-        const percent = (progress / mission.target) * 100;
-        
-        const el = document.createElement('div');
-        el.className = `mission-item ${mission.completed ? 'completed' : ''}`;
-        el.innerHTML = `
-            <div class="mission-info">
-                <h4>${mission.name}</h4>
-                <div class="mission-progress-bar">
-                    <div class="progress-fill" style="width: ${percent}%"></div>
-                </div>
-                <span class="mission-progress">${formatNumber(progress)} / ${formatNumber(mission.target)}</span>
-            </div>
-            <div class="mission-reward">
-                ${mission.completed ? '✓' : '+' + formatNumber(mission.reward)}
-            </div>
-        `;
-        
-        container.appendChild(el);
-    });
-}
-
 function renderEncyclopedia() {
     const container = document.getElementById('encyclopedia-list');
     if (!container) return;

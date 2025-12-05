@@ -144,9 +144,6 @@ function switchMenuTab(tabName) {
         case 'skins':
             renderSkins();
             break;
-        case 'missions':
-            renderMissions();
-            break;
         case 'encyclopedia':
             renderEncyclopedia();
             break;
@@ -325,10 +322,6 @@ window.DEBUG = {
     unlockAllSkins: () => {
         SKINS.forEach(s => gameState.skinsUnlocked.push(s.id));
         renderSkins();
-    },
-    completeAllMissions: () => {
-        gameState.dailyMissions.forEach(m => m.completed = true);
-        renderMissions();
     },
     showTip: showRandomTip,
     switchTheme: applyTheme,
