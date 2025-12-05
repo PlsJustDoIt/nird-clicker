@@ -290,8 +290,8 @@ function createClickUpgradeElement(upgrade) {
                 ${isPurchased ? '<span class="upgrade-status">ACTIVÉ</span>' : ''}
             </div>
             <p class="upgrade-desc">${upgrade.description}</p>
-            <div class="upgrade-footer">
-                <span class="upgrade-cost">${isPurchased ? 'Acheté' : formatNumber(upgrade.cost) + ' pts'}</span>
+            <div class="upgrade-footer${isPurchased ? ' purchased-footer' : ''}">
+                ${!isPurchased ? `<span class="upgrade-cost">${formatNumber(upgrade.cost)} pts</span>` : ''}
                 <span class="upgrade-bonus">+${upgrade.bonus} par clic</span>
             </div>
         </div>
@@ -322,8 +322,12 @@ function updateClickUpgradeElement(el, upgrade) {
         `;
     }
     
-    const costEl = el.querySelector('.upgrade-cost');
-    if (costEl) costEl.textContent = isPurchased ? 'Acheté' : formatNumber(upgrade.cost) + ' pts';
+    const footerEl = el.querySelector('.upgrade-footer');
+    if (footerEl && isPurchased) {
+        footerEl.classList.add('purchased-footer');
+        const costEl = footerEl.querySelector('.upgrade-cost');
+        if (costEl) costEl.remove();
+    }
 }
 
 // Calculer la quantité effective selon le multiplicateur
