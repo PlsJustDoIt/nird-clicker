@@ -48,6 +48,111 @@ const GAMEPAD_AXES = {
 let selectedUpgradeIndex = 0;
 let upgradeElements = [];
 
+// Index pour la navigation dans les quiz
+let selectedQuizAnswerIndex = 0;
+
+// Système de maintien du bouton X pour acheter
+const holdToBuy = {
+    isHolding: false,
+    startTime: 0,
+    duration: 600, // ms pour compléter l'achat
+    progress: 0,
+    vibrationInterval: null
+};
+
+// Helper pour obtenir le conteneur d'upgrades actif et son sélecteur d'items
+function getActiveUpgradeContainer() {
+    // Vérifier quel onglet est actif
+    const upgradesContent = document.getElementById('upgrades-content');
+    const clicksContent = document.getElementById('clicks-content');
+    const prestigeContent = document.getElementById('prestige-content');
+    const skinsContent = document.getElementById('skins-content');
+    
+    if (upgradesContent && upgradesContent.classList.contains('active')) {
+        return document.getElementById('upgrades-list');
+    } else if (clicksContent && clicksContent.classList.contains('active')) {
+        return document.getElementById('click-upgrades-list');
+    } else if (prestigeContent && prestigeContent.classList.contains('active')) {
+        return document.getElementById('prestige-upgrades-list');
+    } else if (skinsContent && skinsContent.classList.contains('active')) {
+        return document.getElementById('skins-list');
+    }
+    
+    // Fallback : retourner le premier conteneur visible
+    const upgrades = document.getElementById('upgrades-list');
+    if (upgrades && upgrades.offsetParent !== null) return upgrades;
+    
+    const clicks = document.getElementById('click-upgrades-list');
+    if (clicks && clicks.offsetParent !== null) return clicks;
+    
+    return document.getElementById('upgrades-list');
+}
+
+// Helper pour obtenir le sélecteur CSS des items selon le conteneur actif
+function getActiveItemSelector() {
+    const prestigeContent = document.getElementById('prestige-content');
+    const skinsContent = document.getElementById('skins-content');
+    
+    if (prestigeContent && prestigeContent.classList.contains('active')) {
+        return '.prestige-upgrade-item';
+    } else if (skinsContent && skinsContent.classList.contains('active')) {
+        return '.skin-item';
+    }
+    
+    return '.upgrade-item:not(.upgrade-separator)';
+}
+
+// Helper pour détecter si on est dans une grille (skins)
+function isGridLayout() {
+    const skinsContent = document.getElementById('skins-content');
+    return skinsContent && skinsContent.classList.contains('active');
+}
+
+// Helper pour obtenir le nombre de colonnes de la grille
+function getGridColumns() {
+    const skinsList = document.getElementById('skins-list');
+    if (!skinsList) return 1;
+    
+    // Obtenir le style calculé
+    const computedStyle = window.getComputedStyle(skinsList);
+    const gridColumns = computedStyle.getPropertyValue('grid-template-columns');
+    
+    // Compter le nombre de colonnes (ex: "100px 100px 100px" = 3 colonnes)
+    if (gridColumns && gridColumns !== 'none') {
+        return gridColumns.split(' ').filter(col => col.trim()).length;
+    }
+    
+    return 3; // Fallback: 3 colonnes par défaut pour les skins
+}
+
+// Helper pour obtenir l'élément scrollable actif
+function getScrollableElement() {
+    // Vérifier si une modal est ouverte
+    const settingsModal = document.querySelector('.settings-modal');
+    if (settingsModal) return settingsModal.querySelector('.settings-menu-content') || settingsModal;
+    
+    const quizModal = document.querySelector('.quiz-modal');
+    if (quizModal) return quizModal.querySelector('.quiz-content') || quizModal;
+    
+    const milestoneModal = document.querySelector('.milestone-modal');
+    if (milestoneModal) return milestoneModal;
+    
+    // Vérifier les modals overlay ouvertes
+    const openModal = document.querySelector('.modal-overlay:not(.hidden) .modal-content');
+    if (openModal) return openModal;
+    
+    // Vérifier l'onglet actif et retourner son conteneur scrollable
+    const activeContent = document.querySelector('.menu-content.active');
+    if (activeContent) return activeContent;
+    
+    // Fallback: scroller la zone de jeu principale
+    const upgradesPanel = document.getElementById('upgrades-panel');
+    if (upgradesPanel) return upgradesPanel;
+    
+    // Dernier recours: scroller la page
+    return document.documentElement;
+}
+
 // Initialisation du support gamepad
 function initGamepad() {
     // Charger les préférences de vibration
@@ -163,12 +268,71 @@ function processGamepadInput(gamepad) {
     const now = Date.now();
     const settingsModal = document.querySelector('.settings-modal');
     
-    // Bouton A - Clic principal OU activer item du menu settings
+    // Détecter les popups actifs
+    const quizModal = document.querySelector('.quiz-modal');
+    const milestoneModal = document.querySelector('.milestone-modal');
+    const prestigePopup = document.querySelector('.prestige-confirm-popup');
+    const bossModal = document.getElementById('boss-modal');
+    const isBossVisible = bossModal && !bossModal.classList.contains('hidden');
+    const facebookModal = document.getElementById('facebook-attack-modal');
+    const facebookAlertScreen = document.getElementById('facebook-alert-screen');
+    const facebookVideoScreen = document.getElementById('facebook-video-screen');
+    const isFacebookAttackVisible = facebookModal && !facebookModal.classList.contains('hidden');
+    const isFacebookAlertPhase = isFacebookAttackVisible && facebookAlertScreen && !facebookAlertScreen.classList.contains('hidden');
+    const isFacebookVideoPhase = isFacebookAttackVisible && facebookVideoScreen && !facebookVideoScreen.classList.contains('hidden');
+    const hasActivePopup = quizModal || milestoneModal || isFacebookAttackVisible || isBossVisible || prestigePopup;
+    
+    // Bouton A - Clic principal OU activer item du menu settings OU valider quiz/event
     if (isButtonPressed(gamepad, GAMEPAD_BUTTONS.A)) {
-        if (settingsModal) {
+        if (prestigePopup) {
+            // Valider le choix dans la popup prestige
+            if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.A)) {
+                activatePrestigePopupButton();
+                vibrateGamepad(50, 0.5);
+            }
+        } else if (settingsModal) {
             if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.A)) {
                 activateSettingsItem();
                 vibrateGamepad(30, 0.3);
+            }
+        } else if (quizModal) {
+            // Valider la réponse sélectionnée du quiz
+            if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.A)) {
+                selectQuizAnswer();
+                vibrateGamepad(50, 0.5);
+            }
+        } else if (milestoneModal) {
+            // Fermer le milestone
+            if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.A)) {
+                closeMilestoneModal();
+                vibrateGamepad(30, 0.3);
+            }
+        } else if (isBossVisible) {
+            // Cliquer sur le bouton du boss
+            if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.A)) {
+                const bossBtn = document.getElementById('boss-click-btn');
+                if (bossBtn) {
+                    bossBtn.click();
+                    vibrateGamepad(40, 0.4);
+                }
+            }
+        } else if (isFacebookAlertPhase) {
+            // Lancer la vidéo de l'attaque Facebook
+            if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.A)) {
+                const alertBtn = document.getElementById('facebook-alert-btn');
+                if (alertBtn) {
+                    alertBtn.click();
+                    vibrateGamepad(100, 0.8);
+                }
+            }
+        } else if (isFacebookVideoPhase) {
+            // Fermer si le bouton est visible
+            if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.A)) {
+                const closeBtn = document.getElementById('facebook-attack-close-btn');
+                if (closeBtn && !closeBtn.classList.contains('hidden')) {
+                    closeBtn.click();
+                    vibrateGamepad(50, 0.5);
+                }
             }
         } else {
             handleClick();
@@ -177,35 +341,89 @@ function processGamepadInput(gamepad) {
         }
     }
     
-    // Bouton X - Acheter l'upgrade sélectionnée
-    if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.X)) {
-        if (!settingsModal) {
-            buySelectedUpgrade();
-            vibrateGamepad(50, 0.4);
+    // Bouton X - Maintenir pour acheter OU interagir avec popup
+    if (!settingsModal) {
+        const xPressed = isButtonPressed(gamepad, GAMEPAD_BUTTONS.X);
+        
+        // Si la popup prestige est ouverte, X valide le choix
+        if (prestigePopup && isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.X)) {
+            activatePrestigePopupButton();
+            vibrateGamepad(50, 0.5);
+        }
+        // Si un boss est visible, X clique sur le bouton (pas besoin de maintenir)
+        else if (isBossVisible && isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.X)) {
+            const bossBtn = document.getElementById('boss-click-btn');
+            if (bossBtn) {
+                bossBtn.click();
+                vibrateGamepad(40, 0.4);
+            }
+        }
+        // Si un quiz est ouvert, X valide aussi la réponse
+        else if (quizModal && isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.X)) {
+            selectQuizAnswer();
+            vibrateGamepad(50, 0.5);
+        }
+        // Si un milestone est ouvert, X le ferme
+        else if (milestoneModal && isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.X)) {
+            closeMilestoneModal();
+            vibrateGamepad(30, 0.3);
+        }
+        // Si l'attaque Facebook est en phase alerte, X lance la vidéo
+        else if (isFacebookAlertPhase && isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.X)) {
+            const alertBtn = document.getElementById('facebook-alert-btn');
+            if (alertBtn) {
+                alertBtn.click();
+                vibrateGamepad(100, 0.8);
+            }
+        }
+        // Si l'attaque Facebook est en phase vidéo, X ferme (si le bouton est visible)
+        else if (isFacebookVideoPhase && isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.X)) {
+            const closeBtn = document.getElementById('facebook-attack-close-btn');
+            if (closeBtn && !closeBtn.classList.contains('hidden')) {
+                closeBtn.click();
+                vibrateGamepad(50, 0.5);
+            }
+        }
+        // Sinon, comportement normal d'achat
+        else if (!hasActivePopup) {
+            if (xPressed && !holdToBuy.isHolding) {
+                // Début du maintien
+                startHoldToBuy();
+            } else if (xPressed && holdToBuy.isHolding) {
+                // Continuer le maintien
+                updateHoldToBuy(now);
+            } else if (!xPressed && holdToBuy.isHolding) {
+                // Relâchement avant la fin
+                cancelHoldToBuy();
+            }
         }
     }
     
-    // Bouton B - Fermer les modals
+    // Bouton B - Fermer les modals/popups (priorité aux popups dynamiques)
     if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.B)) {
-        if (settingsModal) {
+        // Popup prestige en priorité
+        if (prestigePopup) {
+            closePrestigePopup();
+        } else if (settingsModal) {
             settingsModal.remove();
             playSound('click');
         } else {
+            // Fermer tout type de popup/modal ouvert
             closeAllModals();
         }
     }
     
-    // Bouton Y - Ouvrir/fermer le menu settings
+    // Bouton Y - Prestige (avec popup de confirmation)
     if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.Y)) {
-        openSettingsMenu();
-    }
-    
-    // Start - Prestige (avec confirmation)
-    if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.START)) {
         const prestigeBtn = document.getElementById('prestige-btn');
         if (prestigeBtn && !prestigeBtn.disabled) {
-            prestigeBtn.click();
+            showPrestigeConfirmPopup();
         }
+    }
+    
+    // Start - Ouvrir/fermer le menu settings
+    if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.START)) {
+        openSettingsMenu();
     }
     
     // Select - Afficher les succès
@@ -242,21 +460,34 @@ function processGamepadInput(gamepad) {
         if (dpadUp || leftY < -gamepadState.deadzone) {
             if (settingsModal) {
                 navigateSettingsMenu(-1);
-            } else {
-                navigateUpgrades(-1);
+            } else if (quizModal) {
+                navigateQuizAnswers(-1);
+            } else if (!prestigePopup) {
+                navigateUpgrades('up');
             }
             gamepadState.lastActionTime['navigate'] = now;
         } else if (dpadDown || leftY > gamepadState.deadzone) {
             if (settingsModal) {
                 navigateSettingsMenu(1);
-            } else {
-                navigateUpgrades(1);
+            } else if (quizModal) {
+                navigateQuizAnswers(1);
+            } else if (!prestigePopup) {
+                navigateUpgrades('down');
             }
             gamepadState.lastActionTime['navigate'] = now;
         }
         
-        // Navigation gauche/droite pour le thème dans settings
-        if (settingsModal && settingsMenuIndex === 2) { // Index 2 = thème
+        // Navigation gauche/droite
+        if (prestigePopup) {
+            // Navigation dans la popup prestige
+            if (dpadLeft || leftX < -gamepadState.deadzone) {
+                navigatePrestigePopup(-1);
+                gamepadState.lastActionTime['navigate'] = now;
+            } else if (dpadRight || leftX > gamepadState.deadzone) {
+                navigatePrestigePopup(1);
+                gamepadState.lastActionTime['navigate'] = now;
+            }
+        } else if (settingsModal && settingsMenuIndex === 2) { // Index 2 = thème
             if (dpadLeft || leftX < -gamepadState.deadzone) {
                 cycleTheme(-1);
                 gamepadState.lastActionTime['navigate'] = now;
@@ -264,7 +495,25 @@ function processGamepadInput(gamepad) {
                 cycleTheme(1);
                 gamepadState.lastActionTime['navigate'] = now;
             }
+        } else if (!settingsModal && isGridLayout()) {
+            // Navigation gauche/droite pour les grilles (skins)
+            if (dpadLeft || leftX < -gamepadState.deadzone) {
+                navigateUpgrades('left');
+                gamepadState.lastActionTime['navigate'] = now;
+            } else if (dpadRight || leftX > gamepadState.deadzone) {
+                navigateUpgrades('right');
+                gamepadState.lastActionTime['navigate'] = now;
+            }
         }
+    }
+    
+    // Joystick droit - Scroll de la page
+    const rightY = gamepad.axes[GAMEPAD_AXES.RIGHT_Y];
+    const rightX = gamepad.axes[GAMEPAD_AXES.RIGHT_X];
+    
+    if (Math.abs(rightY) > gamepadState.deadzone || Math.abs(rightX) > gamepadState.deadzone) {
+        // Scroll direct de la page
+        window.scrollBy(rightX * 20, rightY * 20);
     }
     
     // Mettre à jour l'état des boutons pour le prochain frame
@@ -322,21 +571,67 @@ function vibrateGamepad(duration = 100, intensity = 0.5) {
     }
 }
 
-// Navigation dans les upgrades
+// Navigation dans les upgrades (verticale ou grille)
+// direction: 'up', 'down', 'left', 'right' ou -1/1 pour compatibilité
 function navigateUpgrades(direction) {
-    const container = document.getElementById('upgrades-list');
+    const container = getActiveUpgradeContainer();
     if (!container) return;
     
-    upgradeElements = container.querySelectorAll('.upgrade-item:not(.upgrade-separator)');
+    const selector = getActiveItemSelector();
+    upgradeElements = container.querySelectorAll(selector);
     if (upgradeElements.length === 0) return;
     
     // Retirer la sélection précédente
     upgradeElements.forEach(el => el.classList.remove('gamepad-selected'));
     
-    // Calculer le nouvel index
-    selectedUpgradeIndex += direction;
-    if (selectedUpgradeIndex < 0) selectedUpgradeIndex = upgradeElements.length - 1;
-    if (selectedUpgradeIndex >= upgradeElements.length) selectedUpgradeIndex = 0;
+    // Calculer le nouvel index selon le type de navigation
+    const isGrid = isGridLayout();
+    const columns = isGrid ? getGridColumns() : 1;
+    
+    let newIndex = selectedUpgradeIndex;
+    
+    if (direction === 'up' || direction === -1) {
+        // Navigation vers le haut
+        if (isGrid) {
+            newIndex -= columns;
+            if (newIndex < 0) {
+                // Aller à la dernière ligne, même colonne si possible
+                const currentCol = selectedUpgradeIndex % columns;
+                const lastRowStart = Math.floor((upgradeElements.length - 1) / columns) * columns;
+                newIndex = Math.min(lastRowStart + currentCol, upgradeElements.length - 1);
+            }
+        } else {
+            newIndex--;
+            if (newIndex < 0) newIndex = upgradeElements.length - 1;
+        }
+    } else if (direction === 'down' || direction === 1) {
+        // Navigation vers le bas
+        if (isGrid) {
+            newIndex += columns;
+            if (newIndex >= upgradeElements.length) {
+                // Aller à la première ligne, même colonne
+                const currentCol = selectedUpgradeIndex % columns;
+                newIndex = currentCol;
+            }
+        } else {
+            newIndex++;
+            if (newIndex >= upgradeElements.length) newIndex = 0;
+        }
+    } else if (direction === 'left') {
+        // Navigation vers la gauche (grille uniquement)
+        if (isGrid) {
+            newIndex--;
+            if (newIndex < 0) newIndex = upgradeElements.length - 1;
+        }
+    } else if (direction === 'right') {
+        // Navigation vers la droite (grille uniquement)
+        if (isGrid) {
+            newIndex++;
+            if (newIndex >= upgradeElements.length) newIndex = 0;
+        }
+    }
+    
+    selectedUpgradeIndex = newIndex;
     
     // Appliquer la sélection
     const selectedElement = upgradeElements[selectedUpgradeIndex];
@@ -349,12 +644,455 @@ function navigateUpgrades(direction) {
     playSound('click');
 }
 
-// Acheter l'upgrade sélectionnée
-function buySelectedUpgrade() {
-    const container = document.getElementById('upgrades-list');
+// ============================================
+// NAVIGATION QUIZ (Gamepad)
+// ============================================
+
+function navigateQuizAnswers(direction) {
+    const quizModal = document.querySelector('.quiz-modal');
+    if (!quizModal) return;
+    
+    const answers = quizModal.querySelectorAll('.quiz-answer');
+    if (answers.length === 0) return;
+    
+    // Retirer la sélection précédente
+    answers.forEach(el => el.classList.remove('gamepad-selected'));
+    
+    // Calculer le nouvel index
+    selectedQuizAnswerIndex += direction;
+    if (selectedQuizAnswerIndex < 0) selectedQuizAnswerIndex = answers.length - 1;
+    if (selectedQuizAnswerIndex >= answers.length) selectedQuizAnswerIndex = 0;
+    
+    // Appliquer la sélection
+    const selectedAnswer = answers[selectedQuizAnswerIndex];
+    if (selectedAnswer) {
+        selectedAnswer.classList.add('gamepad-selected');
+    }
+    
+    playSound('click');
+}
+
+function selectQuizAnswer() {
+    const quizModal = document.querySelector('.quiz-modal');
+    if (!quizModal) return;
+    
+    const answers = quizModal.querySelectorAll('.quiz-answer');
+    if (answers.length === 0) return;
+    
+    // Si aucune réponse n'est sélectionnée, sélectionner la première
+    let selectedAnswer = quizModal.querySelector('.quiz-answer.gamepad-selected');
+    if (!selectedAnswer && answers.length > 0) {
+        selectedAnswer = answers[0];
+    }
+    
+    if (selectedAnswer) {
+        selectedAnswer.click();
+        selectedQuizAnswerIndex = 0; // Reset pour le prochain quiz
+    }
+}
+
+function closeMilestoneModal() {
+    const milestoneModal = document.querySelector('.milestone-modal');
+    if (milestoneModal) {
+        // Chercher le bouton dans le milestone et le cliquer
+        const button = milestoneModal.querySelector('button');
+        if (button) {
+            button.click();
+        } else {
+            milestoneModal.remove();
+        }
+        playSound('click');
+    }
+}
+
+// ============================================
+// POPUP DE CONFIRMATION PRESTIGE
+// ============================================
+
+let prestigePopupSelectedIndex = 0; // 0 = Annuler, 1 = Confirmer
+
+function showPrestigeConfirmPopup() {
+    // Vérifier si on peut prestige
+    if (typeof canPrestige === 'function' && !canPrestige()) {
+        if (typeof showNotification === 'function') {
+            showNotification('Pas assez de points pour le prestige !', 'error');
+        }
+        vibrateGamepad(150, 0.8);
+        return;
+    }
+    
+    // Calculer les points de prestige
+    let pointsGained = 1;
+    if (typeof calculatePrestigePoints === 'function') {
+        pointsGained = calculatePrestigePoints();
+    }
+    
+    let currentBonus = 0;
+    let newBonus = 0;
+    if (typeof gameState !== 'undefined') {
+        currentBonus = (gameState.prestigeLevel || 0) * 10;
+        newBonus = ((gameState.prestigeLevel || 0) + pointsGained) * 10;
+    }
+    
+    // Créer la popup
+    const popup = document.createElement('div');
+    popup.className = 'prestige-confirm-popup';
+    popup.innerHTML = `
+        <div class="prestige-confirm-content">
+            <h2>🔄 PRESTIGE</h2>
+            <div class="prestige-info">
+                <p class="prestige-points">Vous allez gagner <strong>${pointsGained}</strong> point(s) de prestige !</p>
+                <p class="prestige-bonus">Bonus actuel : <span class="current">+${currentBonus}%</span></p>
+                <p class="prestige-bonus">Bonus après : <span class="new">+${newBonus}%</span></p>
+            </div>
+            <p class="prestige-warning">⚠️ Votre score et vos upgrades seront réinitialisés.</p>
+            <div class="prestige-buttons">
+                <button class="prestige-cancel-btn gamepad-selected" data-action="cancel">❌ Annuler</button>
+                <button class="prestige-confirm-btn" data-action="confirm">✅ Confirmer</button>
+            </div>
+            <p class="prestige-hint">🎮 ← → pour choisir, A/X pour valider, B pour annuler</p>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+    prestigePopupSelectedIndex = 0;
+    
+    // Ajouter les événements clic
+    popup.querySelector('.prestige-cancel-btn').addEventListener('click', closePrestigePopup);
+    popup.querySelector('.prestige-confirm-btn').addEventListener('click', confirmPrestige);
+    
+    playSound('click');
+}
+
+function navigatePrestigePopup(direction) {
+    const popup = document.querySelector('.prestige-confirm-popup');
+    if (!popup) return;
+    
+    const buttons = popup.querySelectorAll('.prestige-buttons button');
+    if (buttons.length === 0) return;
+    
+    // Retirer la sélection précédente
+    buttons.forEach(btn => btn.classList.remove('gamepad-selected'));
+    
+    // Changer l'index
+    prestigePopupSelectedIndex += direction;
+    if (prestigePopupSelectedIndex < 0) prestigePopupSelectedIndex = buttons.length - 1;
+    if (prestigePopupSelectedIndex >= buttons.length) prestigePopupSelectedIndex = 0;
+    
+    // Appliquer la nouvelle sélection
+    buttons[prestigePopupSelectedIndex].classList.add('gamepad-selected');
+    
+    playSound('click');
+}
+
+function activatePrestigePopupButton() {
+    const popup = document.querySelector('.prestige-confirm-popup');
+    if (!popup) return;
+    
+    const selectedBtn = popup.querySelector('.prestige-buttons button.gamepad-selected');
+    if (selectedBtn) {
+        selectedBtn.click();
+    }
+}
+
+function confirmPrestige() {
+    closePrestigePopup();
+    
+    // Appeler directement doPrestige sans le confirm() natif
+    if (typeof doPrestigeWithoutConfirm === 'function') {
+        doPrestigeWithoutConfirm();
+    } else if (typeof performPrestigeDirectly === 'function') {
+        performPrestigeDirectly();
+    } else {
+        // Fallback: simuler le clic sur le bouton prestige
+        // Mais on doit bypasser le confirm()
+        executePrestige();
+    }
+    
+    vibrateGamepad(200, 1.0);
+}
+
+function executePrestige() {
+    // Exécuter le prestige directement
+    if (typeof gameState === 'undefined' || typeof PRESTIGE_THRESHOLD === 'undefined') return;
+    
+    if (gameState.totalScore < PRESTIGE_THRESHOLD) return;
+    
+    const pointsGained = typeof calculatePrestigePoints === 'function' ? calculatePrestigePoints() : 1;
+    
+    // Appliquer le prestige
+    gameState.prestigePoints = (gameState.prestigePoints || 0) + pointsGained;
+    gameState.prestigeLevel = (gameState.prestigeLevel || 0) + pointsGained;
+    
+    // Reset les données de jeu
+    gameState.score = 0;
+    gameState.totalScore = 0;
+    gameState.totalClicks = 0;
+    gameState.totalUpgrades = 0;
+    gameState.clickPower = 1;
+    gameState.productionPerSecond = 0;
+    gameState.currentVillageLevel = 0;
+    
+    // Reset les upgrades
+    if (typeof UPGRADES !== 'undefined') {
+        UPGRADES.forEach(u => {
+            u.owned = 0;
+            u.unlocked = u.unlockAt ? false : true;
+        });
+    }
+    
+    // Reset les click upgrades
+    if (typeof CLICK_UPGRADES !== 'undefined') {
+        CLICK_UPGRADES.forEach(u => {
+            u.purchased = false;
+        });
+    }
+    
+    if (typeof playSound === 'function') playSound('prestige');
+    if (typeof showNotification === 'function') {
+        showNotification(`🔄 Prestige ! +${pointsGained} points, bonus +${gameState.prestigeLevel * 10}%`, 'prestige');
+    }
+    
+    if (typeof calculateProductionPerSecond === 'function') calculateProductionPerSecond();
+    if (typeof saveGame === 'function') saveGame();
+    if (typeof updateUI === 'function') updateUI();
+}
+
+function closePrestigePopup() {
+    const popup = document.querySelector('.prestige-confirm-popup');
+    if (popup) {
+        popup.remove();
+        playSound('click');
+    }
+}
+
+// ============================================
+// SYSTÈME DE MAINTIEN POUR ACHETER (Hold to Buy)
+// ============================================
+
+function startHoldToBuy() {
+    const container = getActiveUpgradeContainer();
     if (!container) return;
     
-    upgradeElements = container.querySelectorAll('.upgrade-item:not(.upgrade-separator)');
+    const selector = getActiveItemSelector();
+    upgradeElements = container.querySelectorAll(selector);
+    const selectedElement = upgradeElements[selectedUpgradeIndex];
+    
+    if (!selectedElement) return;
+    
+    // Déterminer le type d'élément
+    const isSkin = selectedElement.classList.contains('skin-item');
+    const isPrestige = selectedElement.classList.contains('prestige-upgrade-item');
+    
+    // Logique pour les skins
+    if (isSkin) {
+        const isLocked = selectedElement.classList.contains('locked');
+        const isActive = selectedElement.classList.contains('active');
+        
+        // Ne pas permettre si verrouillé (pas assez de points) ou déjà actif
+        if (isLocked) {
+            vibrateGamepad(150, 0.8);
+            return;
+        }
+        // Si actif, on peut quand même cliquer pour "réappliquer"
+    }
+    // Logique pour les prestige upgrades
+    else if (isPrestige) {
+        const isPurchased = selectedElement.classList.contains('purchased');
+        const cannotAfford = selectedElement.classList.contains('cannot-afford');
+        
+        // Si déjà acheté, ne rien faire (pas de vibration)
+        if (isPurchased) {
+            return;
+        }
+        
+        // Si on ne peut pas se permettre l'achat
+        if (cannotAfford) {
+            vibrateGamepad(150, 0.8);
+            return;
+        }
+        
+        const buyButton = selectedElement.querySelector('.prestige-buy-btn');
+        if (buyButton && buyButton.disabled) {
+            vibrateGamepad(150, 0.8);
+            return;
+        }
+    }
+    // Logique pour les upgrades classiques
+    else {
+        const buyButton = selectedElement.querySelector('.upgrade-buy-btn');
+        const canAfford = selectedElement.classList.contains('can-afford');
+        const isPurchased = selectedElement.classList.contains('purchased');
+        
+        // Si déjà acheté, ne rien faire (pas de vibration)
+        if (isPurchased) {
+            return;
+        }
+        
+        if (!canAfford && !buyButton) {
+            vibrateGamepad(150, 0.8);
+            return;
+        }
+        
+        if (buyButton && buyButton.disabled) {
+            vibrateGamepad(150, 0.8);
+            return;
+        }
+    }
+    
+    holdToBuy.isHolding = true;
+    holdToBuy.startTime = Date.now();
+    holdToBuy.progress = 0;
+    
+    // Ajouter la classe d'animation
+    selectedElement.classList.add('hold-to-buy-active');
+    
+    // Créer l'élément de progression si pas présent
+    let progressBar = selectedElement.querySelector('.hold-progress-bar');
+    if (!progressBar) {
+        progressBar = document.createElement('div');
+        progressBar.className = 'hold-progress-bar';
+        selectedElement.appendChild(progressBar);
+    }
+    progressBar.style.width = '0%';
+    
+    // Vibration initiale légère
+    vibrateGamepad(30, 0.2);
+}
+
+function updateHoldToBuy(now) {
+    if (!holdToBuy.isHolding) return;
+    
+    const elapsed = now - holdToBuy.startTime;
+    holdToBuy.progress = Math.min(elapsed / holdToBuy.duration, 1);
+    
+    // Mettre à jour la barre de progression
+    const container = getActiveUpgradeContainer();
+    if (!container) return;
+    
+    const selector = getActiveItemSelector();
+    upgradeElements = container.querySelectorAll(selector);
+    const selectedElement = upgradeElements[selectedUpgradeIndex];
+    
+    if (selectedElement) {
+        const progressBar = selectedElement.querySelector('.hold-progress-bar');
+        if (progressBar) {
+            progressBar.style.width = (holdToBuy.progress * 100) + '%';
+        }
+    }
+    
+    // Vibration progressive (plus forte au fur et à mesure)
+    const vibrationIntensity = 0.1 + (holdToBuy.progress * 0.5);
+    vibrateGamepad(20, vibrationIntensity);
+    
+    // Achat complété !
+    if (holdToBuy.progress >= 1) {
+        completeHoldToBuy();
+    }
+}
+
+function completeHoldToBuy() {
+    const container = getActiveUpgradeContainer();
+    if (!container) return;
+    
+    const selector = getActiveItemSelector();
+    upgradeElements = container.querySelectorAll(selector);
+    const selectedElement = upgradeElements[selectedUpgradeIndex];
+    
+    if (selectedElement) {
+        // Déterminer le type d'élément
+        const isSkin = selectedElement.classList.contains('skin-item');
+        const isPrestige = selectedElement.classList.contains('prestige-upgrade-item');
+        
+        if (isSkin) {
+            // Les skins utilisent un clic direct sur l'élément
+            selectedElement.click();
+        } else if (isPrestige) {
+            // Prestige utilise un bouton spécifique
+            const buyButton = selectedElement.querySelector('.prestige-buy-btn');
+            if (buyButton && !buyButton.disabled) {
+                buyButton.click();
+            } else {
+                selectedElement.click();
+            }
+        } else {
+            // Upgrades classiques
+            const buyButton = selectedElement.querySelector('.upgrade-buy-btn');
+            if (buyButton && !buyButton.disabled) {
+                buyButton.click();
+            } else if (selectedElement.classList.contains('can-afford')) {
+                selectedElement.click();
+            }
+        }
+        
+        // Vibration de succès forte
+        vibrateGamepad(150, 1.0);
+        
+        // Animation de succès
+        selectedElement.classList.add('hold-to-buy-success');
+        setTimeout(() => {
+            selectedElement.classList.remove('hold-to-buy-success');
+        }, 300);
+    }
+    
+    // Reset
+    resetHoldToBuy();
+}
+
+function cancelHoldToBuy() {
+    const container = getActiveUpgradeContainer();
+    if (container) {
+        const selector = getActiveItemSelector();
+        upgradeElements = container.querySelectorAll(selector);
+        const selectedElement = upgradeElements[selectedUpgradeIndex];
+        
+        if (selectedElement) {
+            // Animation d'annulation
+            selectedElement.classList.add('hold-to-buy-cancel');
+            setTimeout(() => {
+                selectedElement.classList.remove('hold-to-buy-cancel');
+            }, 200);
+        }
+    }
+    
+    resetHoldToBuy();
+}
+
+function resetHoldToBuy() {
+    holdToBuy.isHolding = false;
+    holdToBuy.progress = 0;
+    holdToBuy.startTime = 0;
+    
+    // Nettoyer les éléments visuels de tous les conteneurs
+    const containersAndSelectors = [
+        { id: 'upgrades-list', selector: '.upgrade-item' },
+        { id: 'click-upgrades-list', selector: '.upgrade-item' },
+        { id: 'prestige-upgrades-list', selector: '.prestige-upgrade-item' },
+        { id: 'skins-list', selector: '.skin-item' }
+    ];
+    
+    containersAndSelectors.forEach(({ id, selector }) => {
+        const container = document.getElementById(id);
+        if (container) {
+            const items = container.querySelectorAll(selector);
+            items.forEach(el => {
+                el.classList.remove('hold-to-buy-active');
+                const progressBar = el.querySelector('.hold-progress-bar');
+                if (progressBar) {
+                    progressBar.style.width = '0%';
+                }
+            });
+        }
+    });
+}
+
+// Acheter l'upgrade sélectionnée (legacy, gardé pour compatibilité)
+function buySelectedUpgrade() {
+    const container = getActiveUpgradeContainer();
+    if (!container) return;
+    
+    const selector = getActiveItemSelector();
+    upgradeElements = container.querySelectorAll(selector);
     const selectedElement = upgradeElements[selectedUpgradeIndex];
     
     if (selectedElement) {
@@ -377,10 +1115,16 @@ function switchToPreviousTab() {
     
     if (!activeTab || tabs.length === 0) return;
     
+    // Retirer la sélection de l'ancien onglet
+    clearGamepadSelection();
+    
     let currentIndex = Array.from(tabs).indexOf(activeTab);
     currentIndex = (currentIndex - 1 + tabs.length) % tabs.length;
     
     tabs[currentIndex].click();
+    
+    // Réinitialiser l'index de sélection
+    selectedUpgradeIndex = 0;
     playSound('click');
 }
 
@@ -391,11 +1135,27 @@ function switchToNextTab() {
     
     if (!activeTab || tabs.length === 0) return;
     
+    // Retirer la sélection de l'ancien onglet
+    clearGamepadSelection();
+    
     let currentIndex = Array.from(tabs).indexOf(activeTab);
     currentIndex = (currentIndex + 1) % tabs.length;
     
     tabs[currentIndex].click();
+    
+    // Réinitialiser l'index de sélection
+    selectedUpgradeIndex = 0;
     playSound('click');
+}
+
+// Nettoyer la sélection gamepad de tous les conteneurs
+function clearGamepadSelection() {
+    const selectors = ['.upgrade-item', '.prestige-upgrade-item', '.skin-item'];
+    selectors.forEach(selector => {
+        document.querySelectorAll(selector).forEach(el => {
+            el.classList.remove('gamepad-selected');
+        });
+    });
 }
 
 // Cycle du mode d'achat
@@ -414,13 +1174,68 @@ function cycleBuyMode(direction) {
     }
 }
 
-// Fermer toutes les modals
+// Fermer toutes les modals et popups
 function closeAllModals() {
+    let closed = false;
+    
+    // Fermer les modals overlay classiques
     const modals = document.querySelectorAll('.modal-overlay:not(.hidden)');
     modals.forEach(modal => {
         modal.classList.add('hidden');
+        closed = true;
     });
-    playSound('click');
+    
+    // Fermer les quiz dynamiques
+    const quizModal = document.querySelector('.quiz-modal');
+    if (quizModal) {
+        quizModal.remove();
+        closed = true;
+        // Appeler skipQuiz si disponible pour gérer l'état
+        if (typeof skipQuiz === 'function') {
+            // skipQuiz affiche une notification, on l'appelle pas directement
+            // On utilise closeQuiz si disponible
+        }
+        if (typeof closeQuiz === 'function') {
+            closeQuiz();
+        }
+    }
+    
+    // Fermer les milestone modals
+    const milestoneModal = document.querySelector('.milestone-modal');
+    if (milestoneModal) {
+        milestoneModal.remove();
+        closed = true;
+    }
+    
+    // Fermer l'attaque Facebook
+    const facebookModal = document.getElementById('facebook-attack-modal');
+    if (facebookModal && !facebookModal.classList.contains('hidden')) {
+        // Utiliser la fonction de fermeture propre
+        if (typeof closeFacebookAttack === 'function') {
+            closeFacebookAttack();
+        } else {
+            facebookModal.classList.add('hidden');
+        }
+        closed = true;
+    }
+    
+    // Fermer le menu settings dynamique
+    const settingsModal = document.querySelector('.settings-modal');
+    if (settingsModal) {
+        settingsModal.remove();
+        closed = true;
+    }
+    
+    // Fermer les notifications de confirmation/alert
+    const confirmModals = document.querySelectorAll('.confirm-modal, .alert-modal, .notification-modal');
+    confirmModals.forEach(modal => {
+        modal.remove();
+        closed = true;
+    });
+    
+    if (closed) {
+        playSound('click');
+    }
 }
 
 // Toggle une modal spécifique

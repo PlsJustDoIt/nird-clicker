@@ -385,15 +385,48 @@ body {
     cursor: pointer;
     transition: all var(--transition-fast);
     border: 2px solid rgba(255, 215, 0, 0.2);
+    position: relative;
 }
 
 .prestige-upgrade-item:hover {
     border-color: #ffd700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
 
+.prestige-upgrade-item.gamepad-selected {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 15px rgba(0, 212, 170, 0.4);
+}
+
+/* Prestige acheté - style lumineux distinctif */
 .prestige-upgrade-item.purchased {
-    opacity: 0.5;
-    border-color: rgba(0, 255, 0, 0.3);
+    opacity: 1;
+    border-color: #00d4aa;
+    background: linear-gradient(145deg, rgba(0, 212, 170, 0.15), rgba(0, 100, 80, 0.2));
+    box-shadow: 0 0 20px rgba(0, 212, 170, 0.3), inset 0 0 15px rgba(0, 212, 170, 0.1);
+    cursor: default;
+}
+
+/* Hover sur prestige acheté - effet subtil différent */
+.prestige-upgrade-item.purchased:hover {
+    border-color: #00ffcc;
+    box-shadow: 0 0 25px rgba(0, 212, 170, 0.5), inset 0 0 20px rgba(0, 212, 170, 0.15);
+}
+
+/* Gamepad selection sur prestige acheté */
+.prestige-upgrade-item.purchased.gamepad-selected {
+    border-color: #00ffcc;
+    box-shadow: 0 0 30px rgba(0, 255, 204, 0.6), inset 0 0 20px rgba(0, 212, 170, 0.2);
+}
+
+.prestige-upgrade-item.purchased::before {
+    content: '✓';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+    color: #00d4aa;
+    text-shadow: 0 0 10px rgba(0, 212, 170, 0.8);
 }
 
 /* Skins Content */
@@ -421,6 +454,12 @@ body {
 .skin-item:hover {
     transform: scale(1.05);
     border-color: var(--accent-primary);
+}
+
+.skin-item.gamepad-selected {
+    transform: scale(1.05);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 15px rgba(0, 212, 170, 0.4);
 }
 
 .skin-item.active {
@@ -603,6 +642,245 @@ body {
 
 .upgrade-item.cannot-afford {
     opacity: 0.6;
+}
+
+/* ============================================
+   HOLD TO BUY - Système de maintien gamepad
+   ============================================ */
+.upgrade-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.hold-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, 
+        rgba(0, 212, 170, 0.3) 0%, 
+        rgba(0, 212, 170, 0.5) 100%);
+    transition: width 0.05s linear;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.upgrade-item.hold-to-buy-active {
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 15px rgba(0, 212, 170, 0.4);
+}
+
+.upgrade-item.hold-to-buy-active .upgrade-icon,
+.upgrade-item.hold-to-buy-active .upgrade-info,
+.upgrade-item.hold-to-buy-active .upgrade-buy-btn {
+    position: relative;
+    z-index: 1;
+}
+
+.upgrade-item.hold-to-buy-success {
+    animation: holdBuySuccess 0.3s ease-out;
+}
+
+@keyframes holdBuySuccess {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 15px rgba(0, 212, 170, 0.4);
+    }
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 0 30px rgba(0, 212, 170, 0.8);
+        background: rgba(0, 212, 170, 0.3);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: none;
+    }
+}
+
+.upgrade-item.hold-to-buy-cancel {
+    animation: holdBuyCancel 0.2s ease-out;
+}
+
+@keyframes holdBuyCancel {
+    0% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/* Hold to Buy pour Prestige et Skins */
+.prestige-upgrade-item,
+.skin-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.prestige-upgrade-item .hold-progress-bar,
+.skin-item .hold-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, 
+        rgba(0, 212, 170, 0.3) 0%, 
+        rgba(0, 212, 170, 0.5) 100%);
+    transition: width 0.05s linear;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.prestige-upgrade-item.hold-to-buy-active,
+.skin-item.hold-to-buy-active {
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 15px rgba(0, 212, 170, 0.4);
+}
+
+.prestige-upgrade-item.hold-to-buy-success,
+.skin-item.hold-to-buy-success {
+    animation: holdBuySuccess 0.3s ease-out;
+}
+
+.prestige-upgrade-item.hold-to-buy-cancel,
+.skin-item.hold-to-buy-cancel {
+    animation: holdBuyCancel 0.2s ease-out;
+}
+
+/* ============================================
+   POPUP DE CONFIRMATION PRESTIGE (Gamepad)
+   ============================================ */
+.prestige-confirm-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.prestige-confirm-content {
+    background: linear-gradient(145deg, #1a1a2e, #16213e);
+    border: 3px solid #9d4edd;
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(157, 78, 221, 0.5);
+}
+
+.prestige-confirm-content h2 {
+    font-size: 1.8rem;
+    color: #9d4edd;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 10px rgba(157, 78, 221, 0.5);
+}
+
+.prestige-info {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.prestige-info p {
+    margin: 0.5rem 0;
+    color: #e0e0e0;
+}
+
+.prestige-points {
+    font-size: 1.1rem;
+}
+
+.prestige-points strong {
+    color: #00d4aa;
+    font-size: 1.3rem;
+}
+
+.prestige-bonus .current {
+    color: #888;
+}
+
+.prestige-bonus .new {
+    color: #00d4aa;
+    font-weight: bold;
+}
+
+.prestige-warning {
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    margin: 1rem 0;
+    padding: 0.5rem;
+    background: rgba(255, 107, 107, 0.1);
+    border-radius: 6px;
+}
+
+.prestige-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.prestige-buttons button {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    border: 2px solid;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: bold;
+}
+
+.prestige-cancel-btn {
+    background: transparent;
+    border-color: #666;
+    color: #888;
+}
+
+.prestige-cancel-btn:hover,
+.prestige-cancel-btn.gamepad-selected {
+    background: rgba(255, 107, 107, 0.2);
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.3);
+    transform: scale(1.05);
+}
+
+.prestige-confirm-btn {
+    background: transparent;
+    border-color: #666;
+    color: #888;
+}
+
+.prestige-confirm-btn:hover,
+.prestige-confirm-btn.gamepad-selected {
+    background: rgba(0, 212, 170, 0.2);
+    border-color: #00d4aa;
+    color: #00d4aa;
+    box-shadow: 0 0 15px rgba(0, 212, 170, 0.3);
+    transform: scale(1.05);
+}
+
+.prestige-hint {
+    margin-top: 1.5rem;
+    font-size: 0.75rem;
+    color: #666;
+    font-style: italic;
 }
 
 .upgrade-icon {
@@ -1664,6 +1942,13 @@ body {
 .quiz-answer:hover {
     border-color: var(--accent-secondary);
     background: rgba(0, 160, 255, 0.1);
+}
+
+.quiz-answer.gamepad-selected {
+    border-color: var(--accent-primary);
+    background: rgba(0, 200, 100, 0.2);
+    box-shadow: 0 0 15px rgba(0, 200, 100, 0.4);
+    transform: scale(1.02);
 }
 
 .quiz-skip {
