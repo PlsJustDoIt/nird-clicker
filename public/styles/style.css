@@ -1887,6 +1887,81 @@ body {
     color: white !important;
 }
 
+/* Gamepad Support in Settings */
+.gamepad-hint {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--fg-secondary);
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: rgba(0, 160, 255, 0.1);
+    border-radius: 6px;
+    border: 1px dashed var(--accent-secondary);
+}
+
+.gamepad-selectable.setting-item {
+    transition: all var(--transition-fast);
+    border-radius: 8px;
+    margin: 0.25rem 0;
+    padding: 0.75rem 1rem !important;
+    border: 2px solid transparent;
+}
+
+.gamepad-selectable.setting-item.gamepad-selected {
+    background: rgba(0, 212, 170, 0.1);
+    border-color: var(--accent-primary);
+}
+
+.gamepad-selectable.setting-item.gamepad-selected button,
+.gamepad-selectable.setting-item.gamepad-selected select {
+    box-shadow: 0 0 8px rgba(0, 212, 170, 0.5);
+}
+
+/* Bouton Fermer avec support gamepad */
+.settings-content .close-btn.gamepad-selectable {
+    margin-top: 1rem;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    transition: all var(--transition-fast);
+}
+
+.settings-content .close-btn.gamepad-selectable.gamepad-selected {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 10px rgba(0, 212, 170, 0.4);
+}
+
+/* Theme selector pour gamepad */
+.theme-selector-gamepad {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.theme-selector-gamepad .theme-name {
+    min-width: 100px;
+    text-align: center;
+    padding: 0.5rem 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent-secondary);
+    border-radius: 6px;
+    color: var(--fg-main);
+}
+
+.theme-selector-gamepad .theme-arrow {
+    padding: 0.5rem 0.75rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent-secondary);
+    color: var(--accent-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.theme-selector-gamepad .theme-arrow:hover {
+    background: var(--accent-secondary);
+    color: #000;
+}
+
 /* Achievements Modal */
 .achievements-count {
     text-align: center;

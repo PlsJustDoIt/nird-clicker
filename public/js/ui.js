@@ -519,78 +519,84 @@ function closeBoss() {
 // MENUS SUPPLÉMENTAIRES
 // ============================================
 
-// Menu Options/Settings
+// Menu Options/Settings - Compatible Gamepad
+// Navigation: D-Pad haut/bas, A pour activer, B pour fermer
+let settingsMenuIndex = 0;
+let settingsMenuItems = [];
+
 function openSettingsMenu() {
     const existingModal = document.querySelector('.settings-modal');
-    if (existingModal) existingModal.remove();
+    if (existingModal) {
+        existingModal.remove();
+        return; // Toggle: si déjà ouvert, on ferme
+    }
+    
+    settingsMenuIndex = 0;
+    
+    const currentTheme = THEMES.find(t => t.id === gameState.currentTheme) || THEMES[0];
     
     const modal = document.createElement('div');
     modal.className = 'settings-modal modal-overlay';
     modal.innerHTML = `
         <div class="modal-content settings-content">
             <h2>⚙️ Options</h2>
+            <p class="gamepad-hint">🎮 D-Pad: naviguer • A: activer • B: fermer</p>
             
-            <div class="setting-item">
+            <div class="setting-item gamepad-selectable" data-index="0">
                 <span>🔊 Sons</span>
                 <button id="sound-toggle-btn" class="${gameState.soundEnabled ? 'active' : ''}">
                     ${gameState.soundEnabled ? 'ON' : 'OFF'}
                 </button>
             </div>
             
-            <div class="setting-item">
+            <div class="setting-item gamepad-selectable" data-index="1">
                 <span>✨ Particules</span>
                 <button id="particles-toggle-btn" class="${gameState.particlesEnabled ? 'active' : ''}">
                     ${gameState.particlesEnabled ? 'ON' : 'OFF'}
                 </button>
             </div>
             
-            <div class="setting-item">
+            <div class="setting-item gamepad-selectable" data-index="2">
                 <span>🎨 Thème</span>
-                <select id="theme-select">
-                    ${THEMES.map(t => `<option value="${t.id}" ${gameState.currentTheme === t.id ? 'selected' : ''}>${t.name}</option>`).join('')}
-                </select>
+                <div class="theme-selector-gamepad">
+                    <button class="theme-arrow" id="theme-prev">◀</button>
+                    <span class="theme-name" id="theme-current">${currentTheme.name}</span>
+                    <button class="theme-arrow" id="theme-next">▶</button>
+                </div>
             </div>
             
             <hr>
             
-            <div class="setting-item">
-                <span>💾 Sauvegarde</span>
-                <button id="export-btn">Exporter</button>
-                <button id="import-btn">Importer</button>
+            <div class="setting-item gamepad-selectable" data-index="3">
+                <span>💾 Exporter</span>
+                <button id="export-btn">📤 Exporter</button>
             </div>
             
-            <div class="setting-item danger">
+            <div class="setting-item gamepad-selectable" data-index="4">
+                <span>💾 Importer</span>
+                <button id="import-btn">📥 Importer</button>
+            </div>
+            
+            <div class="setting-item danger gamepad-selectable" data-index="5">
                 <span>🗑️ Reset</span>
                 <button id="reset-btn" class="danger-btn">Recommencer</button>
             </div>
             
-            <button id="close-settings-btn" class="close-btn">Fermer</button>
+            <button id="close-settings-btn" class="close-btn gamepad-selectable" data-index="6">Fermer</button>
         </div>
     `;
     
     document.body.appendChild(modal);
     
-    // Event listeners
-    modal.querySelector('#sound-toggle-btn').addEventListener('click', () => {
-        gameState.soundEnabled = !gameState.soundEnabled;
-        const btn = modal.querySelector('#sound-toggle-btn');
-        btn.textContent = gameState.soundEnabled ? 'ON' : 'OFF';
-        btn.classList.toggle('active', gameState.soundEnabled);
-        saveGame();
-    });
+    // Récupérer les éléments navigables
+    settingsMenuItems = modal.querySelectorAll('.gamepad-selectable');
+    updateSettingsSelection();
     
-    modal.querySelector('#particles-toggle-btn').addEventListener('click', () => {
-        gameState.particlesEnabled = !gameState.particlesEnabled;
-        const btn = modal.querySelector('#particles-toggle-btn');
-        btn.textContent = gameState.particlesEnabled ? 'ON' : 'OFF';
-        btn.classList.toggle('active', gameState.particlesEnabled);
-        saveGame();
-    });
-    
-    modal.querySelector('#theme-select').addEventListener('change', (e) => {
-        applyTheme(e.target.value);
-    });
-    
+    // Event listeners souris/clavier
+    modal.querySelector('#sound-toggle-btn').addEventListener('click', toggleSettingsSound);
+    modal.querySelector('#particles-toggle-btn').addEventListener('click', toggleSettingsParticles);
+    modal.querySelector('#theme-prev').addEventListener('click', () => cycleTheme(-1));
+    modal.querySelector('#theme-next').addEventListener('click', () => cycleTheme(1));
     modal.querySelector('#export-btn').addEventListener('click', exportSave);
     modal.querySelector('#import-btn').addEventListener('click', importSave);
     modal.querySelector('#reset-btn').addEventListener('click', () => {
@@ -598,12 +604,86 @@ function openSettingsMenu() {
             resetGame();
         }
     });
-    
     modal.querySelector('#close-settings-btn').addEventListener('click', () => modal.remove());
-    
     modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.remove();
     });
+}
+
+function cycleTheme(direction) {
+    const currentIndex = THEMES.findIndex(t => t.id === gameState.currentTheme);
+    let newIndex = currentIndex + direction;
+    if (newIndex < 0) newIndex = THEMES.length - 1;
+    if (newIndex >= THEMES.length) newIndex = 0;
+    
+    const newTheme = THEMES[newIndex];
+    applyTheme(newTheme.id);
+    
+    // Mettre à jour l'affichage
+    const themeNameEl = document.getElementById('theme-current');
+    if (themeNameEl) themeNameEl.textContent = newTheme.name;
+}
+
+function toggleSettingsSound() {
+    gameState.soundEnabled = !gameState.soundEnabled;
+    const btn = document.querySelector('#sound-toggle-btn');
+    if (btn) {
+        btn.textContent = gameState.soundEnabled ? 'ON' : 'OFF';
+        btn.classList.toggle('active', gameState.soundEnabled);
+    }
+    saveGame();
+}
+
+function toggleSettingsParticles() {
+    gameState.particlesEnabled = !gameState.particlesEnabled;
+    const btn = document.querySelector('#particles-toggle-btn');
+    if (btn) {
+        btn.textContent = gameState.particlesEnabled ? 'ON' : 'OFF';
+        btn.classList.toggle('active', gameState.particlesEnabled);
+    }
+    saveGame();
+}
+
+function updateSettingsSelection() {
+    settingsMenuItems.forEach((item, index) => {
+        item.classList.toggle('gamepad-selected', index === settingsMenuIndex);
+    });
+}
+
+function navigateSettingsMenu(direction) {
+    const modal = document.querySelector('.settings-modal');
+    if (!modal) return;
+    
+    settingsMenuIndex += direction;
+    if (settingsMenuIndex < 0) settingsMenuIndex = settingsMenuItems.length - 1;
+    if (settingsMenuIndex >= settingsMenuItems.length) settingsMenuIndex = 0;
+    
+    updateSettingsSelection();
+    playSound('click');
+}
+
+function activateSettingsItem() {
+    const modal = document.querySelector('.settings-modal');
+    if (!modal) return;
+    
+    const item = settingsMenuItems[settingsMenuIndex];
+    if (!item) return;
+    
+    // Trouver le bouton dans l'item et l'activer
+    const btn = item.querySelector('button:not(.theme-arrow)');
+    const themeNext = item.querySelector('#theme-next');
+    
+    if (themeNext) {
+        // Pour le thème, on cycle vers le suivant
+        cycleTheme(1);
+        playSound('click');
+    } else if (btn) {
+        btn.click();
+        playSound('click');
+    } else if (item.classList.contains('close-btn')) {
+        modal.remove();
+        playSound('click');
+    }
 }
 
 // Menu Succès

@@ -161,28 +161,43 @@ function gamepadLoop() {
 // Traitement des entrées gamepad
 function processGamepadInput(gamepad) {
     const now = Date.now();
+    const settingsModal = document.querySelector('.settings-modal');
     
-    // Bouton A - Clic principal
+    // Bouton A - Clic principal OU activer item du menu settings
     if (isButtonPressed(gamepad, GAMEPAD_BUTTONS.A)) {
-        handleClick();
-        createClickEffect();
-        vibrateGamepad(30, 0.2);
+        if (settingsModal) {
+            if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.A)) {
+                activateSettingsItem();
+                vibrateGamepad(30, 0.3);
+            }
+        } else {
+            handleClick();
+            createClickEffect();
+            vibrateGamepad(30, 0.2);
+        }
     }
     
     // Bouton X - Acheter l'upgrade sélectionnée
     if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.X)) {
-        buySelectedUpgrade();
-        vibrateGamepad(50, 0.4);
+        if (!settingsModal) {
+            buySelectedUpgrade();
+            vibrateGamepad(50, 0.4);
+        }
     }
     
     // Bouton B - Fermer les modals
     if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.B)) {
-        closeAllModals();
+        if (settingsModal) {
+            settingsModal.remove();
+            playSound('click');
+        } else {
+            closeAllModals();
+        }
     }
     
     // Bouton Y - Ouvrir/fermer le menu settings
     if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.Y)) {
-        toggleModal('settings-modal');
+        openSettingsMenu();
     }
     
     // Start - Prestige (avec confirmation)
@@ -214,18 +229,41 @@ function processGamepadInput(gamepad) {
         cycleBuyMode(1);
     }
     
-    // D-Pad / Stick gauche - Navigation dans les upgrades
+    // D-Pad / Stick gauche - Navigation
     const leftY = gamepad.axes[GAMEPAD_AXES.LEFT_Y];
+    const leftX = gamepad.axes[GAMEPAD_AXES.LEFT_X];
     const dpadUp = gamepad.buttons[GAMEPAD_BUTTONS.DPAD_UP]?.pressed;
     const dpadDown = gamepad.buttons[GAMEPAD_BUTTONS.DPAD_DOWN]?.pressed;
+    const dpadLeft = gamepad.buttons[GAMEPAD_BUTTONS.DPAD_LEFT]?.pressed;
+    const dpadRight = gamepad.buttons[GAMEPAD_BUTTONS.DPAD_RIGHT]?.pressed;
     
     if (canRepeatAction('navigate', now)) {
+        // Navigation haut/bas
         if (dpadUp || leftY < -gamepadState.deadzone) {
-            navigateUpgrades(-1);
+            if (settingsModal) {
+                navigateSettingsMenu(-1);
+            } else {
+                navigateUpgrades(-1);
+            }
             gamepadState.lastActionTime['navigate'] = now;
         } else if (dpadDown || leftY > gamepadState.deadzone) {
-            navigateUpgrades(1);
+            if (settingsModal) {
+                navigateSettingsMenu(1);
+            } else {
+                navigateUpgrades(1);
+            }
             gamepadState.lastActionTime['navigate'] = now;
+        }
+        
+        // Navigation gauche/droite pour le thème dans settings
+        if (settingsModal && settingsMenuIndex === 2) { // Index 2 = thème
+            if (dpadLeft || leftX < -gamepadState.deadzone) {
+                cycleTheme(-1);
+                gamepadState.lastActionTime['navigate'] = now;
+            } else if (dpadRight || leftX > gamepadState.deadzone) {
+                cycleTheme(1);
+                gamepadState.lastActionTime['navigate'] = now;
+            }
         }
     }
     
