@@ -36,6 +36,7 @@ public/
 │   ├── gameLogic.js    # Logique : score, achats, sauvegarde
 │   ├── ui.js           # Interface : affichage, animations
 │   ├── events.js       # Événements spéciaux, combos
+│   ├── gamepad.js      # 🎮 Support manette (Xbox, PlayStation, etc.)
 │   └── main.js         # Initialisation
 └── images/             # Images et logos
 ```
@@ -48,6 +49,7 @@ public/
 - [x] Sauvegarde automatique (localStorage)
 - [x] **10 Boss GAFAM** (Windows Update → SKYNET GAFAM)
 - [x] **12 événements aléatoires**
+- [x] **Support Gamepad** (Xbox, PlayStation, manettes génériques)
 - [x] **15 niveaux de jauge** (Salle Info → Singularité Éternelle)
 - [x] **15 upgrades de prestige**
 - [x] Système de combo
