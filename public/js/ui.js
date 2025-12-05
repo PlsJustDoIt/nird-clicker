@@ -862,16 +862,30 @@ function processLaggedClick() {
 }
 
 // === MÉCANIQUE : MOVING ===
+let lastMoveX = 0;
+
 function startMovingMechanic(params) {
     showBossStatus(params.moveMessage, 'info');
+    lastMoveX = 0;
     
     bossTimers.moving = setInterval(() => {
         const clickZone = document.getElementById('boss-click-zone');
         if (clickZone) {
-            // Déplacement limité en pixels pour éviter le scroll
-            const randomX = Math.random() * 40 - 60; // -20px à +20px
-            const randomY = Math.random() * 30 - 15; // -15px à +15px
-            clickZone.style.transform = `translate(${randomX}px, ${randomY}px)`;
+            // Forcer un grand déplacement en X : alterner gauche/droite
+            let newX, newY;
+            
+            // Choisir un côté opposé à la position actuelle avec une grande amplitude
+            if (lastMoveX <= 0) {
+                newX = 80 + Math.random() * 70;  // +80 à +150 (droite)
+            } else {
+                newX = -80 - Math.random() * 70; // -80 à -150 (gauche)
+            }
+            
+            // Y complètement aléatoire pour plus de variété
+            newY = Math.random() * 80 - 40;  // -40 à +40 (aléatoire)
+            
+            lastMoveX = newX;
+            clickZone.style.transform = `translate(${newX}px, ${newY}px)`;
         }
     }, params.moveInterval);
 }
