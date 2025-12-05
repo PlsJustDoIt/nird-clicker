@@ -544,8 +544,21 @@ const PRESTIGE_UPGRADES = [
 ];
 
 // ============================================
-// BOSS GAFAM (10 boss)
+// BOSS GAFAM (10 boss avec mécaniques uniques)
 // ============================================
+// Mécaniques disponibles:
+// - 'classic': Cliquer X fois (défaut)
+// - 'regen': Le boss régénère sa vie si on ne clique pas pendant X secondes
+// - 'popups': Des pop-ups apparaissent et volent des clics, il faut les fermer
+// - 'invisible': Le boss devient invisible par moments
+// - 'timer': Timer très serré, il faut être rapide
+// - 'pattern': Reproduire un pattern de clics (QTE)
+// - 'shield': Bouclier périodique, attendre qu'il tombe
+// - 'lag': Les clics sont retardés
+// - 'moving': Le boss bouge sur l'écran
+// - 'chaos': Mélange de plusieurs mécaniques !
+// ============================================
+
 const BOSS_TYPES = [
     // === TIER 1 : CLASSIQUES ===
     {
@@ -555,7 +568,13 @@ const BOSS_TYPES = [
         message: 'Windows veut redémarrer votre ordinateur...',
         clicksRequired: 20,
         reward: 50,
-        color: '#0078d4'
+        color: '#0078d4',
+        mechanic: 'regen',
+        mechanicParams: {
+            regenDelay: 2000,      // Régénère après 2s sans clic
+            regenAmount: 3,        // Régénère 3 clics
+            regenMessage: '⚠️ Installation en cours...'
+        }
     },
     {
         id: 'google',
@@ -564,7 +583,13 @@ const BOSS_TYPES = [
         message: 'Google veut collecter vos données personnelles...',
         clicksRequired: 25,
         reward: 100,
-        color: '#4285f4'
+        color: '#4285f4',
+        mechanic: 'invisible',
+        mechanicParams: {
+            invisibleDuration: 1500,  // Invisible pendant 1.5s
+            visibleDuration: 3000,    // Visible pendant 3s
+            invisibleMessage: '🔍 Analyse de vos données...'
+        }
     },
     {
         id: 'facebook',
@@ -573,7 +598,14 @@ const BOSS_TYPES = [
         message: 'Facebook veut vous montrer des publicités ciblées...',
         clicksRequired: 30,
         reward: 150,
-        color: '#1877f2'
+        color: '#1877f2',
+        mechanic: 'popups',
+        mechanicParams: {
+            popupInterval: 2500,      // Popup toutes les 2.5s
+            popupDuration: 3000,      // Popup reste 3s
+            stolenClicks: 2,          // Vole 2 clics si pas fermé
+            popupTexts: ['📢 Pub: Achetez maintenant!', '👥 12 amis aiment ça', '🔔 Notification: Quelqu\'un vous a mentionné']
+        }
     },
     {
         id: 'amazon',
@@ -582,7 +614,12 @@ const BOSS_TYPES = [
         message: 'Amazon veut vous abonner à Prime...',
         clicksRequired: 35,
         reward: 200,
-        color: '#ff9900'
+        color: '#ff9900',
+        mechanic: 'timer',
+        mechanicParams: {
+            timeLimit: 15000,         // 15 secondes seulement !
+            timerMessage: '⏰ Livraison Express!'
+        }
     },
     {
         id: 'apple',
@@ -591,7 +628,14 @@ const BOSS_TYPES = [
         message: 'Apple veut vous enfermer dans son écosystème...',
         clicksRequired: 40,
         reward: 300,
-        color: '#555555'
+        color: '#555555',
+        mechanic: 'pattern',
+        mechanicParams: {
+            patternLength: 4,         // 4 touches à reproduire
+            patternKeys: ['⬆️', '⬇️', '⬅️', '➡️'],
+            patternTimeout: 2000,     // 2s pour chaque touche
+            patternMessage: '🔐 Reproduisez le code d\'accès!'
+        }
     },
     // === TIER 2 : AVANCÉS ===
     {
@@ -601,7 +645,12 @@ const BOSS_TYPES = [
         message: 'Teams se lance au démarrage et ne veut pas se fermer...',
         clicksRequired: 50,
         reward: 500,
-        color: '#6264a7'
+        color: '#6264a7',
+        mechanic: 'lag',
+        mechanicParams: {
+            lagDelay: 400,            // 0.4s de délai
+            lagMessage: '🔄 Connexion en cours...'
+        }
     },
     {
         id: 'tiktok',
@@ -610,7 +659,12 @@ const BOSS_TYPES = [
         message: 'TikTok veut monopoliser votre attention pendant des heures...',
         clicksRequired: 60,
         reward: 750,
-        color: '#000000'
+        color: '#000000',
+        mechanic: 'moving',
+        mechanicParams: {
+            moveInterval: 1500,       // Bouge toutes les 1.5s
+            moveMessage: '📱 Swipe pour continuer!'
+        }
     },
     {
         id: 'nvidia',
@@ -619,7 +673,13 @@ const BOSS_TYPES = [
         message: 'NVIDIA force l\'installation de GeForce Experience...',
         clicksRequired: 70,
         reward: 1000,
-        color: '#76b900'
+        color: '#76b900',
+        mechanic: 'shield',
+        mechanicParams: {
+            shieldDuration: 2000,     // Bouclier actif 2s
+            shieldCooldown: 3000,     // Pause de 3s entre boucliers
+            shieldMessage: '🛡️ GeForce Experience se protège!'
+        }
     },
     // === TIER 3 : BOSS LÉGENDAIRES ===
     {
@@ -629,7 +689,15 @@ const BOSS_TYPES = [
         message: 'L\'IA de Meta veut apprendre de toutes vos conversations...',
         clicksRequired: 100,
         reward: 2500,
-        color: '#0668E1'
+        color: '#0668E1',
+        mechanic: 'phases',
+        mechanicParams: {
+            phases: [
+                { percent: 100, mechanic: 'classic', message: '🤖 Analyse de vos messages...' },
+                { percent: 66, mechanic: 'popups', message: '📢 Injection de publicités!' },
+                { percent: 33, mechanic: 'invisible', message: '👁️ Mode fantôme activé!' }
+            ]
+        }
     },
     {
         id: 'skynet-gafam',
@@ -638,7 +706,13 @@ const BOSS_TYPES = [
         message: '⚠️ BOSS FINAL : Les GAFAM ont fusionné en une super-IA !',
         clicksRequired: 150,
         reward: 10000,
-        color: '#ff0000'
+        color: '#ff0000',
+        mechanic: 'chaos',
+        mechanicParams: {
+            chaosInterval: 5000,      // Change de mécanique toutes les 5s
+            chaosMechanics: ['regen', 'popups', 'shield', 'moving', 'lag'],
+            chaosMessage: '⚠️ CHAOS MODE ACTIVÉ!'
+        }
     }
 ];
 
@@ -676,41 +750,48 @@ const SKINS = [
 // ============================================
 const ACHIEVEMENTS = [
     // === CLICS ===
-    { id: 'first-click', name: 'Premier pas', description: 'Faites votre premier clic', condition: (state) => state.totalClicks >= 1, unlocked: false, icon: '👆' },
-    { id: 'hundred-clicks', name: 'Cliqueur assidu', description: '100 clics réalisés', condition: (state) => state.totalClicks >= 100, unlocked: false, icon: '💯' },
-    { id: 'thousand-clicks', name: 'Cliqueur fou', description: '1000 clics réalisés', condition: (state) => state.totalClicks >= 1000, unlocked: false, icon: '🔥' },
-    { id: 'tenthousand-clicks', name: 'Cliqueur légendaire', description: '10 000 clics réalisés', condition: (state) => state.totalClicks >= 10000, unlocked: false, icon: '⚡' },
-    { id: 'hundred-thousand-clicks', name: 'Cliqueur cosmique', description: '100 000 clics réalisés', condition: (state) => state.totalClicks >= 100000, unlocked: false, icon: '🌟' },
+    { id: 'first-click', name: 'Premier pas', description: 'Faites votre premier clic', condition: (/** @type {{ totalClicks: number; }} */ state) => state.totalClicks >= 1, unlocked: false, icon: '👆' },
+    { id: 'hundred-clicks', name: 'Cliqueur assidu', description: '100 clics réalisés', condition: (/** @type {{ totalClicks: number; }} */ state) => state.totalClicks >= 100, unlocked: false, icon: '💯' },
+    { id: 'thousand-clicks', name: 'Cliqueur fou', description: '1000 clics réalisés', condition: (/** @type {{ totalClicks: number; }} */ state) => state.totalClicks >= 1000, unlocked: false, icon: '🔥' },
+    { id: 'tenthousand-clicks', name: 'Cliqueur légendaire', description: '10 000 clics réalisés', condition: (/** @type {{ totalClicks: number; }} */ state) => state.totalClicks >= 10000, unlocked: false, icon: '⚡' },
+    { id: 'hundred-thousand-clicks', name: 'Cliqueur cosmique', description: '100 000 clics réalisés', condition: (/** @type {{ totalClicks: number; }} */ state) => state.totalClicks >= 100000, unlocked: false, icon: '🌟' },
     // === UPGRADES ===
-    { id: 'first-upgrade', name: 'Investisseur', description: 'Achetez votre première amélioration', condition: (state) => state.totalUpgrades >= 1, unlocked: false, icon: '💰' },
-    { id: 'linux-master', name: 'Maître Manchot', description: '10 Install Parties organisées', condition: (state) => UPGRADES.find(u => u.id === 'install-party')?.owned >= 10, unlocked: false, icon: '🐧' },
-    { id: 'datacenter-owner', name: 'Baron du DataCenter', description: 'Possédez 5 DataCenters verts', condition: (state) => UPGRADES.find(u => u.id === 'datacenter-vert')?.owned >= 5, unlocked: false, icon: '🌱' },
-    { id: 'space-pioneer', name: 'Pionnier Spatial', description: 'Possédez une Station Orbitale', condition: (state) => UPGRADES.find(u => u.id === 'station-orbitale')?.owned >= 1, unlocked: false, icon: '🛸' },
-    { id: 'time-master', name: 'Maître du Temps', description: 'Possédez un Accélérateur Temporel', condition: (state) => UPGRADES.find(u => u.id === 'accelerateur-temporel')?.owned >= 1, unlocked: false, icon: '⏰' },
+    { id: 'first-upgrade', name: 'Investisseur', description: 'Achetez votre première amélioration', condition: (/** @type {{ totalUpgrades: number; }} */ state) => state.totalUpgrades >= 1, unlocked: false, icon: '💰' },
+    // @ts-ignore
+    // @ts-ignore
+    { id: 'linux-master', name: 'Maître Manchot', description: '10 Install Parties organisées', condition: (/** @type {any} */ state) => UPGRADES.find(u => u.id === 'install-party')?.owned >= 10, unlocked: false, icon: '🐧' },
+    // @ts-ignore
+    // @ts-ignore
+    { id: 'datacenter-owner', name: 'Baron du DataCenter', description: 'Possédez 5 DataCenters verts', condition: (/** @type {any} */ state) => UPGRADES.find(u => u.id === 'datacenter-vert')?.owned >= 5, unlocked: false, icon: '🌱' },
+    // @ts-ignore
+    { id: 'space-pioneer', name: 'Pionnier Spatial', description: 'Possédez une Station Orbitale', condition: (/** @type {any} */ state) => UPGRADES.find(u => u.id === 'station-orbitale')?.owned >= 1, unlocked: false, icon: '🛸' },
+    // @ts-ignore
+    { id: 'time-master', name: 'Maître du Temps', description: 'Possédez un Accélérateur Temporel', condition: (/** @type {any} */ state) => UPGRADES.find(u => u.id === 'accelerateur-temporel')?.owned >= 1, unlocked: false, icon: '⏰' },
     // === BOSS ===
-    { id: 'boss-defeated', name: 'Anti-GAFAM', description: 'Fermez une fenêtre GAFAM', condition: (state) => state.bossDefeated >= 1, unlocked: false, icon: '🛡️' },
-    { id: 'boss-hunter', name: 'Chasseur de GAFAM', description: 'Fermez 10 fenêtres GAFAM', condition: (state) => state.bossDefeated >= 10, unlocked: false, icon: '⚔️' },
-    { id: 'boss-slayer', name: 'Tueur de GAFAM', description: 'Fermez 50 fenêtres GAFAM', condition: (state) => state.bossDefeated >= 50, unlocked: false, icon: '💀' },
-    { id: 'gafam-exterminator', name: 'Exterminateur GAFAM', description: 'Fermez 100 fenêtres GAFAM', condition: (state) => state.bossDefeated >= 100, unlocked: false, icon: '☠️' },
+    { id: 'boss-defeated', name: 'Anti-GAFAM', description: 'Fermez une fenêtre GAFAM', condition: (/** @type {{ bossDefeated: number; }} */ state) => state.bossDefeated >= 1, unlocked: false, icon: '🛡️' },
+    { id: 'boss-hunter', name: 'Chasseur de GAFAM', description: 'Fermez 10 fenêtres GAFAM', condition: (/** @type {{ bossDefeated: number; }} */ state) => state.bossDefeated >= 10, unlocked: false, icon: '⚔️' },
+    { id: 'boss-slayer', name: 'Tueur de GAFAM', description: 'Fermez 50 fenêtres GAFAM', condition: (/** @type {{ bossDefeated: number; }} */ state) => state.bossDefeated >= 50, unlocked: false, icon: '💀' },
+    { id: 'gafam-exterminator', name: 'Exterminateur GAFAM', description: 'Fermez 100 fenêtres GAFAM', condition: (/** @type {{ bossDefeated: number; }} */ state) => state.bossDefeated >= 100, unlocked: false, icon: '☠️' },
     // === SCORE ===
-    { id: 'village-complete', name: 'Village Complet', description: 'Atteignez le niveau "Village Numérique"', condition: (state) => state.totalScore >= 15000, unlocked: false, icon: '🏘️' },
-    { id: 'millionaire', name: 'Millionnaire Libre', description: 'Atteignez 1 million de points', condition: (state) => state.totalScore >= 1000000, unlocked: false, icon: '💎' },
-    { id: 'billionaire', name: 'Milliardaire Libre', description: 'Atteignez 1 milliard de points', condition: (state) => state.totalScore >= 1000000000, unlocked: false, icon: '💠' },
-    { id: 'trillionaire', name: 'Trillionaire Cosmique', description: 'Atteignez 1 trillion de points', condition: (state) => state.totalScore >= 1000000000000, unlocked: false, icon: '🌌' },
+    { id: 'village-complete', name: 'Village Complet', description: 'Atteignez le niveau "Village Numérique"', condition: (/** @type {{ totalScore: number; }} */ state) => state.totalScore >= 15000, unlocked: false, icon: '🏘️' },
+    { id: 'millionaire', name: 'Millionnaire Libre', description: 'Atteignez 1 million de points', condition: (/** @type {{ totalScore: number; }} */ state) => state.totalScore >= 1000000, unlocked: false, icon: '💎' },
+    { id: 'billionaire', name: 'Milliardaire Libre', description: 'Atteignez 1 milliard de points', condition: (/** @type {{ totalScore: number; }} */ state) => state.totalScore >= 1000000000, unlocked: false, icon: '💠' },
+    { id: 'trillionaire', name: 'Trillionaire Cosmique', description: 'Atteignez 1 trillion de points', condition: (/** @type {{ totalScore: number; }} */ state) => state.totalScore >= 1000000000000, unlocked: false, icon: '🌌' },
     // === QUIZ & COMBO ===
-    { id: 'quiz-master', name: 'Quiz Master', description: 'Répondez correctement à 5 quiz', condition: (state) => state.quizCorrect >= 5, unlocked: false, icon: '🧠' },
-    { id: 'quiz-genius', name: 'Génie du Quiz', description: 'Répondez correctement à 25 quiz', condition: (state) => state.quizCorrect >= 25, unlocked: false, icon: '🎓' },
-    { id: 'combo-master', name: 'Combo Master', description: 'Atteignez un combo de 50', condition: (state) => state.maxCombo >= 50, unlocked: false, icon: '⚡' },
-    { id: 'combo-legend', name: 'Légende du Combo', description: 'Atteignez un combo de 200', condition: (state) => state.maxCombo >= 200, unlocked: false, icon: '🏆' },
+    { id: 'quiz-master', name: 'Quiz Master', description: 'Répondez correctement à 5 quiz', condition: (/** @type {{ quizCorrect: number; }} */ state) => state.quizCorrect >= 5, unlocked: false, icon: '🧠' },
+    { id: 'quiz-genius', name: 'Génie du Quiz', description: 'Répondez correctement à 25 quiz', condition: (/** @type {{ quizCorrect: number; }} */ state) => state.quizCorrect >= 25, unlocked: false, icon: '🎓' },
+    { id: 'combo-master', name: 'Combo Master', description: 'Atteignez un combo de 50', condition: (/** @type {{ maxCombo: number; }} */ state) => state.maxCombo >= 50, unlocked: false, icon: '⚡' },
+    { id: 'combo-legend', name: 'Légende du Combo', description: 'Atteignez un combo de 200', condition: (/** @type {{ maxCombo: number; }} */ state) => state.maxCombo >= 200, unlocked: false, icon: '🏆' },
     // === PRESTIGE ===
-    { id: 'prestige-1', name: 'Renaissance', description: 'Effectuez votre premier prestige', condition: (state) => state.prestigeCount >= 1 || state.prestigeLevel >= 1, unlocked: false, icon: '🔄' },
-    { id: 'prestige-5', name: 'Réincarnation', description: 'Effectuez 5 prestiges', condition: (state) => state.prestigeCount >= 5 || state.prestigeLevel >= 5, unlocked: false, icon: '🌀' },
-    { id: 'prestige-master', name: 'Maître du Prestige', description: 'Effectuez 20 prestiges', condition: (state) => state.prestigeCount >= 20 || state.prestigeLevel >= 20, unlocked: false, icon: '👑' },
+    { id: 'prestige-1', name: 'Renaissance', description: 'Effectuez votre premier prestige', condition: (/** @type {{ prestigeCount: number; prestigeLevel: number; }} */ state) => state.prestigeCount >= 1 || state.prestigeLevel >= 1, unlocked: false, icon: '🔄' },
+    { id: 'prestige-5', name: 'Réincarnation', description: 'Effectuez 5 prestiges', condition: (/** @type {{ prestigeCount: number; prestigeLevel: number; }} */ state) => state.prestigeCount >= 5 || state.prestigeLevel >= 5, unlocked: false, icon: '🌀' },
+    { id: 'prestige-master', name: 'Maître du Prestige', description: 'Effectuez 20 prestiges', condition: (/** @type {{ prestigeCount: number; prestigeLevel: number; }} */ state) => state.prestigeCount >= 20 || state.prestigeLevel >= 20, unlocked: false, icon: '👑' },
     // === COLLECTIONS ===
-    { id: 'skin-collector', name: 'Collectionneur', description: 'Possédez 5 skins différents', condition: (state) => (state.skinsUnlocked && state.skinsUnlocked.length >= 5), unlocked: false, icon: '🎨' },
-    { id: 'skin-master', name: 'Maître des Skins', description: 'Possédez 10 skins différents', condition: (state) => (state.skinsUnlocked && state.skinsUnlocked.length >= 10), unlocked: false, icon: '🖼️' },
-    { id: 'all-click-upgrades', name: 'Completionniste Clic', description: 'Possédez toutes les améliorations de clic', condition: (state) => CLICK_UPGRADES.every(u => u.purchased), unlocked: false, icon: '✅' },
-    { id: 'singularity-reached', name: 'Singularité Atteinte', description: 'Atteignez le niveau "Singularité Éternelle"', condition: (state) => state.currentVillageLevel >= 14, unlocked: false, icon: '✨' }
+    { id: 'skin-collector', name: 'Collectionneur', description: 'Possédez 5 skins différents', condition: (/** @type {{ skinsUnlocked: string | any[]; }} */ state) => (state.skinsUnlocked && state.skinsUnlocked.length >= 5), unlocked: false, icon: '🎨' },
+    { id: 'skin-master', name: 'Maître des Skins', description: 'Possédez 10 skins différents', condition: (/** @type {{ skinsUnlocked: string | any[]; }} */ state) => (state.skinsUnlocked && state.skinsUnlocked.length >= 10), unlocked: false, icon: '🖼️' },
+    // @ts-ignore
+    { id: 'all-click-upgrades', name: 'Completionniste Clic', description: 'Possédez toutes les améliorations de clic', condition: (/** @type {any} */ state) => CLICK_UPGRADES.every(u => u.purchased), unlocked: false, icon: '✅' },
+    { id: 'singularity-reached', name: 'Singularité Atteinte', description: 'Atteignez le niveau "Singularité Éternelle"', condition: (/** @type {{ currentVillageLevel: number; }} */ state) => state.currentVillageLevel >= 14, unlocked: false, icon: '✨' }
 ];
 
 // ============================================

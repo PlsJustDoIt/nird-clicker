@@ -55,6 +55,8 @@ function checkMilestoneEvents() {
 function showMilestoneModal(event) {
     playSound('levelup');
     
+    document.body.classList.add('modal-open'); // Bloquer le scroll
+    
     const modal = document.createElement('div');
     modal.className = 'milestone-modal';
     modal.innerHTML = `
@@ -62,7 +64,7 @@ function showMilestoneModal(event) {
             <h2>${event.title}</h2>
             <p>${event.message}</p>
             <div class="milestone-celebration">🎉🎊🎉</div>
-            <button onclick="this.parentElement.parentElement.remove()">Continuer</button>
+            <button onclick="document.body.classList.remove('modal-open'); this.parentElement.parentElement.remove()">Continuer</button>
         </div>
     `;
     document.body.appendChild(modal);
@@ -337,6 +339,7 @@ function triggerFacebookAttack() {
     
     // Afficher le modal
     modal.classList.remove('hidden');
+    document.body.classList.add('modal-open'); // Bloquer le scroll;
     
     // Montrer une notification
     if (typeof showNotification === 'function') {
@@ -453,6 +456,7 @@ function closeFacebookAttack() {
     
     // Cacher le modal
     modal.classList.add('hidden');
+    document.body.classList.remove('modal-open'); // Réactiver le scroll
     if (alertScreen) alertScreen.classList.remove('hidden');
     if (videoScreen) videoScreen.classList.add('hidden');
     

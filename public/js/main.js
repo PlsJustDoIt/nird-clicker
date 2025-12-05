@@ -312,7 +312,7 @@ window.DEBUG = {
         updateUI();
     },
     resetGame: resetGame,
-    triggerBoss: () => showBoss(GAFAM_BOSSES[gameState.currentBossIndex || 0]),
+    triggerBoss: () => showBoss(),
     triggerQuiz: showQuiz,
     addPrestige: (amount) => {
         gameState.prestigePoints += amount;

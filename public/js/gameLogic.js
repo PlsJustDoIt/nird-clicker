@@ -609,6 +609,8 @@ function showQuiz() {
     shuffleArray(shuffledAnswers);
     const newCorrectIndex = shuffledAnswers.indexOf(correctAnswer);
     
+    document.body.classList.add('modal-open'); // Bloquer le scroll
+    
     const modal = document.createElement('div');
     modal.className = 'quiz-modal';
     modal.innerHTML = `
@@ -659,6 +661,7 @@ function skipQuiz() {
 
 function closeQuiz() {
     currentQuiz = null;
+    document.body.classList.remove('modal-open'); // Réactiver le scroll
     const modal = document.querySelector('.quiz-modal');
     if (modal) modal.remove();
 }

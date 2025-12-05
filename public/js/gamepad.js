@@ -455,54 +455,78 @@ function processGamepadInput(gamepad) {
     const dpadLeft = gamepad.buttons[GAMEPAD_BUTTONS.DPAD_LEFT]?.pressed;
     const dpadRight = gamepad.buttons[GAMEPAD_BUTTONS.DPAD_RIGHT]?.pressed;
     
+    // Vérifier si le boss pattern est actif
+    const bossPatternActive = typeof currentBoss !== 'undefined' && currentBoss && currentBoss.mechanic === 'pattern';
+    
     if (canRepeatAction('navigate', now)) {
-        // Navigation haut/bas
-        if (dpadUp || leftY < -gamepadState.deadzone) {
-            if (settingsModal) {
-                navigateSettingsMenu(-1);
-            } else if (quizModal) {
-                navigateQuizAnswers(-1);
-            } else if (!prestigePopup) {
-                navigateUpgrades('up');
-            }
-            gamepadState.lastActionTime['navigate'] = now;
-        } else if (dpadDown || leftY > gamepadState.deadzone) {
-            if (settingsModal) {
-                navigateSettingsMenu(1);
-            } else if (quizModal) {
-                navigateQuizAnswers(1);
-            } else if (!prestigePopup) {
-                navigateUpgrades('down');
-            }
-            gamepadState.lastActionTime['navigate'] = now;
-        }
-        
-        // Navigation gauche/droite
-        if (prestigePopup) {
-            // Navigation dans la popup prestige
-            if (dpadLeft || leftX < -gamepadState.deadzone) {
-                navigatePrestigePopup(-1);
+        // Si boss pattern actif, utiliser le D-pad pour le pattern
+        if (bossPatternActive && typeof handlePatternGamepad === 'function') {
+            if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.DPAD_UP) || (leftY < -0.7 && canRepeatAction('pattern', now))) {
+                handlePatternGamepad('up');
+                gamepadState.lastActionTime['pattern'] = now;
                 gamepadState.lastActionTime['navigate'] = now;
-            } else if (dpadRight || leftX > gamepadState.deadzone) {
-                navigatePrestigePopup(1);
+            } else if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.DPAD_DOWN) || (leftY > 0.7 && canRepeatAction('pattern', now))) {
+                handlePatternGamepad('down');
+                gamepadState.lastActionTime['pattern'] = now;
+                gamepadState.lastActionTime['navigate'] = now;
+            } else if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.DPAD_LEFT) || (leftX < -0.7 && canRepeatAction('pattern', now))) {
+                handlePatternGamepad('left');
+                gamepadState.lastActionTime['pattern'] = now;
+                gamepadState.lastActionTime['navigate'] = now;
+            } else if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.DPAD_RIGHT) || (leftX > 0.7 && canRepeatAction('pattern', now))) {
+                handlePatternGamepad('right');
+                gamepadState.lastActionTime['pattern'] = now;
                 gamepadState.lastActionTime['navigate'] = now;
             }
-        } else if (settingsModal && settingsMenuIndex === 2) { // Index 2 = thème
-            if (dpadLeft || leftX < -gamepadState.deadzone) {
-                cycleTheme(-1);
+        } else {
+            // Navigation normale haut/bas
+            if (dpadUp || leftY < -gamepadState.deadzone) {
+                if (settingsModal) {
+                    navigateSettingsMenu(-1);
+                } else if (quizModal) {
+                    navigateQuizAnswers(-1);
+                } else if (!prestigePopup) {
+                    navigateUpgrades('up');
+                }
                 gamepadState.lastActionTime['navigate'] = now;
-            } else if (dpadRight || leftX > gamepadState.deadzone) {
-                cycleTheme(1);
+            } else if (dpadDown || leftY > gamepadState.deadzone) {
+                if (settingsModal) {
+                    navigateSettingsMenu(1);
+                } else if (quizModal) {
+                    navigateQuizAnswers(1);
+                } else if (!prestigePopup) {
+                    navigateUpgrades('down');
+                }
                 gamepadState.lastActionTime['navigate'] = now;
             }
-        } else if (!settingsModal && isGridLayout()) {
-            // Navigation gauche/droite pour les grilles (skins)
-            if (dpadLeft || leftX < -gamepadState.deadzone) {
-                navigateUpgrades('left');
-                gamepadState.lastActionTime['navigate'] = now;
-            } else if (dpadRight || leftX > gamepadState.deadzone) {
-                navigateUpgrades('right');
-                gamepadState.lastActionTime['navigate'] = now;
+            
+            // Navigation gauche/droite
+            if (prestigePopup) {
+                // Navigation dans la popup prestige
+                if (dpadLeft || leftX < -gamepadState.deadzone) {
+                    navigatePrestigePopup(-1);
+                    gamepadState.lastActionTime['navigate'] = now;
+                } else if (dpadRight || leftX > gamepadState.deadzone) {
+                    navigatePrestigePopup(1);
+                    gamepadState.lastActionTime['navigate'] = now;
+                }
+            } else if (settingsModal && settingsMenuIndex === 2) { // Index 2 = thème
+                if (dpadLeft || leftX < -gamepadState.deadzone) {
+                    cycleTheme(-1);
+                    gamepadState.lastActionTime['navigate'] = now;
+                } else if (dpadRight || leftX > gamepadState.deadzone) {
+                    cycleTheme(1);
+                    gamepadState.lastActionTime['navigate'] = now;
+                }
+            } else if (!settingsModal && isGridLayout()) {
+                // Navigation gauche/droite pour les grilles (skins)
+                if (dpadLeft || leftX < -gamepadState.deadzone) {
+                    navigateUpgrades('left');
+                    gamepadState.lastActionTime['navigate'] = now;
+                } else if (dpadRight || leftX > gamepadState.deadzone) {
+                    navigateUpgrades('right');
+                    gamepadState.lastActionTime['navigate'] = now;
+                }
             }
         }
     }
