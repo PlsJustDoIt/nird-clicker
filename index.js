@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 
 // Configuration
-const PORT = process.env.PORT || 45975;
+const PORT = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === "production";
 const leaderboardEnabled = process.env.LEADERBOARD_ENABLED === "true";
 
