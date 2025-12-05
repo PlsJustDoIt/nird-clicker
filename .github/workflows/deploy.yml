@@ -62,7 +62,7 @@ jobs:
           command_timeout: 30m
           script: |
             cd /var/www/nird-clicker
-            npm install --production
+            npm ci --production
             pm2 reload nird-clicker || pm2 start ecosystem.config.cjs
             pm2 save
             echo "🎉 Deployed successfully!"
