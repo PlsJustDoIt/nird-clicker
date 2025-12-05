@@ -1082,6 +1082,17 @@ function clearBossMechanicTimers() {
             delete bossTimers[key];
         }
     });
+    
+    // Réinitialiser les états des mécaniques pour éviter les bugs (bouclier/invisible infini)
+    bossState.shieldActive = false;
+    bossState.invisible = false;
+    
+    // Retirer les classes visuelles du bouton
+    const btn = document.getElementById('boss-click-btn');
+    if (btn) {
+        btn.classList.remove('boss-shielded');
+        btn.classList.remove('boss-invisible');
+    }
 }
 
 function closeBoss(victory = true) {
