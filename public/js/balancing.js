@@ -656,7 +656,7 @@ const SKINS = [
     { id: 'blackhole', name: 'Trou Noir', emoji: '🕳️', cost: 1000000000 },
     { id: 'star', name: 'Superstar', emoji: '⭐', cost: 5000000000 },
     // === SECRET ===
-    { id: 'star-of-david', name: '???', emoji: '❓', cost: 1000000000000, hidden: true, image: 'images/Star_of_David.png', unlockedName: 'Étoile Secrète' }
+    { id: 'star-of-david', name: '???', emoji: '❓', cost: 1000000000000000, hidden: true, image: 'images/Star_of_David.png', unlockedName: 'Étoile Secrète' }
 ];
 
 // ============================================
