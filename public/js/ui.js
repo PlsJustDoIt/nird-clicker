@@ -833,7 +833,12 @@ function applySkin(skinId) {
         gameState.currentSkin = skinId;
         const clicker = document.querySelector('#main-clicker .pc-icon');
         if (clicker) {
-            clicker.textContent = skin.emoji;
+            // Si le skin a une image, l'afficher, sinon utiliser l'emoji
+            if (skin.image) {
+                clicker.innerHTML = `<img src="${skin.image}" alt="${skin.unlockedName || skin.name}" class="clicker-skin-image">`;
+            } else {
+                clicker.textContent = skin.emoji;
+            }
         }
         saveGame();
     }
@@ -890,11 +895,21 @@ function renderSkins() {
         const isActive = gameState.currentSkin === skin.id;
         const canAfford = owned || gameState.score >= (skin.cost || 0);
         
+        // Si c'est un skin caché et pas encore débloqué, ne l'afficher que si on peut se le permettre
+        if (skin.hidden && !owned && !canAfford) return;
+        
         const el = document.createElement('div');
-        el.className = `skin-item ${isActive ? 'active' : ''} ${!canAfford && !owned ? 'locked' : ''}`;
+        el.className = `skin-item ${isActive ? 'active' : ''} ${!canAfford && !owned ? 'locked' : ''} ${skin.hidden ? 'secret-skin' : ''}`;
+        
+        // Afficher l'image si le skin est débloqué et a une image, sinon l'emoji
+        const displayName = owned && skin.unlockedName ? skin.unlockedName : skin.name;
+        const iconContent = owned && skin.image 
+            ? `<img src="${skin.image}" alt="${displayName}" class="skin-image">` 
+            : skin.emoji;
+        
         el.innerHTML = `
-            <div class="skin-icon">${skin.emoji}</div>
-            <div class="skin-name">${skin.name}</div>
+            <div class="skin-icon">${iconContent}</div>
+            <div class="skin-name">${displayName}</div>
             ${!owned && skin.cost > 0 ? `<div class="skin-cost">${formatNumber(skin.cost)} pts</div>` : ''}
             ${isActive ? '<div class="skin-badge">✓</div>' : ''}
         `;

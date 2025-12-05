@@ -174,6 +174,13 @@ body {
     animation: float 3s ease-in-out infinite;
 }
 
+.pc-icon .clicker-skin-image {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+}
+
 @keyframes float {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
@@ -443,6 +450,23 @@ body {
     font-size: 0.75rem;
     color: var(--accent-warning);
     margin-top: 0.25rem;
+}
+
+.skin-item.secret-skin {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    border: 2px solid gold;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.skin-item.secret-skin:hover {
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+}
+
+.skin-item .skin-icon .skin-image {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    border-radius: 4px;
 }
 
 /* Missions Content */
