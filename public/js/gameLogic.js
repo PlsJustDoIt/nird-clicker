@@ -142,6 +142,12 @@ function playSound(type) {
     }
 }
 
+// Calcul de la vraie puissance de clic (avec bonus prestige)
+function getEffectiveClickPower() {
+    const prestigeBonus = 1 + (gameState.prestigeLevel * PRESTIGE_BONUS_PER_LEVEL);
+    return Math.floor(gameState.clickPower * prestigeBonus);
+}
+
 // Calcul du coût d'une upgrade
 function getUpgradeCost(upgrade) {
     return Math.floor(upgrade.baseCost * Math.pow(COST_MULTIPLIER, upgrade.owned));
@@ -165,6 +171,8 @@ function calculateProductionPerSecond() {
         if (effect.type === 'production_doubled') multiplier *= 2;
         if (effect.type === 'production_tripled') multiplier *= 3;
         if (effect.type === 'production_x5') multiplier *= 5;
+        if (effect.type === 'production_x10') multiplier *= 10;
+        if (effect.type === 'production_x20') multiplier *= 20;
         if (effect.type === 'production_halved') multiplier *= 0.5;
         if (effect.type === 'clicks_only') multiplier = 0;
     });
@@ -175,9 +183,8 @@ function calculateProductionPerSecond() {
 
 // Gestion du clic
 function handleClick() {
-    // Bonus de prestige sur les clics
-    const prestigeBonus = 1 + (gameState.prestigeLevel * PRESTIGE_BONUS_PER_LEVEL);
-    const points = Math.floor(gameState.clickPower * prestigeBonus);
+    // Utiliser la vraie puissance de clic (avec bonus prestige)
+    const points = getEffectiveClickPower();
     
     gameState.score += points;
     gameState.totalScore += points;

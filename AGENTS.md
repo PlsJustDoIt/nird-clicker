@@ -4,9 +4,9 @@
 
 | Rôle | Responsabilités | Fichiers |
 |------|-----------------|----------|
-| **Dev 1 (Cœur)** | Logique du jeu, calculs, progression | `js/gameLogic.js`, `js/gameData.js` |
+| **Dev 1 (Cœur)** | Logique du jeu, calculs, progression | `js/gameLogic.js` |
 | **Dev 2 (Interface)** | Composants UI, animations | `js/ui.js`, `styles/style.css` |
-| **Game Designer** | Textes, descriptions, équilibrage | `js/gameData.js` (UPGRADES, textes) |
+| **Game Designer** | Textes, descriptions, équilibrage | `js/balancing.js` ⭐ |
 | **Graphiste** | Images, icônes, polish visuel | `images/`, `styles/style.css` |
 | **DevOps** | Déploiement, Git, tests | `deploy_script.sh`, commits |
 
@@ -31,7 +31,8 @@ public/
 ├── styles/
 │   └── style.css       # Tous les styles
 ├── js/
-│   ├── gameData.js     # Données : upgrades, événements, constantes
+│   ├── balancing.js    # ⭐ ÉQUILIBRAGE : upgrades, coûts, progression
+│   ├── gameData.js     # (Fichier de compatibilité, vide)
 │   ├── gameLogic.js    # Logique : score, achats, sauvegarde
 │   ├── ui.js           # Interface : affichage, animations
 │   ├── events.js       # Événements spéciaux, combos
@@ -42,12 +43,13 @@ public/
 ## 🎮 Fonctionnalités implémentées
 
 - [x] Système de clic avec animation
-- [x] 8 types d'upgrades (Éco-délégué → Libération Totale)
-- [x] 4 améliorations de clic
+- [x] **20 types d'upgrades** (Éco-délégué → Singularité Libre)
+- [x] **12 améliorations de clic** (Souris → Superposition Temporelle)
 - [x] Sauvegarde automatique (localStorage)
-- [x] Boss "Windows Update" à fermer
-- [x] Événements aléatoires
-- [x] Jauge de résistance (7 niveaux de village)
+- [x] **10 Boss GAFAM** (Windows Update → SKYNET GAFAM)
+- [x] **12 événements aléatoires**
+- [x] **15 niveaux de jauge** (Salle Info → Singularité Éternelle)
+- [x] **15 upgrades de prestige**
 - [x] Système de combo
 - [x] Succès/Achievements
 - [x] Gains hors-ligne
@@ -56,9 +58,9 @@ public/
 ## 📝 Améliorations possibles
 
 ### Pour le Game Designer
-- Ajouter plus de textes pédagogiques NIRD dans `gameData.js`
-- Équilibrer les coûts des upgrades
-- Créer de nouveaux événements aléatoires
+- Modifier `js/balancing.js` pour ajuster les coûts et productions
+- Ajouter de nouvelles upgrades ou événements
+- Équilibrer la courbe de progression
 
 ### Pour le Graphiste
 - Ajouter des images/icônes personnalisées
@@ -67,7 +69,7 @@ public/
 
 ### Pour les Devs
 - Ajouter des sons (optionnel)
-- Créer un système de prestige/rebirth
+- Améliorer le système de prestige
 - Ajouter un tableau des scores
 
 ## 🐛 Debug

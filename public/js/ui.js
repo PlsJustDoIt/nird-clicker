@@ -47,9 +47,13 @@ function updateStatsDisplay() {
     }
 }
 
-// Mise à jour de la puissance de clic
+// Mise à jour de la puissance de clic (avec bonus prestige)
 function updateClickPower() {
-    document.getElementById('click-power').textContent = gameState.clickPower;
+    const effectivePower = getEffectiveClickPower();
+    const clickPowerEl = document.getElementById('click-power');
+    if (clickPowerEl) {
+        clickPowerEl.textContent = effectivePower;
+    }
 }
 
 // Mise à jour du combo
@@ -660,7 +664,7 @@ function openStatsMenu() {
                 </div>
                 <div class="stat-item">
                     <span class="stat-label">Puissance de clic</span>
-                    <span class="stat-value">${gameState.clickPower}</span>
+                    <span class="stat-value">${getEffectiveClickPower()}</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-label">GAFAM vaincus</span>
