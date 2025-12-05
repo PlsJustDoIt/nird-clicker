@@ -876,7 +876,12 @@ function triggerEvent(event) {
 // ============================================
 // SAUVEGARDE / CHARGEMENT
 // ============================================
+let isResetting = false;
+
 function saveGame() {
+    // Ne pas sauvegarder si on est en train de reset
+    if (isResetting) return;
+    
     const saveData = {
         score: gameState.score,
         totalScore: gameState.totalScore,
@@ -990,10 +995,24 @@ function loadGame() {
 
 // Reset du jeu
 function resetGame() {
-    if (confirm('⚠️ Voulez-vous vraiment recommencer ? Toute progression sera perdue !')) {
-        localStorage.removeItem('nirdClicker_save');
-        location.reload();
+    console.log('Reset du jeu...');
+    
+    // Bloquer la sauvegarde automatique
+    isResetting = true;
+    
+    try {
+        // Supprimer TOUT le localStorage
+        localStorage.clear();
+        console.log('localStorage.clear() exécuté');
+    } catch (e) {
+        console.error('Erreur lors du clear:', e);
     }
+    
+    // Vérification
+    console.log('Après suppression, nirdClicker_save =', localStorage.getItem('nirdClicker_save'));
+    
+    // Forcer le rechargement immédiatement
+    window.location.reload(true);
 }
 
 // ============================================
