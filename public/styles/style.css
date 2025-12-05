@@ -923,6 +923,8 @@ body {
     font-weight: 500;
     animation: slideIn 0.3s ease;
     max-width: 350px;
+    pointer-events: none;
+    user-select: none;
 }
 
 .notification-success {
