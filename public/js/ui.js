@@ -15,6 +15,7 @@ function updateUI() {
     updateGauge();
     updateClickPower();
     updatePrestigeButton();
+    updatePrestigeDisplay();
     updateMissionsUI();
     updateVillageVisual();
 }
@@ -42,8 +43,23 @@ function updateStatsDisplay() {
     
     // Prestige info si disponible
     const prestigeInfo = document.getElementById('prestige-info');
-    if (prestigeInfo && gameState.prestigeLevel > 0) {
-        prestigeInfo.textContent = `Prestige: ${gameState.prestigeLevel} (+${gameState.prestigeLevel * 10}%)`;
+    const prestigeTab = document.getElementById('prestige-tab');
+    if (gameState.prestigeLevel > 0) {
+        if (prestigeInfo) {
+            prestigeInfo.textContent = `Prestige: ${gameState.prestigeLevel} (+${gameState.prestigeLevel * 10}%)`;
+            prestigeInfo.classList.add('visible');
+        }
+        if (prestigeTab) {
+            prestigeTab.style.display = 'inline-block';
+        }
+    } else {
+        if (prestigeInfo) {
+            prestigeInfo.textContent = '';
+            prestigeInfo.classList.remove('visible');
+        }
+        if (prestigeTab) {
+            prestigeTab.style.display = 'none';
+        }
     }
 }
 
@@ -980,7 +996,16 @@ function renderPrestigeUpgrades() {
         const canAfford = gameState.prestigePoints >= upgrade.cost;
         
         const el = document.createElement('div');
-        el.className = `prestige-upgrade-item ${owned ? 'purchased' : ''} ${canAfford ? 'can-afford' : 'cannot-afford'}`;
+        // Ne pas ajouter cannot-afford si déjà acheté
+        let classes = 'prestige-upgrade-item';
+        if (owned) {
+            classes += ' purchased';
+        } else if (canAfford) {
+            classes += ' can-afford';
+        } else {
+            classes += ' cannot-afford';
+        }
+        el.className = classes;
         el.innerHTML = `
             <div class="upgrade-icon">${upgrade.icon || '⭐'}</div>
             <div class="upgrade-info">

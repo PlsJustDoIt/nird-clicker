@@ -475,11 +475,18 @@ function doPrestige() {
         return false;
     }
     
-    const pointsGained = calculatePrestigePoints();
-    
-    if (!confirm(`🔄 PRESTIGE\n\nVous allez gagner ${pointsGained} point(s) de prestige !\nBonus actuel : +${(gameState.prestigeLevel * 10)}%\nBonus après : +${((gameState.prestigeLevel + pointsGained) * 10)}%\n\n⚠️ Votre score et vos upgrades seront réinitialisés.\n\nContinuer ?`)) {
+    // Afficher la popup de confirmation
+    showPrestigeConfirmPopup();
+    return true;
+}
+
+// Exécute le prestige directement sans confirmation
+function doPrestigeDirectly() {
+    if (!canPrestige()) {
         return false;
     }
+    
+    const pointsGained = calculatePrestigePoints();
     
     // Appliquer le prestige
     gameState.prestigePoints += pointsGained;
@@ -520,6 +527,11 @@ function doPrestige() {
 // Alias pour la compatibilité
 function performPrestige() {
     return doPrestige();
+}
+
+// Alias pour gamepad.js
+function doPrestigeWithoutConfirm() {
+    return doPrestigeDirectly();
 }
 
 // Acheter une amélioration de prestige
@@ -900,6 +912,7 @@ function saveGame() {
         currentVillageLevel: gameState.currentVillageLevel,
         prestigeLevel: gameState.prestigeLevel,
         prestigePoints: gameState.prestigePoints,
+        prestigeUpgrades: gameState.prestigeUpgrades,
         currentSkin: gameState.currentSkin,
         quizCorrect: gameState.quizCorrect,
         maxCombo: gameState.maxCombo,

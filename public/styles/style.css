@@ -429,6 +429,17 @@ body {
     text-shadow: 0 0 10px rgba(0, 212, 170, 0.8);
 }
 
+/* Prestige qu'on ne peut pas acheter */
+.prestige-upgrade-item.cannot-afford {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.prestige-upgrade-item.cannot-afford:hover {
+    border-color: rgba(255, 215, 0, 0.2);
+    box-shadow: none;
+}
+
 /* Skins Content */
 #skins-content h3 {
     color: var(--accent-secondary);
@@ -795,6 +806,21 @@ body {
     border-radius: 10px;
     padding: 1rem;
     margin-bottom: 1rem;
+    display: none;
+}
+
+/* Prestige info dans le header - caché par défaut */
+#prestige-info {
+    display: none;
+}
+
+#prestige-info.visible {
+    display: inline-block;
+}
+
+/* Prestige info dans la popup - toujours visible */
+.prestige-confirm-popup .prestige-info {
+    display: block;
 }
 
 .prestige-info p {
@@ -818,6 +844,38 @@ body {
 .prestige-bonus .new {
     color: #00d4aa;
     font-weight: bold;
+}
+
+/* Section des pertes lors du prestige */
+.prestige-losses {
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1rem 0;
+    text-align: left;
+}
+
+.prestige-losses .loss-title {
+    color: #ff6b6b;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.prestige-losses ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.prestige-losses li {
+    color: #ccc;
+    padding: 0.3rem 0;
+    font-size: 0.9rem;
+}
+
+.prestige-gains {
+    margin-top: 0.5rem;
 }
 
 .prestige-warning {
@@ -1671,10 +1729,14 @@ body {
 
 /* Prestige Info */
 .prestige-info {
-    display: block;
+    display: none;
     font-size: 0.8rem;
     color: var(--accent-warning);
     margin-top: 0.3rem;
+}
+
+.prestige-info.visible {
+    display: block;
 }
 
 /* Buy Multiplier Buttons */

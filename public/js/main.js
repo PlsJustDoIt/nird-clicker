@@ -86,9 +86,8 @@ function initNewEventListeners() {
     const prestigeBtn = document.getElementById('prestige-btn');
     if (prestigeBtn) {
         prestigeBtn.addEventListener('click', () => {
-            if (confirm('⚠️ PRESTIGE : Cela va réinitialiser votre progression mais vous obtiendrez des bonus permanents. Continuer ?')) {
-                performPrestige();
-            }
+            // Utilise la popup de confirmation
+            doPrestige();
         });
     }
     

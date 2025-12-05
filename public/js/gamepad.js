@@ -712,6 +712,12 @@ function closeMilestoneModal() {
 let prestigePopupSelectedIndex = 0; // 0 = Annuler, 1 = Confirmer
 
 function showPrestigeConfirmPopup() {
+    // Fermer toute popup existante d'abord
+    const existingPopup = document.querySelector('.prestige-confirm-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+    
     // Vérifier si on peut prestige
     if (typeof canPrestige === 'function' && !canPrestige()) {
         if (typeof showNotification === 'function') {
@@ -729,10 +735,20 @@ function showPrestigeConfirmPopup() {
     
     let currentBonus = 0;
     let newBonus = 0;
+    let currentScore = 0;
+    let currentProduction = 0;
+    let totalUpgrades = 0;
+    
     if (typeof gameState !== 'undefined') {
         currentBonus = (gameState.prestigeLevel || 0) * 10;
         newBonus = ((gameState.prestigeLevel || 0) + pointsGained) * 10;
+        currentScore = gameState.score || 0;
+        currentProduction = gameState.productionPerSecond || 0;
+        totalUpgrades = gameState.totalUpgrades || 0;
     }
+    
+    // Formater les nombres
+    const formatNum = typeof formatNumber === 'function' ? formatNumber : (n) => n.toLocaleString();
     
     // Créer la popup
     const popup = document.createElement('div');
@@ -741,11 +757,19 @@ function showPrestigeConfirmPopup() {
         <div class="prestige-confirm-content">
             <h2>🔄 PRESTIGE</h2>
             <div class="prestige-info">
-                <p class="prestige-points">Vous allez gagner <strong>${pointsGained}</strong> point(s) de prestige !</p>
-                <p class="prestige-bonus">Bonus actuel : <span class="current">+${currentBonus}%</span></p>
-                <p class="prestige-bonus">Bonus après : <span class="new">+${newBonus}%</span></p>
+                <p class="prestige-points">Vous allez gagner <strong>+${pointsGained}</strong> point(s) de prestige !</p>
+                <div class="prestige-gains">
+                    <p class="prestige-bonus">Bonus production : <span class="current">+${currentBonus}%</span> → <span class="new">+${newBonus}%</span></p>
+                </div>
             </div>
-            <p class="prestige-warning">⚠️ Votre score et vos upgrades seront réinitialisés.</p>
+            <div class="prestige-losses">
+                <p class="loss-title">⚠️ Vous allez perdre :</p>
+                <ul>
+                    <li>💰 ${formatNum(currentScore)} points</li>
+                    <li>⚡ ${formatNum(currentProduction)}/sec production</li>
+                    <li>🔧 ${totalUpgrades} améliorations</li>
+                </ul>
+            </div>
             <div class="prestige-buttons">
                 <button class="prestige-cancel-btn gamepad-selected" data-action="cancel">❌ Annuler</button>
                 <button class="prestige-confirm-btn" data-action="confirm">✅ Confirmer</button>
@@ -796,20 +820,24 @@ function activatePrestigePopupButton() {
 }
 
 function confirmPrestige() {
-    closePrestigePopup();
+    // Fermer la popup d'abord
+    const popup = document.querySelector('.prestige-confirm-popup');
+    if (popup) {
+        popup.remove();
+    }
     
-    // Appeler directement doPrestige sans le confirm() natif
-    if (typeof doPrestigeWithoutConfirm === 'function') {
+    // Appeler directement doPrestigeDirectly
+    if (typeof doPrestigeDirectly === 'function') {
+        doPrestigeDirectly();
+    } else if (typeof doPrestigeWithoutConfirm === 'function') {
         doPrestigeWithoutConfirm();
-    } else if (typeof performPrestigeDirectly === 'function') {
-        performPrestigeDirectly();
     } else {
-        // Fallback: simuler le clic sur le bouton prestige
-        // Mais on doit bypasser le confirm()
+        // Fallback: exécuter le prestige directement
         executePrestige();
     }
     
     vibrateGamepad(200, 1.0);
+    playSound('prestige');
 }
 
 function executePrestige() {
