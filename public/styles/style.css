@@ -3185,7 +3185,7 @@ body.modal-open {
 
 .facebook-attack-video-container {
     position: relative;
-    padding: 1rem;
+    /* padding: 1rem; */
     background: #000;
 }
 
