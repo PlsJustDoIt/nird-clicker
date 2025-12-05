@@ -36,7 +36,8 @@ let gameState = {
     sessionScore: 0,
     sessionUpgrades: 0,
     sessionBoss: 0,
-    sessionQuiz: 0
+    sessionQuiz: 0,
+    triggeredMilestones: []
 };
 
 // Audio context pour les sons
@@ -901,6 +902,7 @@ function saveGame() {
         sessionUpgrades: gameState.sessionUpgrades,
         sessionBoss: gameState.sessionBoss,
         sessionQuiz: gameState.sessionQuiz,
+        triggeredMilestones: gameState.triggeredMilestones,
         upgrades: UPGRADES.map(u => ({ id: u.id, owned: u.owned, unlocked: u.unlocked })),
         clickUpgrades: CLICK_UPGRADES.map(u => ({ id: u.id, purchased: u.purchased })),
         achievements: ACHIEVEMENTS.map(a => ({ id: a.id, unlocked: a.unlocked })),

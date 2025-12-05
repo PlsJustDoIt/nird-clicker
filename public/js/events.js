@@ -40,12 +40,15 @@ const MILESTONE_EVENTS = [
 
 // Vérifier les événements de milestone
 function checkMilestoneEvents() {
-    MILESTONE_EVENTS.forEach(event => {
-        if (!event.triggered && gameState.totalScore >= event.score) {
-            event.triggered = true;
+    // Ne déclencher qu'un seul milestone à la fois (le plus bas non encore atteint)
+    for (const event of MILESTONE_EVENTS) {
+        if (!gameState.triggeredMilestones.includes(event.score) && gameState.totalScore >= event.score) {
+            gameState.triggeredMilestones.push(event.score);
             showMilestoneModal(event);
+            saveGame(); // Sauvegarder immédiatement pour éviter les doublons
+            return; // Sortir après avoir affiché un seul milestone
         }
-    });
+    }
 }
 
 // Afficher une modal de milestone
