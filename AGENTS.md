@@ -17,7 +17,7 @@
 npm install
 
 # Lancer le serveur
-npm start
+npm run dev # utilise nodemon
 
 # Accéder au jeu
 # http://localhost:45975
@@ -83,6 +83,8 @@ window.DEBUG.addScore(1000)  // Ajouter des points
 window.DEBUG.triggerBoss()   // Déclencher le boss
 window.DEBUG.resetGame()     // Reset total
 ```
+
+> ⚠️ **Note** : Les erreurs TypeScript dans VS Code sont à **ignorer**. Le projet est en JavaScript pur et le linter TypeScript ne reconnaît pas les variables globales partagées entre fichiers (`gameState`, `playSound`, etc.). Le code fonctionne correctement.
 
 ## 📜 Licence
 
