@@ -269,3 +269,204 @@ window.DEBUG = {
 console.log('%c🖥️ NIRD Clicker - Console Debug', 'font-size: 20px; color: #00d4aa;');
 console.log('%cUtilisez window.DEBUG pour accéder aux commandes de débogage.', 'color: #aaa;');
 console.log('%cExemple: window.DEBUG.addScore(1000)', 'color: #888; font-style: italic;');
+
+// ============================================
+// ATTAQUE FACEBOOK NUCLÉAIRE 
+// ============================================
+let facebookAttackActive = false;
+let facebookAttackInterval = null;
+let facebookBonusGiven = false;
+
+function triggerFacebookAttack() {
+    if (facebookAttackActive) return;
+    facebookAttackActive = true;
+    facebookBonusGiven = false;
+    
+    const modal = document.getElementById('facebook-attack-modal');
+    const alertScreen = document.getElementById('facebook-alert-screen');
+    const videoScreen = document.getElementById('facebook-video-screen');
+    const alertBtn = document.getElementById('facebook-alert-btn');
+    
+    // Reset - montrer l'alerte, cacher la vidéo
+    alertScreen.classList.remove('hidden');
+    videoScreen.classList.add('hidden');
+    
+    // Afficher le modal
+    modal.classList.remove('hidden');
+    
+    // Montrer une notification
+    if (typeof showNotification === 'function') {
+        showNotification('⚠️ ALERTE : Facebook tente une intrusion !', 'danger');
+    }
+    
+    // Quand l'utilisateur clique sur le bouton d'alerte
+    alertBtn.onclick = startFacebookVideo;
+}
+
+function startFacebookVideo() {
+    const alertScreen = document.getElementById('facebook-alert-screen');
+    const videoScreen = document.getElementById('facebook-video-screen');
+    const video = document.getElementById('facebook-attack-video');
+    const progressBar = document.getElementById('facebook-attack-progress-bar');
+    const closeBtn = document.getElementById('facebook-attack-close-btn');
+    const warningText = document.querySelector('#facebook-video-screen .attack-warning');
+    
+    // Cacher l'alerte, montrer la vidéo
+    alertScreen.classList.add('hidden');
+    videoScreen.classList.remove('hidden');
+    
+    // Reset
+    progressBar.style.width = '0%';
+    closeBtn.classList.add('hidden');
+    warningText.textContent = '🔴 RIPOSTE EN COURS...';
+    
+    // Jouer la vidéo (maintenant c'est après un clic utilisateur, donc l'audio marche)
+    video.currentTime = 0;
+    video.muted = false;
+    video.volume = 1;
+    video.play().catch(err => console.log('Video play error:', err));
+    
+    // Jouer le son d'alerte si disponible
+    if (typeof playSound === 'function') {
+        playSound('boss');
+    }
+    
+    // Quand la vidéo se termine -> fermeture automatique
+    video.onended = () => {
+        console.log('Vidéo terminée, fermeture auto...');
+        // Donner le bonus avant de fermer
+        if (!facebookBonusGiven) {
+            facebookBonusGiven = true;
+            const bonus = Math.floor((gameState.productionPerSecond || 0) * 30 + 500);
+            gameState.score += bonus;
+            gameState.totalScore += bonus;
+            
+            if (typeof showNotification === 'function') {
+                showNotification(`🛡️ Facebook repoussé ! +${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points !`, 'success');
+            }
+            
+            if (typeof createConfetti === 'function') {
+                createConfetti();
+            }
+        }
+        // Fermer après un court délai
+        setTimeout(() => {
+            closeFacebookAttack();
+        }, 500);
+    };
+}
+
+function finishFacebookAttack() {
+    const progressBar = document.getElementById('facebook-attack-progress-bar');
+    const closeBtn = document.getElementById('facebook-attack-close-btn');
+    const warningText = document.querySelector('#facebook-video-screen .attack-warning');
+    
+    if (facebookAttackInterval) {
+        clearInterval(facebookAttackInterval);
+        facebookAttackInterval = null;
+    }
+    
+    progressBar.style.width = '100%';
+    closeBtn.classList.remove('hidden');
+    warningText.textContent = '🟢 PROTECTION ACTIVÉE !';
+    
+    // Donner le bonus (une seule fois)
+    if (!facebookBonusGiven) {
+        facebookBonusGiven = true;
+        const bonus = Math.floor(gameState.productionPerSecond * 30 + 500);
+        
+        if (typeof playSound === 'function') {
+            playSound('achievement');
+        }
+        
+        warningText.innerHTML = `✅ DONNÉES PROTÉGÉES ! <span style="color: #00d4aa;">+${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points</span>`;
+    }
+}
+
+function closeFacebookAttack() {
+    console.log('Fermeture attaque Facebook...');
+    const modal = document.getElementById('facebook-attack-modal');
+    const video = document.getElementById('facebook-attack-video');
+    const alertScreen = document.getElementById('facebook-alert-screen');
+    const videoScreen = document.getElementById('facebook-video-screen');
+    
+    if (!modal) return;
+    
+    // Arrêter la vidéo
+    if (video) {
+        video.pause();
+        video.currentTime = 0;
+        video.onended = null; // Supprimer le handler pour éviter les appels multiples
+    }
+    
+    // Cacher le modal
+    modal.classList.add('hidden');
+    if (alertScreen) alertScreen.classList.remove('hidden');
+    if (videoScreen) videoScreen.classList.add('hidden');
+    
+    // Arrêter l'interval
+    if (facebookAttackInterval) {
+        clearInterval(facebookAttackInterval);
+        facebookAttackInterval = null;
+    }
+    
+    // Bonus (seulement si pas déjà donné)
+    if (!facebookBonusGiven) {
+        facebookBonusGiven = true;
+        const bonus = Math.floor(gameState.productionPerSecond * 30 + 500);
+        gameState.score += bonus;
+        gameState.totalScore += bonus;
+        
+        if (typeof showNotification === 'function') {
+            showNotification(`🛡️ Facebook repoussé ! +${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points !`, 'success');
+        }
+        
+        if (typeof createConfetti === 'function') {
+            createConfetti();
+        }
+    }
+    
+    // Update UI
+    if (typeof updateUI === 'function') {
+        updateUI();
+    }
+    
+    // Reset
+    facebookAttackActive = false;
+    
+    // Sauvegarder
+    if (typeof saveGame === 'function') {
+        saveGame();
+    }
+}
+
+// Déclencher l'attaque Facebook aléatoirement (environ toutes les 3-5 minutes de jeu)
+function scheduleFacebookAttack() {
+    const minDelay = 180000; // 3 minutes
+    const maxDelay = 300000; // 5 minutes
+    const delay = Math.random() * (maxDelay - minDelay) + minDelay;
+    
+    setTimeout(() => {
+        // Ne déclencher que si le joueur a un certain niveau
+        if (gameState.totalScore >= 5000 && !facebookAttackActive) {
+            triggerFacebookAttack();
+        }
+        // Programmer la prochaine attaque
+        scheduleFacebookAttack();
+    }, delay);
+}
+
+// Démarrer le système d'attaques Facebook après un délai initial
+setTimeout(() => {
+    scheduleFacebookAttack();
+}, 60000); // Première attaque possible après 1 minute
+
+// Ajouter au DEBUG
+if (window.DEBUG) {
+    window.DEBUG.triggerFacebookAttack = triggerFacebookAttack;
+}
+
+// Rendre les fonctions accessibles globalement pour les onclick HTML
+window.closeFacebookAttack = closeFacebookAttack;
+window.triggerFacebookAttack = triggerFacebookAttack;
+window.startFacebookVideo = startFacebookVideo;

@@ -247,7 +247,43 @@
             </div>
         </div>
 
-    
+        <!-- Modal Attaque Facebook Nucléaire -->
+        <div id="facebook-attack-modal" class="modal-overlay hidden">
+            <div class="facebook-attack-overlay"></div>
+            
+            <!-- Écran d'alerte initial -->
+            <div id="facebook-alert-screen" class="facebook-alert-screen">
+                <div class="alert-content">
+                    <div class="alert-icon-container">
+                        <span class="alert-icon">📘</span>
+                        <span class="alert-danger">⚠️</span>
+                    </div>
+                    <h1 class="alert-title">ALERTE FACEBOOK !!!!</h1>
+                    <p class="alert-message">Une attaque de Zuckerberg a été détectée !</p>
+                    <p class="alert-submessage">Vos données sont en danger !</p>
+                    <button id="facebook-alert-btn" class="alert-launch-btn">🚨 VOIR L'ATTAQUE</button>
+                </div>
+            </div>
+            
+            <!-- Contenu vidéo (caché initialement) -->
+            <div id="facebook-video-screen" class="facebook-attack-content hidden">
+                <button id="facebook-close-x" class="facebook-close-x" onclick="closeFacebookAttack()">✕</button>
+                <div class="facebook-attack-video-container">
+                    <video id="facebook-attack-video">
+                        <source src="./videos/nuclear.mp4" type="video/mp4">
+                        Votre navigateur ne supporte pas la vidéo.
+                    </video>
+                    <div class="video-glitch-effect"></div>
+                </div>
+                <div class="facebook-attack-footer">
+                    <p class="attack-warning">🔴 RIPOSTE EN COURS...</p>
+                    <div class="attack-progress">
+                        <div id="facebook-attack-progress-bar"></div>
+                    </div>
+                    <button id="facebook-attack-close-btn" class="hidden" onclick="closeFacebookAttack()">🛡️ DONNÉES PROTÉGÉES - Continuer</button>
+                </div>
+            </div>
+        </div>
 
         <!-- Notifications flottantes -->
         <div id="floating-notifications"></div>

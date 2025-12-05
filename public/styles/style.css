@@ -2294,3 +2294,373 @@ body {
     text-align: center;
     color: var(--accent-warning);
 }
+
+/* ============================================
+   ATTAQUE FACEBOOK NUCLÉAIRE
+   ============================================ */
+
+#facebook-attack-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: facebookAttackFadeIn 0.5s ease;
+}
+
+#facebook-attack-modal.hidden {
+    display: none;
+}
+
+.facebook-attack-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    animation: overlayPulse 2s ease-in-out infinite;
+}
+
+@keyframes overlayPulse {
+    0%, 100% { background: rgba(0, 0, 0, 0.95); }
+    50% { background: rgba(24, 119, 242, 0.15); }
+}
+
+@keyframes facebookAttackFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(1.1);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.facebook-attack-content {
+    position: relative;
+    z-index: 10;
+    max-width: 800px;
+    max-height: 90vh;
+    width: 95%;
+    background: linear-gradient(145deg, #0a0a1a 0%, #1a0a2e 50%, #0a1a3a 100%);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 4px solid #ff4444;
+    box-shadow: 
+        0 0 50px rgba(255, 68, 68, 0.6),
+        0 0 100px rgba(255, 68, 68, 0.3),
+        inset 0 0 50px rgba(255, 68, 68, 0.1);
+    animation: contentPulse 1.5s ease-in-out infinite, shake 0.3s ease-in-out infinite;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes contentPulse {
+    0%, 100% { 
+        box-shadow: 
+            0 0 50px rgba(255, 68, 68, 0.6),
+            0 0 100px rgba(255, 68, 68, 0.3),
+            inset 0 0 50px rgba(255, 68, 68, 0.1);
+    }
+    50% { 
+        box-shadow: 
+            0 0 80px rgba(255, 68, 68, 0.8),
+            0 0 150px rgba(255, 68, 68, 0.4),
+            inset 0 0 80px rgba(255, 68, 68, 0.2);
+        border-color: #ff6666;
+    }
+}
+
+.facebook-attack-video-container {
+    position: relative;
+    padding: 1rem;
+    background: #000;
+}
+
+#facebook-attack-video {
+    width: 100%;
+    border-radius: 12px;
+    border: 3px solid #333;
+    box-shadow: 
+        0 0 30px rgba(255, 68, 68, 0.5),
+        inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.video-glitch-effect {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    border-radius: 12px;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 255, 255, 0.03) 2px,
+        rgba(255, 255, 255, 0.03) 4px
+    );
+    animation: scanlines 0.1s linear infinite;
+}
+
+@keyframes scanlines {
+    from { background-position: 0 0; }
+    to { background-position: 0 4px; }
+}
+
+.facebook-attack-footer {
+    padding: 1rem;
+    text-align: center;
+    background: linear-gradient(135deg, #1a0a2e 0%, #0a1a3a 100%);
+    border-top: 2px solid rgba(255, 68, 68, 0.5);
+}
+
+.attack-warning {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ff4444;
+    animation: warningPulse 0.5s ease infinite;
+    margin-bottom: 0.5rem;
+}
+
+@keyframes warningPulse {
+    0%, 100% { 
+        color: #ff4444;
+        text-shadow: 0 0 10px #ff4444;
+    }
+    50% { 
+        color: #ffcc00;
+        text-shadow: 0 0 20px #ffcc00;
+    }
+}
+
+.attack-progress {
+    height: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    overflow: hidden;
+    border: 2px solid #333;
+    margin-bottom: 0.5rem;
+}
+
+#facebook-attack-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #1877f2, #ff4444, #ffcc00, #00ff00);
+    background-size: 200% 100%;
+    border-radius: 4px;
+    animation: progressGradient 1s linear infinite;
+    transition: width 0.1s linear;
+}
+
+@keyframes progressGradient {
+    from { background-position: 0% 50%; }
+    to { background-position: 200% 50%; }
+}
+
+#facebook-attack-close-btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, #00d4aa 0%, #00a0ff 100%);
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 212, 170, 0.4);
+}
+
+#facebook-attack-close-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 30px rgba(0, 212, 170, 0.6);
+}
+
+#facebook-attack-close-btn.hidden {
+    display: none;
+}
+
+/* Écran d'alerte Facebook */
+.facebook-alert-screen {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.facebook-alert-screen.hidden {
+    display: none;
+}
+
+.alert-content {
+    text-align: center;
+    padding: 3rem;
+    background: linear-gradient(145deg, #1a0a2e 0%, #2d1b4e 50%, #1a0a3a 100%);
+    border-radius: 20px;
+    border: 4px solid #ff4444;
+    box-shadow: 
+        0 0 50px rgba(255, 68, 68, 0.6),
+        0 0 100px rgba(255, 68, 68, 0.3),
+        inset 0 0 50px rgba(255, 68, 68, 0.1);
+    animation: alertPulse 0.5s ease-in-out infinite alternate;
+    max-width: 500px;
+}
+
+@keyframes alertPulse {
+    from { 
+        transform: scale(1);
+        box-shadow: 
+            0 0 50px rgba(255, 68, 68, 0.6),
+            0 0 100px rgba(255, 68, 68, 0.3);
+    }
+    to { 
+        transform: scale(1.02);
+        box-shadow: 
+            0 0 80px rgba(255, 68, 68, 0.8),
+            0 0 150px rgba(255, 68, 68, 0.5);
+    }
+}
+
+.alert-icon-container {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+}
+
+.alert-icon {
+    animation: alertIconShake 0.2s ease infinite;
+}
+
+.alert-danger {
+    position: absolute;
+    top: -10px;
+    right: -20px;
+    font-size: 2.5rem;
+    animation: dangerBlink 0.3s ease infinite;
+}
+
+@keyframes alertIconShake {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+@keyframes dangerBlink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+.alert-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.5rem;
+    color: #ff4444;
+    text-shadow: 
+        0 0 10px #ff4444,
+        0 0 20px #ff4444,
+        0 0 40px #ff4444;
+    margin-bottom: 1rem;
+    animation: titleFlash 0.3s ease infinite alternate;
+}
+
+@keyframes titleFlash {
+    from { color: #ff4444; }
+    to { color: #ff8888; }
+}
+
+.alert-message {
+    font-size: 1.3rem;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.alert-submessage {
+    font-size: 1rem;
+    color: #ffcc00;
+    margin-bottom: 2rem;
+    animation: submessagePulse 0.5s ease infinite;
+}
+
+@keyframes submessagePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.alert-launch-btn {
+    padding: 1.2rem 2.5rem;
+    font-size: 1.3rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+    color: #fff;
+    border: 3px solid #ff6666;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 
+        0 5px 20px rgba(255, 68, 68, 0.5),
+        inset 0 0 20px rgba(255, 255, 255, 0.1);
+    animation: btnPulse 0.8s ease infinite;
+}
+
+@keyframes btnPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.alert-launch-btn:hover {
+    background: linear-gradient(135deg, #ff6666 0%, #ff4444 100%);
+    transform: scale(1.1);
+    box-shadow: 
+        0 8px 30px rgba(255, 68, 68, 0.7),
+        inset 0 0 30px rgba(255, 255, 255, 0.2);
+}
+
+/* Bouton croix pour fermer */
+.facebook-close-x {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 68, 68, 0.8);
+    color: #fff;
+    border: 2px solid #ff6666;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.facebook-close-x:hover {
+    background: #ff4444;
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 0 20px rgba(255, 68, 68, 0.8);
+}
+
+/* Ajustement du contenu vidéo */
+#facebook-video-screen {
+    position: relative;
+}
+
+#facebook-video-screen.hidden {
+    display: none;
+}
