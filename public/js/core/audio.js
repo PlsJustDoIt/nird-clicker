@@ -1,10 +1,11 @@
+
+// Audio context singleton (var pour compatibilité)
 /**
  * NIRD Clicker - Système Audio
  * Sons synthétisés via Web Audio API
  * Licence MIT - GPT MEN'S - Nuit de l'Info 2025
+ * @type {AudioContext | null}
  */
-
-// Audio context singleton (var pour compatibilité)
 var audioContext = null;
 
 /**
@@ -14,7 +15,7 @@ function initAudio() {
     if (audioContext) return;
     
     try {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        audioContext = new (window.AudioContext || window.AudioContext)();
         console.log('🔊 Audio initialisé');
     } catch (e) {
         console.log('🔇 Audio non supporté:', e.message);
@@ -30,6 +31,31 @@ function resumeAudio() {
     }
 }
 
+// Cache pour les sons MP3
+var audioCache = {};
+
+/**
+ * Joue un fichier audio MP3
+ * @param {string} src - Chemin vers le fichier audio
+ */
+function playAudioFile(src) {
+    if (typeof gameState !== 'undefined' && !gameState.soundEnabled) return;
+    
+    try {
+        // Créer ou réutiliser l'élément audio
+        if (!audioCache[src]) {
+            audioCache[src] = new Audio(src);
+            audioCache[src].volume = 0.3;
+        }
+        
+        // Remettre au début si déjà en cours
+        audioCache[src].currentTime = 0;
+        audioCache[src].play().catch(() => {});
+    } catch (e) {
+        console.log('Erreur lecture audio:', e.message);
+    }
+}
+
 /**
  * Joue un son synthétisé
  * @param {string} type - Type de son: 'click', 'upgrade', 'achievement', 'boss', 'levelup', 'prestige', 'error'
@@ -38,6 +64,12 @@ function playSound(type) {
     // Vérifier si le son est activé
     if (typeof gameState !== 'undefined' && !gameState.soundEnabled) return;
     if (!audioContext) return;
+    
+    // Son spécial pour le skin Star of David
+    if (type === 'click' && typeof gameState !== 'undefined' && gameState.currentSkin === 'star-of-david') {
+        playAudioFile('assets/Goy.mp3');
+        return;
+    }
     
     // Reprendre le contexte si suspendu
     resumeAudio();
