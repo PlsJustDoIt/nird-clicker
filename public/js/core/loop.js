@@ -1,17 +1,27 @@
 /**
- * NIRD Clicker - Game Loop Unifié
- * Un seul setInterval pour tout, optimisé pour les performances
- * Licence MIT - GPT MEN'S - Nuit de l'Info 2025
+ * @file NIRD Clicker - Game Loop Unifié
+ * @description Un seul setInterval pour tout, optimisé pour les performances
+ * @license MIT
+ * @author GPT MEN'S - Nuit de l'Info 2025
  */
 
 // ============================================
 // CONFIGURATION DU GAME LOOP
 // ============================================
-var TICK_RATE = 1000; // 1 tick par seconde (1000ms)
+
+/** @type {number} Intervalle du game loop en ms (1 tick par seconde) */
+var TICK_RATE = 1000;
+
+/** @type {number|null} ID du setInterval du game loop */
 var gameLoopId = null;
+
+/** @type {number} Timestamp du dernier tick */
 var lastTickTime = Date.now();
 
-// Compteurs pour les actions périodiques
+/**
+ * Compteurs pour les actions périodiques
+ * @type {TickCounters}
+ */
 var tickCounters = {
     production: 0,      // Chaque tick
     save: 0,            // Toutes les 10 secondes
@@ -22,7 +32,10 @@ var tickCounters = {
     uiRefresh: 0        // Chaque tick (ou moins souvent)
 };
 
-// Intervalles en nombre de ticks
+/**
+ * Intervalles en nombre de ticks
+ * @type {TickIntervals}
+ */
 var TICK_INTERVALS = {
     production: 1,      // Chaque seconde
     save: 10,           // Toutes les 10 secondes
@@ -33,7 +46,7 @@ var TICK_INTERVALS = {
     uiRefresh: 1        // Chaque seconde
 };
 
-// Flag pour éviter les doubles exécutions
+/** @type {boolean} Flag pour éviter les doubles exécutions */
 var isGameLoopRunning = false;
 
 // ============================================
@@ -78,7 +91,7 @@ function stopGameLoop() {
  */
 function gameTick() {
     const now = Date.now();
-    const deltaTime = now - lastTickTime;
+    const _deltaTime = now - lastTickTime; // Préfixé pour usage futur
     lastTickTime = now;
     
     // Incrémenter tous les compteurs
@@ -153,12 +166,12 @@ function tickProduction() {
  */
 function tickEffects() {
     const now = Date.now();
-    const hadEffects = gameState.activeEffects.length > 0;
+    const previousCount = gameState.activeEffects.length;
     
     gameState.activeEffects = gameState.activeEffects.filter(e => e.endTime > now);
     
     // Recalculer la production si des effets ont expiré
-    if (hadEffects && gameState.activeEffects.length !== hadEffects) {
+    if (previousCount > 0 && gameState.activeEffects.length !== previousCount) {
         if (typeof calculateProductionPerSecond === 'function') {
             calculateProductionPerSecond();
         }
@@ -270,6 +283,7 @@ function cancelScheduledBoss() {
 
 /**
  * Obtient les stats du game loop
+ * @returns {object} Statistiques du game loop
  */
 function getLoopStats() {
     return {
@@ -282,9 +296,11 @@ function getLoopStats() {
 
 /**
  * Modifie un intervalle de tick (pour debug/tuning)
+ * @param {string} key - Clé de l'intervalle à modifier
+ * @param {number} ticks - Nouveau nombre de ticks
  */
 function setTickInterval(key, ticks) {
-    if (TICK_INTERVALS.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(TICK_INTERVALS, key)) {
         TICK_INTERVALS[key] = ticks;
         console.log(`⚙️ Intervalle "${key}" changé à ${ticks} ticks`);
     }

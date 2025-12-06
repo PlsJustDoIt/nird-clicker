@@ -1,7 +1,8 @@
 /**
- * NIRD Clicker - Système de modales
- * Settings, Achievements, Encyclopedia, Stats, Leaderboard
- * Licence MIT - GPT MEN'S - Nuit de l'Info 2025
+ * @file NIRD Clicker - Système de modales
+ * @description Settings, Achievements, Encyclopedia, Stats, Leaderboard
+ * @license MIT
+ * @author GPT MEN'S - Nuit de l'Info 2025
  */
 
 // ============================================
@@ -121,6 +122,9 @@ function cycleTheme(direction) {
     if (themeNameEl) themeNameEl.textContent = newTheme.name;
 }
 
+/**
+ * Active/désactive le son et met à jour le bouton
+ */
 function toggleSettingsSound() {
     gameState.soundEnabled = !gameState.soundEnabled;
     const btn = document.querySelector('#sound-toggle-btn');
@@ -131,6 +135,9 @@ function toggleSettingsSound() {
     if (typeof saveGame === 'function') saveGame();
 }
 
+/**
+ * Active/désactive les particules et met à jour le bouton
+ */
 function toggleSettingsParticles() {
     gameState.particlesEnabled = !gameState.particlesEnabled;
     const btn = document.querySelector('#particles-toggle-btn');
@@ -141,12 +148,19 @@ function toggleSettingsParticles() {
     if (typeof saveGame === 'function') saveGame();
 }
 
+/**
+ * Met à jour la sélection visuelle dans le menu paramètres (pour gamepad)
+ */
 function updateSettingsSelection() {
     settingsMenuItems.forEach((item, index) => {
         item.classList.toggle('gamepad-selected', index === settingsMenuIndex);
     });
 }
 
+/**
+ * Navigue dans le menu paramètres (pour gamepad)
+ * @param {number} direction - Direction de navigation (1 ou -1)
+ */
 function navigateSettingsMenu(direction) {
     const modal = document.querySelector('.settings-modal');
     if (!modal) return;
@@ -159,6 +173,9 @@ function navigateSettingsMenu(direction) {
     if (typeof playSound === 'function') playSound('click');
 }
 
+/**
+ * Active l'élément actuellement sélectionné dans le menu paramètres
+ */
 function activateSettingsItem() {
     const modal = document.querySelector('.settings-modal');
     if (!modal) return;
@@ -185,6 +202,9 @@ function activateSettingsItem() {
 // MENU SUCCÈS
 // ============================================
 
+/**
+ *
+ */
 function openAchievementsMenu() {
     const modal = document.createElement('div');
     modal.className = 'achievements-modal modal-overlay';
@@ -224,6 +244,9 @@ function openAchievementsMenu() {
 // MENU ENCYCLOPÉDIE
 // ============================================
 
+/**
+ *
+ */
 function openEncyclopedia() {
     const modal = document.createElement('div');
     modal.className = 'encyclopedia-modal modal-overlay';
@@ -263,6 +286,9 @@ function openEncyclopedia() {
 // MENU STATISTIQUES
 // ============================================
 
+/**
+ *
+ */
 function openStatsMenu() {
     const playTime = Math.floor((Date.now() - (gameState.startTime || Date.now())) / 1000);
     const hours = Math.floor(playTime / 3600);
@@ -331,6 +357,9 @@ function openStatsMenu() {
 // LEADERBOARD
 // ============================================
 
+/**
+ *
+ */
 async function openLeaderboard() {
     const modal = document.createElement('div');
     modal.className = 'leaderboard-modal modal-overlay';
@@ -365,6 +394,9 @@ async function openLeaderboard() {
     await refreshLeaderboard();
 }
 
+/**
+ *
+ */
 async function refreshLeaderboard() {
     const container = document.getElementById('leaderboard-list');
     if (!container) return;
@@ -402,6 +434,9 @@ async function refreshLeaderboard() {
     container.innerHTML = html;
 }
 
+/**
+ *
+ */
 async function submitToLeaderboard() {
     const input = document.getElementById('leaderboard-pseudo');
     if (!input) return;
@@ -415,6 +450,7 @@ async function submitToLeaderboard() {
 
 /**
  * Échappe les caractères HTML
+ * @param text
  */
 function escapeHtml(text) {
     const div = document.createElement('div');
@@ -426,6 +462,9 @@ function escapeHtml(text) {
 // TOGGLES
 // ============================================
 
+/**
+ *
+ */
 function toggleSound() {
     gameState.soundEnabled = !gameState.soundEnabled;
     const btn = document.getElementById('sound-toggle');
@@ -440,6 +479,9 @@ function toggleSound() {
     if (typeof saveGame === 'function') saveGame();
 }
 
+/**
+ *
+ */
 function toggleParticles() {
     gameState.particlesEnabled = !gameState.particlesEnabled;
     const btn = document.getElementById('particles-toggle');
@@ -458,6 +500,10 @@ function toggleParticles() {
 // THÈMES & SKINS
 // ============================================
 
+/**
+ *
+ * @param themeName
+ */
 function applyTheme(themeName) {
     document.body.className = document.body.className.replace(/theme-\w+/g, '');
     document.body.classList.add(`theme-${themeName}`);
@@ -470,6 +516,10 @@ function applyTheme(themeName) {
     if (typeof saveGame === 'function') saveGame();
 }
 
+/**
+ *
+ * @param skinId
+ */
 function applySkin(skinId) {
     if (typeof SKINS === 'undefined') return;
     
@@ -492,6 +542,9 @@ function applySkin(skinId) {
 // EXPORT/IMPORT SAVE
 // ============================================
 
+/**
+ *
+ */
 function exportSave() {
     if (typeof saveGame === 'function') saveGame();
     const data = localStorage.getItem('nirdClicker_save');
@@ -506,6 +559,9 @@ function exportSave() {
     }
 }
 
+/**
+ *
+ */
 function importSave() {
     const input = document.createElement('input');
     input.type = 'file';

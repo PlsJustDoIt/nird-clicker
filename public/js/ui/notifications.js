@@ -1,7 +1,8 @@
 /**
- * NIRD Clicker - Système de notifications
- * Notifications flottantes et bannières d'événements
- * Licence MIT - GPT MEN'S - Nuit de l'Info 2025
+ * @file NIRD Clicker - Système de notifications
+ * @description Notifications flottantes et bannières d'événements
+ * @license MIT
+ * @author GPT MEN'S - Nuit de l'Info 2025
  */
 
 // ============================================

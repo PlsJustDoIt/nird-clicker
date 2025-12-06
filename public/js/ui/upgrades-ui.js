@@ -1,7 +1,8 @@
 /**
- * NIRD Clicker - Interface des upgrades
- * Affichage et interaction avec les upgrades de production et de clic
- * Licence MIT - GPT MEN'S - Nuit de l'Info 2025
+ * @file NIRD Clicker - Interface des upgrades
+ * @description Affichage et interaction avec les upgrades de production et de clic
+ * @license MIT
+ * @author GPT MEN'S - Nuit de l'Info 2025
  */
 
 // ============================================
@@ -90,6 +91,8 @@ function updateClickUpgradesList() {
 
 /**
  * Crée un élément DOM pour une upgrade de production
+ * @param {Upgrade} upgrade - L'upgrade à afficher
+ * @returns {HTMLElement} Élément DOM de l'upgrade
  */
 function createUpgradeElement(upgrade) {
     let displayCount = buyMode;
@@ -138,6 +141,8 @@ function createUpgradeElement(upgrade) {
 
 /**
  * Met à jour un élément d'upgrade existant sans recréer le DOM
+ * @param {HTMLElement} el - Élément DOM de l'upgrade
+ * @param {Upgrade} upgrade - Données de l'upgrade
  */
 function updateUpgradeElement(el, upgrade) {
     let displayCount = buyMode;
@@ -172,6 +177,8 @@ function updateUpgradeElement(el, upgrade) {
 
 /**
  * Crée un élément DOM pour une upgrade de clic
+ * @param {ClickUpgrade} upgrade - L'upgrade de clic à afficher
+ * @returns {HTMLElement} Élément DOM de l'upgrade
  */
 function createClickUpgradeElement(upgrade) {
     const isPurchased = upgrade.purchased;
@@ -206,6 +213,8 @@ function createClickUpgradeElement(upgrade) {
 
 /**
  * Met à jour un élément d'upgrade de clic existant
+ * @param el
+ * @param upgrade
  */
 function updateClickUpgradeElement(el, upgrade) {
     const isPurchased = upgrade.purchased;
@@ -250,6 +259,7 @@ function updateBuyModeButtons() {
 
 /**
  * Change le mode d'achat (1, 10, 100, max)
+ * @param mode
  */
 function setBuyMode(mode) {
     buyMode = mode;
@@ -259,6 +269,7 @@ function setBuyMode(mode) {
 
 /**
  * Pour compatibilité avec l'ancien code
+ * @param value
  */
 function setBuyMultiplier(value) {
     setBuyMode(value);
@@ -270,6 +281,7 @@ function setBuyMultiplier(value) {
 
 /**
  * Calcule la quantité effective selon le multiplicateur
+ * @param upgrade
  */
 function getEffectiveQuantity(upgrade) {
     if (buyMode === 'max') {
@@ -295,6 +307,8 @@ function getEffectiveQuantity(upgrade) {
 
 /**
  * Calcule le coût total pour une quantité donnée
+ * @param upgrade
+ * @param quantity
  */
 function getTotalCostForQuantity(upgrade, quantity) {
     let total = 0;

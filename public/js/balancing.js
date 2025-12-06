@@ -1,25 +1,49 @@
 /**
- * NIRD Clicker - Équilibrage du jeu
- * Toutes les données de progression, coûts, et contenus
- * Licence MIT - GPT MEN'S - Nuit de l'Info 2025
+ * @file NIRD Clicker - Équilibrage du jeu
+ * @description Toutes les données de progression, coûts, et contenus
+ * @license MIT
+ * @author GPT MEN'S - Nuit de l'Info 2025
  */
 
 // ============================================
 // CONSTANTES D'ÉQUILIBRAGE
 // ============================================
-const COST_MULTIPLIER = 1.12;  // Multiplicateur de coût par achat
-const SAVE_INTERVAL = 10000;   // Intervalle de sauvegarde (ms)
+
+/** @type {number} Multiplicateur de coût par achat */
+const COST_MULTIPLIER = 1.12;
+
+/** @type {number} Intervalle de sauvegarde en ms */
+const SAVE_INTERVAL = 10000;
+
+/** @type {number} Intervalle minimum entre les boss (ms) */
 const BOSS_INTERVAL_MIN = 45000;
+
+/** @type {number} Intervalle maximum entre les boss (ms) */
 const BOSS_INTERVAL_MAX = 120000;
+
+/** @type {number} Nombre de clics requis pour vaincre un boss */
 const BOSS_CLICKS_REQUIRED = 20;
+
+/** @type {number} Intervalle entre les quiz (ms) */
 const QUIZ_INTERVAL = 90000;
+
+/** @type {number} Intervalle entre les tips (ms) */
 const TIP_INTERVAL = 60000;
-const PRESTIGE_THRESHOLD = 500000;  // Score minimum pour prestige
-const PRESTIGE_BONUS_PER_LEVEL = 0.05;  // Bonus par niveau de prestige
+
+/** @type {number} Score minimum pour effectuer un prestige */
+const PRESTIGE_THRESHOLD = 500000;
+
+/** @type {number} Bonus de production par niveau de prestige (5%) */
+const PRESTIGE_BONUS_PER_LEVEL = 0.05;
 
 // ============================================
 // UPGRADES DE PRODUCTION (20 niveaux)
 // ============================================
+
+/**
+ * Liste des upgrades de production
+ * @type {Upgrade[]}
+ */
 const UPGRADES = [
     // === TIER 1 : DÉBUT ===
     {
@@ -270,6 +294,11 @@ const UPGRADES = [
 // ============================================
 // AMÉLIORATIONS DE CLIC (12 niveaux)
 // ============================================
+
+/**
+ * Liste des améliorations de clic
+ * @type {ClickUpgrade[]}
+ */
 const CLICK_UPGRADES = [
     // === TIER 1 : BASIQUE ===
     {
@@ -388,6 +417,11 @@ const CLICK_UPGRADES = [
 // ============================================
 // NIVEAUX DE VILLAGE (15 niveaux)
 // ============================================
+
+/**
+ * Niveaux de progression du village
+ * @type {VillageLevel[]}
+ */
 const VILLAGE_LEVELS = [
     // === PHASE 1 : LOCALE ===
     { name: 'Salle Informatique', minScore: 0, emoji: '🏫', description: 'Une simple salle avec quelques vieux PC' },

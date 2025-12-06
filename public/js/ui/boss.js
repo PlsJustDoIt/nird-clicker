@@ -1,20 +1,39 @@
 /**
- * NIRD Clicker - Système de Boss GAFAM
- * Combats de boss avec mécaniques variées
- * Licence MIT - GPT MEN'S - Nuit de l'Info 2025
+ * @file NIRD Clicker - Système de Boss GAFAM
+ * @description Combats de boss avec mécaniques variées
+ * @license MIT
+ * @author GPT MEN'S - Nuit de l'Info 2025
  */
 
 // ============================================
 // VARIABLES DU BOSS
 // ============================================
+
+/** @type {Boss|null} Boss actuellement actif */
 var currentBoss = null;
+
+/** @type {number} Nombre de clics restants pour vaincre le boss */
 var bossClicksRemaining = 0;
+
+/** @type {number[]} Timers actifs du boss */
 var bossTimers = [];
+
+/** @type {number} Timestamp de début du combat */
 var bossStartTime = 0;
+
+/** @type {string[]} Pattern actuel pour les boss pattern */
 var bossPattern = [];
+
+/** @type {number} Index actuel dans le pattern */
 var patternIndex = 0;
+
+/** @type {Array} File d'attente des clics retardés (mécanique lag) */
 var lagQueue = [];
+
+/** @type {boolean} Indique si le bouclier du boss est actif */
 var bossShieldActive = false;
+
+/** @type {number} Phase actuelle du combat */
 var bossPhase = 1;
 
 // ============================================
@@ -22,7 +41,8 @@ var bossPhase = 1;
 // ============================================
 
 /**
- * Fonction publique pour déclencher un boss
+ * Déclenche l'apparition d'un boss
+ * @param {string|null} [bossId=null] - ID du boss spécifique ou null pour aléatoire
  */
 function showBoss(bossId = null) {
     if (typeof isEventActive === 'function' && isEventActive()) {
@@ -34,7 +54,8 @@ function showBoss(bossId = null) {
 }
 
 /**
- * Fonction interne pour afficher le boss
+ * Fonction interne pour afficher le boss (appelée après vérification de la queue)
+ * @param {string|null} [bossId=null] - ID du boss spécifique ou null pour aléatoire
  */
 function _showBossInternal(bossId = null) {
     clearAllBossTimers();
@@ -95,7 +116,8 @@ function _showBossInternal(bossId = null) {
 }
 
 /**
- * Génère le HTML du boss
+ * Génère le HTML du boss actuel
+ * @returns {string} Code HTML de l'interface du boss
  */
 function generateBossHTML() {
     const mechanicHint = getMechanicHint(bossState.activeMechanic);
@@ -125,7 +147,9 @@ function generateBossHTML() {
 }
 
 /**
- * Retourne l'indice pour une mécanique
+ * Retourne l'indice pour une mécanique de boss
+ * @param {string} mechanic - Type de mécanique
+ * @returns {string} Texte d'indice pour le joueur
  */
 function getMechanicHint(mechanic) {
     const hints = {
@@ -144,6 +168,9 @@ function getMechanicHint(mechanic) {
     return hints[mechanic] || hints['classic'];
 }
 
+/**
+ *
+ */
 function setupBossEventListeners() {
     const clickBtn = document.getElementById('boss-click-btn');
     if (clickBtn) {
@@ -159,6 +186,9 @@ function setupBossEventListeners() {
 // MÉCANIQUES DE BOSS
 // ============================================
 
+/**
+ *
+ */
 function startBossMechanic() {
     const mechanic = bossState.activeMechanic;
     const isSubMechanic = currentBoss.mechanic === 'phases' || currentBoss.mechanic === 'chaos';
@@ -181,6 +211,10 @@ function startBossMechanic() {
 }
 
 // === MÉCANIQUE : RÉGÉNÉRATION ===
+/**
+ *
+ * @param params
+ */
 function startRegenMechanic(params) {
     let lastClickTime = Date.now();
     
@@ -198,6 +232,10 @@ function startRegenMechanic(params) {
 }
 
 // === MÉCANIQUE : INVISIBLE ===
+/**
+ *
+ * @param params
+ */
 function startInvisibleMechanic(params) {
     const visibleDuration = params.visibleDuration || 2000;
     const invisibleDuration = params.invisibleDuration || 1500;
@@ -237,12 +275,20 @@ function startInvisibleMechanic(params) {
 }
 
 // === MÉCANIQUE : POPUPS ===
+/**
+ *
+ * @param params
+ */
 function startPopupsMechanic(params) {
     bossTimers.popups = setInterval(() => {
         createBossPopup(params);
     }, params.popupInterval);
 }
 
+/**
+ *
+ * @param params
+ */
 function createBossPopup(params) {
     const container = document.getElementById('boss-popups');
     if (!container) return;
@@ -286,6 +332,10 @@ function createBossPopup(params) {
 }
 
 // === MÉCANIQUE : TIMER ===
+/**
+ *
+ * @param params
+ */
 function startTimerMechanic(params) {
     let timeRemaining = params.timeLimit;
     
@@ -307,10 +357,18 @@ function startTimerMechanic(params) {
 }
 
 // === MÉCANIQUE : PATTERN (QTE) ===
+/**
+ *
+ * @param params
+ */
 function startPatternMechanic(params) {
     generatePattern(params);
 }
 
+/**
+ *
+ * @param params
+ */
 function generatePattern(params) {
     bossState.currentPattern = [];
     bossState.patternIndex = 0;
@@ -323,6 +381,9 @@ function generatePattern(params) {
     showBossStatus(params.patternMessage, 'info');
 }
 
+/**
+ *
+ */
 function displayPattern() {
     const patternEl = document.getElementById('boss-pattern');
     if (!patternEl) return;
@@ -335,6 +396,10 @@ function displayPattern() {
     }).join('');
 }
 
+/**
+ *
+ * @param e
+ */
 function handlePatternKey(e) {
     if (!currentBoss || currentBoss.mechanic !== 'pattern') return;
     
@@ -351,6 +416,10 @@ function handlePatternKey(e) {
     processPatternInput(pressed);
 }
 
+/**
+ *
+ * @param pressed
+ */
 function processPatternInput(pressed) {
     if (!currentBoss || currentBoss.mechanic !== 'pattern') return;
     
@@ -381,6 +450,10 @@ function processPatternInput(pressed) {
     }
 }
 
+/**
+ *
+ * @param direction
+ */
 function handlePatternGamepad(direction) {
     const directionMap = { 'up': '⬆️', 'down': '⬇️', 'left': '⬅️', 'right': '➡️' };
     const pressed = directionMap[direction];
@@ -388,11 +461,18 @@ function handlePatternGamepad(direction) {
 }
 
 // === MÉCANIQUE : LAG ===
+/**
+ *
+ * @param params
+ */
 function startLagMechanic(params) {
     showBossStatus(params.lagMessage, 'warning');
     bossState.lagDelay = params.lagDelay;
 }
 
+/**
+ *
+ */
 function processLaggedClick() {
     setTimeout(() => {
         if (bossClicksRemaining > 0) {
@@ -408,6 +488,10 @@ function processLaggedClick() {
 // === MÉCANIQUE : MOVING ===
 // NOTE: lastMoveX est défini dans ui.js
 
+/**
+ *
+ * @param params
+ */
 function startMovingMechanic(params) {
     showBossStatus(params.moveMessage, 'info');
     lastMoveX = 0;
@@ -431,6 +515,10 @@ function startMovingMechanic(params) {
 }
 
 // === MÉCANIQUE : BOUCLIER ===
+/**
+ *
+ * @param params
+ */
 function startShieldMechanic(params) {
     const toggleShield = () => {
         bossState.shieldActive = !bossState.shieldActive;
@@ -452,11 +540,18 @@ function startShieldMechanic(params) {
 }
 
 // === MÉCANIQUE : PHASES ===
+/**
+ *
+ * @param params
+ */
 function startPhasesMechanic(params) {
     bossState.phases = params.phases;
     updateBossPhase();
 }
 
+/**
+ *
+ */
 function updateBossPhase() {
     if (!bossState.phases) return;
     
@@ -483,6 +578,10 @@ function updateBossPhase() {
 }
 
 // === MÉCANIQUE : CHAOS ===
+/**
+ *
+ * @param params
+ */
 function startChaosMechanic(params) {
     showBossStatus(params.chaosMessage, 'danger');
     
@@ -511,6 +610,10 @@ function startChaosMechanic(params) {
     switchMechanic();
 }
 
+/**
+ *
+ * @param mechanic
+ */
 function getDefaultMechanicParams(mechanic) {
     const defaults = {
         'regen': { regenDelay: 2000, regenAmount: 5, regenMessage: '⚠️ Régénération !' },
@@ -527,6 +630,9 @@ function getDefaultMechanicParams(mechanic) {
 // GESTION DES CLICS
 // ============================================
 
+/**
+ *
+ */
 function handleBossClick() {
     const popupContainer = document.getElementById('boss-popups');
     const activePopups = popupContainer ? popupContainer.querySelectorAll('.boss-popup').length : 0;
@@ -574,6 +680,9 @@ function handleBossClick() {
     }
 }
 
+/**
+ *
+ */
 function updateBossUI() {
     const progressBar = document.getElementById('boss-progress-bar');
     const clicksLeft = document.getElementById('boss-clicks-left');
@@ -583,6 +692,11 @@ function updateBossUI() {
     if (clicksLeft) clicksLeft.textContent = bossClicksRemaining;
 }
 
+/**
+ *
+ * @param message
+ * @param type
+ */
 function showBossStatus(message, type) {
     const status = document.getElementById('boss-status');
     if (status) {
@@ -595,6 +709,10 @@ function showBossStatus(message, type) {
 // FIN DU BOSS
 // ============================================
 
+/**
+ *
+ * @param message
+ */
 function failBoss(message) {
     clearAllBossTimers();
     
@@ -611,6 +729,9 @@ function failBoss(message) {
     if (typeof onEventComplete === 'function') onEventComplete();
 }
 
+/**
+ *
+ */
 function clearAllBossTimers() {
     Object.values(bossTimers).forEach(timer => {
         clearInterval(timer);
@@ -620,6 +741,9 @@ function clearAllBossTimers() {
     bossState = {};
 }
 
+/**
+ *
+ */
 function clearBossMechanicTimers() {
     Object.keys(bossTimers).forEach(key => {
         if (key !== 'chaos') {
@@ -639,6 +763,10 @@ function clearBossMechanicTimers() {
     }
 }
 
+/**
+ *
+ * @param victory
+ */
 function closeBoss(victory = true) {
     const bossInfo = currentBoss ? {
         reward: currentBoss.reward,

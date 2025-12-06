@@ -236,7 +236,7 @@ function $$$(selector) {
 /**
  * Crée un élément HTML avec des attributs et du contenu
  * @param {string} tag - Le tag HTML
- * @param {Object} attrs - Les attributs
+ * @param {object} attrs - Les attributs
  * @param {string|HTMLElement|Array} content - Le contenu
  * @returns {HTMLElement} L'élément créé
  */

@@ -1,7 +1,8 @@
 /**
- * NIRD Clicker - Animations UI
- * Particules, nombres flottants, feedback visuel
- * Licence MIT - GPT MEN'S - Nuit de l'Info 2025
+ * @file NIRD Clicker - Animations UI
+ * @description Particules, nombres flottants, feedback visuel
+ * @license MIT
+ * @author GPT MEN'S - Nuit de l'Info 2025
  */
 
 // ============================================
@@ -10,8 +11,9 @@
 
 /**
  * Animation de feedback au clic sur le bouton principal
+ * @param {number} _points - Points gagnés (non utilisé actuellement)
  */
-function showClickFeedback(points) {
+function showClickFeedback(_points) {
     const clicker = document.getElementById('main-clicker');
     if (clicker) {
         clicker.classList.add('clicked');
@@ -55,8 +57,10 @@ function createFloatingNumber(points) {
 // PARTICULES
 // ============================================
 
-// Pool de particules pour réutilisation (optimisation)
+/** @type {HTMLElement[]} Pool de particules pour réutilisation */
 var particlePool = [];
+
+/** @type {number} Nombre maximum de particules dans le pool */
 var MAX_PARTICLES = 50;
 
 /**
@@ -195,6 +199,8 @@ function shakeElement(element, intensity = 5, duration = 500) {
 
 /**
  * Fait trembler tout l'écran (pour les boss par exemple)
+ * @param {number} [intensity=5] - Intensité du shake (1-10)
+ * @param {number} [duration=300] - Durée en ms
  */
 function shakeScreen(intensity = 5, duration = 300) {
     const app = document.getElementById('app');

@@ -1,7 +1,8 @@
 /**
- * NIRD Clicker - Logique du jeu (Version Complète)
- * Gestion des calculs, prestige, quiz, missions et progression
- * Licence MIT - GPT MEN'S - Nuit de l'Info 2025
+ * @file NIRD Clicker - Logique du jeu (Version Complète)
+ * @description Gestion des calculs, prestige, quiz, missions et progression
+ * @license MIT
+ * @author GPT MEN'S - Nuit de l'Info 2025
  * 
  * Note: gameState, audio et save sont maintenant dans core/
  */
@@ -47,7 +48,10 @@ if (typeof gameState === 'undefined') {
     };
 }
 
-// Initialisation du jeu
+/**
+ * Initialise le jeu
+ * Charge la sauvegarde, calcule la production et démarre le game loop
+ */
 function initGame() {
     loadGame();
     calculateProductionPerSecond();
@@ -76,6 +80,9 @@ function initGame() {
 if (typeof initAudio === 'undefined') {
     var audioContext = null;
     
+    /**
+     *
+     */
     function initAudio() {
         try {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -84,6 +91,10 @@ if (typeof initAudio === 'undefined') {
         }
     }
     
+    /**
+     *
+     * @param type
+     */
     function playSound(type) {
         if (!gameState.soundEnabled || !audioContext) return;
         // Version simplifiée en fallback
@@ -101,19 +112,29 @@ if (typeof initAudio === 'undefined') {
     }
 }
 
-// Calcul de la vraie puissance de clic (avec bonus prestige)
+/**
+ * Calcule la vraie puissance de clic (avec bonus prestige)
+ * @returns {number} Puissance de clic effective
+ */
 function getEffectiveClickPower() {
     const prestigeBonus = 1 + (gameState.prestigeLevel * PRESTIGE_BONUS_PER_LEVEL);
     return Math.floor(gameState.clickPower * prestigeBonus);
 }
 
 
-// Calcul du coût d'une upgrade
+/**
+ * Calcule le coût actuel d'une upgrade
+ * @param {Upgrade} upgrade - L'upgrade dont on veut le coût
+ * @returns {number} Coût de la prochaine unité
+ */
 function getUpgradeCost(upgrade) {
     return Math.floor(upgrade.baseCost * Math.pow(COST_MULTIPLIER, upgrade.owned));
 }
 
-// Calcul de la production par seconde (avec bonus prestige)
+/**
+ * Calcule la production passive par seconde (avec bonus prestige)
+ * @returns {number} Production par seconde
+ */
 function calculateProductionPerSecond() {
     let baseProduction = 0;
     
@@ -141,7 +162,10 @@ function calculateProductionPerSecond() {
     return gameState.productionPerSecond;
 }
 
-// Gestion du clic
+/**
+ * Gère un clic sur le bouton principal
+ * Ajoute les points, met à jour le combo, joue le son et met à jour l'UI
+ */
 function handleClick() {
     // Utiliser la vraie puissance de clic (avec bonus prestige)
     const points = getEffectiveClickPower();
@@ -182,7 +206,10 @@ function handleClick() {
     }
 }
 
-// Gestion du combo de clics
+/**
+ * Met à jour le combo de clics
+ * Reset automatiquement après 1.5 secondes sans clic
+ */
 function updateCombo() {
     gameState.currentCombo++;
     
@@ -200,7 +227,12 @@ function updateCombo() {
 
 // NOTE: buyMode et setBuyMode sont maintenant dans ui/upgrades-ui.js
 
-// Calculer le coût total pour acheter N upgrades
+/**
+ * Calcule le coût total pour acheter N upgrades
+ * @param {Upgrade} upgrade - L'upgrade à acheter
+ * @param {number} count - Nombre d'unités à acheter
+ * @returns {number} Coût total
+ */
 function getMultiUpgradeCost(upgrade, count) {
     let totalCost = 0;
     for (let i = 0; i < count; i++) {
@@ -209,7 +241,11 @@ function getMultiUpgradeCost(upgrade, count) {
     return totalCost;
 }
 
-// Calculer combien d'upgrades on peut acheter avec le score actuel
+/**
+ * Calcule combien d'upgrades on peut acheter avec le score actuel
+ * @param {Upgrade} upgrade - L'upgrade à analyser
+ * @returns {{count: number, totalCost: number}} Nombre et coût total
+ */
 function getMaxAffordable(upgrade) {
     let count = 0;
     let totalCost = 0;
@@ -227,7 +263,12 @@ function getMaxAffordable(upgrade) {
     return { count, totalCost };
 }
 
-// Acheter une upgrade (avec support multi-achat)
+/**
+ * Achète une upgrade de production (avec support multi-achat)
+ * @param {string} upgradeId - ID de l'upgrade à acheter
+ * @param {number|null} [forceCount=null] - Forcer un nombre d'achats
+ * @returns {boolean} True si l'achat a réussi
+ */
 function buyUpgrade(upgradeId, forceCount = null) {
     const upgrade = UPGRADES.find(u => u.id === upgradeId);
     if (!upgrade) return false;
@@ -275,7 +316,11 @@ function buyUpgrade(upgradeId, forceCount = null) {
     }
 }
 
-// Acheter une amélioration de clic
+/**
+ * Achète une amélioration de clic
+ * @param {string} upgradeId - ID de l'amélioration à acheter
+ * @returns {boolean} True si l'achat a réussi
+ */
 function buyClickUpgrade(upgradeId) {
     const upgrade = CLICK_UPGRADES.find(u => u.id === upgradeId);
     if (!upgrade || upgrade.purchased) return false;
@@ -295,7 +340,11 @@ function buyClickUpgrade(upgradeId) {
     return false;
 }
 
-// Acheter un skin
+/**
+ * Achète ou équipe un skin
+ * @param {string} skinId - ID du skin
+ * @returns {boolean} True si l'achat/équipement a réussi
+ */
 function buySkin(skinId) {
     // Chercher dans SKINS
     let skin = null;
@@ -340,7 +389,10 @@ function buySkin(skinId) {
     return false;
 }
 
-// Appliquer un skin
+/**
+ * Applique un skin au jeu
+ * @param {string} skinId - ID du skin à appliquer
+ */
 function applySkin(skinId) {
     // Chercher dans SKINS
     let skin = null;
@@ -357,6 +409,9 @@ function applySkin(skinId) {
 }
 
 // Vérifier les débloquages
+/**
+ *
+ */
 function checkUnlocks() {
     UPGRADES.forEach(upgrade => {
         if (!upgrade.unlocked && upgrade.unlockAt && gameState.totalScore >= upgrade.unlockAt) {
@@ -385,6 +440,9 @@ function checkUnlocks() {
 }
 
 // Mettre à jour le visuel du village
+/**
+ *
+ */
 function updateVillageVisual() {
     const villageContainer = document.getElementById('village-visual');
     if (villageContainer) {
@@ -399,6 +457,9 @@ function updateVillageVisual() {
 }
 
 // Vérifier les succès
+/**
+ *
+ */
 function checkAchievements() {
     ACHIEVEMENTS.forEach(achievement => {
         if (!achievement.unlocked && achievement.condition(gameState)) {
@@ -412,15 +473,24 @@ function checkAchievements() {
 // ============================================
 // SYSTÈME DE PRESTIGE
 // ============================================
+/**
+ *
+ */
 function canPrestige() {
     return gameState.totalScore >= PRESTIGE_THRESHOLD;
 }
 
+/**
+ *
+ */
 function calculatePrestigePoints() {
     if (!canPrestige()) return 0;
     return Math.floor(Math.sqrt(gameState.totalScore / PRESTIGE_THRESHOLD));
 }
 
+/**
+ *
+ */
 function doPrestige() {
     if (!canPrestige()) {
         showNotification(`Besoin de ${formatNumber(PRESTIGE_THRESHOLD)} points pour prestige !`, 'error');
@@ -433,6 +503,9 @@ function doPrestige() {
 }
 
 // Exécute le prestige directement sans confirmation
+/**
+ *
+ */
 function doPrestigeDirectly() {
     if (!canPrestige()) {
         return false;
@@ -477,16 +550,26 @@ function doPrestigeDirectly() {
 }
 
 // Alias pour la compatibilité
+/**
+ *
+ */
 function performPrestige() {
     return doPrestige();
 }
 
 // Alias pour gamepad.js
+/**
+ *
+ */
 function doPrestigeWithoutConfirm() {
     return doPrestigeDirectly();
 }
 
 // Acheter une amélioration de prestige
+/**
+ *
+ * @param upgradeId
+ */
 function buyPrestigeUpgrade(upgradeId) {
     if (typeof PRESTIGE_UPGRADES === 'undefined') return false;
     
@@ -543,6 +626,9 @@ var currentQuiz = null;
 
 // Note: scheduleQuiz n'est plus nécessaire, géré par core/loop.js
 // On garde la fonction vide pour compatibilité
+/**
+ *
+ */
 function scheduleQuiz() {
     // Géré par core/loop.js - tickQuiz()
     console.log('📝 Quiz scheduling géré par core/loop.js');
@@ -610,6 +696,11 @@ function _showQuizInternal() {
     });
 }
 
+/**
+ *
+ * @param e
+ * @param question
+ */
 function handleQuizAnswer(e, question) {
     const isCorrect = e.target.dataset.correct === 'true';
     
@@ -631,11 +722,17 @@ function handleQuizAnswer(e, question) {
     closeQuiz();
 }
 
+/**
+ *
+ */
 function skipQuiz() {
     showNotification('Quiz passé', 'info');
     closeQuiz();
 }
 
+/**
+ *
+ */
 function closeQuiz() {
     currentQuiz = null;
     document.body.classList.remove('modal-open'); // Réactiver le scroll
@@ -651,6 +748,9 @@ function closeQuiz() {
 // ============================================
 // MISSIONS QUOTIDIENNES
 // ============================================
+/**
+ *
+ */
 function initDailyMissions() {
     const today = new Date().toDateString();
     
@@ -676,10 +776,16 @@ function initDailyMissions() {
 }
 
 // Alias pour la compatibilité
+/**
+ *
+ */
 function generateDailyMissions() {
     initDailyMissions();
 }
 
+/**
+ *
+ */
 function checkDailyMissions() {
     gameState.dailyMissions.forEach(mission => {
         if (mission.completed) return;
@@ -712,11 +818,17 @@ function checkDailyMissions() {
 // TIPS ÉDUCATIFS
 // ============================================
 // Note: scheduleTips n'est plus nécessaire, géré par core/loop.js
+/**
+ *
+ */
 function scheduleTips() {
     // Géré par core/loop.js - tickTips()
     console.log('💡 Tips scheduling géré par core/loop.js');
 }
 
+/**
+ *
+ */
 function showRandomTip() {
     const tip = EDUCATIONAL_TIPS[Math.floor(Math.random() * EDUCATIONAL_TIPS.length)];
     showNotification(tip, 'tip', 6000);
@@ -725,6 +837,10 @@ function showRandomTip() {
 // ============================================
 // THÈMES
 // ============================================
+/**
+ *
+ * @param themeId
+ */
 function setTheme(themeId) {
     const theme = THEMES.find(t => t.id === themeId);
     if (!theme) return;
@@ -735,6 +851,10 @@ function setTheme(themeId) {
     showNotification(`${theme.name} activé !`, 'success');
 }
 
+/**
+ *
+ * @param themeId
+ */
 function applyTheme(themeId) {
     document.body.className = document.body.className.replace(/theme-\w+/g, '');
     const theme = THEMES.find(t => t.id === themeId);
@@ -746,6 +866,9 @@ function applyTheme(themeId) {
 // ============================================
 // TUTORIEL
 // ============================================
+/**
+ *
+ */
 function startTutorial() {
     const steps = [
         { target: '#main-clicker', message: '👆 Cliquez sur le PC pour gagner des points de souveraineté !' },
@@ -756,6 +879,9 @@ function startTutorial() {
     
     let currentStep = 0;
     
+    /**
+     *
+     */
     function showStep() {
         if (currentStep >= steps.length) {
             gameState.tutorialCompleted = true;
@@ -801,6 +927,9 @@ function startTutorial() {
 if (typeof startGameLoop === 'undefined') {
     console.warn('⚠️ core/loop.js non chargé, utilisation du fallback');
     
+    /**
+     *
+     */
     function startGameLoop() {
         // Production automatique
         setInterval(() => {
@@ -839,6 +968,9 @@ if (typeof startGameLoop === 'undefined') {
         setInterval(() => updateUpgradesList(), 1000);
     }
     
+    /**
+     *
+     */
     function scheduleBoss() {
         const delay = BOSS_INTERVAL_MIN + Math.random() * (BOSS_INTERVAL_MAX - BOSS_INTERVAL_MIN);
         setTimeout(() => {
@@ -851,6 +983,9 @@ if (typeof startGameLoop === 'undefined') {
 }
 
 // Événement aléatoire
+/**
+ *
+ */
 function tryRandomEvent() {
     if (gameState.totalScore < 500) return;
     
@@ -862,6 +997,10 @@ function tryRandomEvent() {
 }
 
 // Déclencher un événement
+/**
+ *
+ * @param event
+ */
 function triggerEvent(event) {
     showEventBanner(event.name, event.description);
     
@@ -889,6 +1028,9 @@ if (typeof saveGame === 'undefined') {
     
     var isResetting = false;
     
+    /**
+     *
+     */
     function saveGame() {
         if (isResetting) return;
         
@@ -930,6 +1072,9 @@ if (typeof saveGame === 'undefined') {
         gameState.lastSave = Date.now();
     }
     
+    /**
+     *
+     */
     function loadGame() {
         const savedData = localStorage.getItem('nirdClicker_save');
         
@@ -997,6 +1142,9 @@ if (typeof saveGame === 'undefined') {
         }
     }
     
+    /**
+     *
+     */
     function resetGame() {
         isResetting = true;
         try {
@@ -1014,6 +1162,10 @@ if (typeof saveGame === 'undefined') {
 // On garde un fallback si le module n'est pas chargé
 // ============================================
 if (typeof formatNumber === 'undefined') {
+    /**
+     *
+     * @param num
+     */
     function formatNumber(num) {
         if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
         if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
@@ -1023,6 +1175,10 @@ if (typeof formatNumber === 'undefined') {
 }
 
 if (typeof shuffleArray === 'undefined') {
+    /**
+     *
+     * @param array
+     */
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -1037,6 +1193,9 @@ if (typeof shuffleArray === 'undefined') {
 // ============================================
 
 // Récupérer le leaderboard
+/**
+ *
+ */
 async function fetchLeaderboard() {
     try {
         const response = await fetch('/api/leaderboard');
@@ -1052,6 +1211,10 @@ async function fetchLeaderboard() {
 }
 
 // Soumettre le score au leaderboard
+/**
+ *
+ * @param pseudo
+ */
 async function submitScore(pseudo) {
     if (!pseudo || pseudo.length < 2) {
         showNotification('Pseudo trop court (min 2 caractères)', 'error');
@@ -1098,6 +1261,10 @@ async function submitScore(pseudo) {
 }
 
 // Récupérer le rang du joueur
+/**
+ *
+ * @param pseudo
+ */
 async function fetchPlayerRank(pseudo) {
     try {
         const response = await fetch(`/api/leaderboard/rank/${encodeURIComponent(pseudo)}`);
@@ -1113,6 +1280,10 @@ async function fetchPlayerRank(pseudo) {
 }
 
 // Formater le temps de jeu
+/**
+ *
+ * @param seconds
+ */
 function formatPlayTime(seconds) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);

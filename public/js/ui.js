@@ -1,22 +1,30 @@
 /**
- * NIRD Clicker - Interface Utilisateur (Version Complète)
- * Gestion de l'affichage, interactions, particules et menus
- * Licence MIT - GPT MEN'S - Nuit de l'Info 2025
+ * @file NIRD Clicker - Interface Utilisateur (Version Complète)
+ * @description Gestion de l'affichage, interactions, particules et menus
+ * @license MIT
+ * @author GPT MEN'S - Nuit de l'Info 2025
  */
 
-// Variable pour le multiplicateur d'achat
+/** @type {number} Multiplicateur d'achat (1, 10, 25, 100 ou 'max') */
 let buyMultiplier = 1;
-var buyMode = 1; // Alias pour compatibilité avec les modules
+
+/** @type {number|string} Mode d'achat actuel */
+var buyMode = 1;
 
 // ============================================
 // SYSTÈME DE QUEUE D'ÉVÉNEMENTS
 // Évite les conflits entre boss et quiz
 // ============================================
-let eventQueue = [];
+
+/** @type {Array<{type: string, data: *}>} File d'attente des événements */
+const eventQueue = [];
+
+/** @type {boolean} Indique si un événement est en cours */
 let isEventInProgress = false;
 
 /**
  * Vérifie si un événement (boss ou quiz) est actuellement actif
+ * @returns {boolean} True si un événement est actif
  */
 function isEventActive() {
     // Vérifier si un boss est actif
@@ -36,6 +44,8 @@ function isEventActive() {
 
 /**
  * Ajoute un événement à la queue s'il n'y en a pas déjà du même type
+ * @param {string} type - Type d'événement ('boss' ou 'quiz')
+ * @param {*} [data=null] - Données associées à l'événement
  */
 function queueEvent(type, data = null) {
     // Éviter les doublons du même type
@@ -89,7 +99,9 @@ function onEventComplete() {
     processEventQueue();
 }
 
-// Mise à jour complète de l'interface
+/**
+ * Met à jour complète de l'interface utilisateur
+ */
 function updateUI() {
     updateScoreDisplay();
     updateStatsDisplay();
@@ -102,10 +114,12 @@ function updateUI() {
     updateVillageVisual();
 }
 
-// Variable pour tracker si on doit mettre à jour les upgrades
+/** @type {number} Dernier score utilisé pour mettre à jour les upgrades */
 let lastScoreForUpgrades = 0;
 
-// Mise à jour du score
+/**
+ * Met à jour l'affichage du score et de la production
+ */
 function updateScoreDisplay() {
     document.getElementById('score').textContent = formatNumber(gameState.score);
     document.getElementById('per-second').textContent = formatNumber(gameState.productionPerSecond);
@@ -117,7 +131,9 @@ function updateScoreDisplay() {
     }
 }
 
-// Mise à jour des statistiques
+/**
+ * Met à jour l'affichage des statistiques
+ */
 function updateStatsDisplay() {
     document.getElementById('total-clicks').textContent = formatNumber(gameState.totalClicks);
     document.getElementById('pc-liberated').textContent = formatNumber(Math.floor(gameState.totalScore / 100));
@@ -142,7 +158,9 @@ function updateStatsDisplay() {
     }
 }
 
-// Mise à jour de la puissance de clic (avec bonus prestige)
+/**
+ * Met à jour l'affichage de la puissance de clic (avec bonus prestige)
+ */
 function updateClickPower() {
     const effectivePower = getEffectiveClickPower();
     const clickPowerEl = document.getElementById('click-power');
@@ -152,6 +170,9 @@ function updateClickPower() {
 }
 
 // Mise à jour du combo
+/**
+ *
+ */
 function updateComboDisplay() {
     const comboEl = document.getElementById('combo-display');
     if (comboEl) {
@@ -166,6 +187,9 @@ function updateComboDisplay() {
 }
 
 // Mise à jour de la jauge de résistance
+/**
+ *
+ */
 function updateGauge() {
     const currentLevel = VILLAGE_LEVELS[gameState.currentVillageLevel];
     const nextLevel = VILLAGE_LEVELS[gameState.currentVillageLevel + 1];
@@ -182,6 +206,9 @@ function updateGauge() {
 }
 
 // Mise à jour du bouton prestige
+/**
+ *
+ */
 function updatePrestigeButton() {
     const prestigeBtn = document.getElementById('prestige-btn');
     if (prestigeBtn) {
@@ -195,6 +222,9 @@ function updatePrestigeButton() {
 }
 
 // Mise à jour des missions
+/**
+ *
+ */
 function updateMissionsUI() {
     const container = document.getElementById('daily-missions');
     if (!container || !gameState.dailyMissions) return;
@@ -222,6 +252,9 @@ function updateMissionsUI() {
 }
 
 // Mise à jour des boutons de mode d'achat
+/**
+ *
+ */
 function updateBuyModeButtons() {
     document.querySelectorAll('.buy-mode-btn').forEach(btn => {
         btn.classList.remove('active');
@@ -232,6 +265,9 @@ function updateBuyModeButtons() {
 }
 
 // Génération de la liste des upgrades
+/**
+ *
+ */
 function updateUpgradesList() {
     const container = document.getElementById('upgrades-list');
     if (!container) return;
@@ -269,6 +305,9 @@ function updateUpgradesList() {
 
 // Mise à jour de la liste des upgrades de clic (tab séparé)
 // Affiche : les achetées + les 3 prochaines non achetées
+/**
+ *
+ */
 function updateClickUpgradesList() {
     const container = document.getElementById('click-upgrades-list');
     if (!container) return;
@@ -300,6 +339,10 @@ function updateClickUpgradesList() {
 }
 
 // Créer un élément d'upgrade
+/**
+ *
+ * @param upgrade
+ */
 function createUpgradeElement(upgrade) {
     let displayCount = buyMode;
     let cost;
@@ -342,6 +385,11 @@ function createUpgradeElement(upgrade) {
 }
 
 // Mettre à jour un élément d'upgrade existant
+/**
+ *
+ * @param el
+ * @param upgrade
+ */
 function updateUpgradeElement(el, upgrade) {
     let displayCount = buyMode;
     let cost;
@@ -370,6 +418,10 @@ function updateUpgradeElement(el, upgrade) {
 }
 
 // Créer un élément d'upgrade de clic
+/**
+ *
+ * @param upgrade
+ */
 function createClickUpgradeElement(upgrade) {
     const isPurchased = upgrade.purchased;
     const canAfford = !isPurchased && gameState.score >= upgrade.cost;
@@ -400,6 +452,11 @@ function createClickUpgradeElement(upgrade) {
 }
 
 // Mettre à jour un élément d'upgrade de clic existant
+/**
+ *
+ * @param el
+ * @param upgrade
+ */
 function updateClickUpgradeElement(el, upgrade) {
     const isPurchased = upgrade.purchased;
     const canAfford = !isPurchased && gameState.score >= upgrade.cost;
@@ -426,6 +483,10 @@ function updateClickUpgradeElement(el, upgrade) {
 }
 
 // Calculer la quantité effective selon le multiplicateur
+/**
+ *
+ * @param upgrade
+ */
 function getEffectiveQuantity(upgrade) {
     if (buyMultiplier === 'max') {
         let count = 0;
@@ -448,6 +509,11 @@ function getEffectiveQuantity(upgrade) {
 }
 
 // Calculer le coût total pour une quantité
+/**
+ *
+ * @param upgrade
+ * @param quantity
+ */
 function getTotalCostForQuantity(upgrade, quantity) {
     let total = 0;
     let tempOwned = upgrade.owned;
@@ -460,6 +526,10 @@ function getTotalCostForQuantity(upgrade, quantity) {
 }
 
 // Animation de clic
+/**
+ *
+ * @param points
+ */
 function showClickFeedback(points) {
     const clicker = document.getElementById('main-clicker');
     clicker.classList.add('clicked');
@@ -467,6 +537,10 @@ function showClickFeedback(points) {
 }
 
 // Nombre flottant après clic
+/**
+ *
+ * @param points
+ */
 function createFloatingNumber(points) {
     const clickArea = document.getElementById('click-area');
     const floater = document.createElement('div');
@@ -491,6 +565,9 @@ function createFloatingNumber(points) {
 }
 
 // Création de particules au clic
+/**
+ *
+ */
 function createParticles() {
     const clickArea = document.getElementById('click-area');
     const colors = ['#4ade80', '#60a5fa', '#f472b6', '#facc15', '#a78bfa'];
@@ -510,6 +587,12 @@ function createParticles() {
 }
 
 // Notifications
+/**
+ *
+ * @param message
+ * @param type
+ * @param duration
+ */
 function showNotification(message, type = 'info', duration = 3000) {
     const container = document.getElementById('floating-notifications');
     const notification = document.createElement('div');
@@ -525,6 +608,11 @@ function showNotification(message, type = 'info', duration = 3000) {
 }
 
 // Bannière d'événement
+/**
+ *
+ * @param title
+ * @param description
+ */
 function showEventBanner(title, description) {
     const banner = document.getElementById('event-banner');
     const text = document.getElementById('event-text');
@@ -547,6 +635,7 @@ let bossState = {};
 /**
  * Fonction publique pour déclencher un boss
  * Utilise le système de queue pour éviter les conflits
+ * @param bossId
  */
 function showBoss(bossId = null) {
     if (isEventActive()) {
@@ -559,6 +648,7 @@ function showBoss(bossId = null) {
 
 /**
  * Fonction interne pour afficher le boss (appelée par la queue)
+ * @param bossId
  */
 function _showBossInternal(bossId = null) {
     // Nettoyer les anciens timers s'il y en avait
@@ -616,6 +706,9 @@ function _showBossInternal(bossId = null) {
     playSound('boss');
 }
 
+/**
+ *
+ */
 function generateBossHTML() {
     const mechanicHint = getMechanicHint(bossState.activeMechanic);
     
@@ -643,6 +736,10 @@ function generateBossHTML() {
     `;
 }
 
+/**
+ *
+ * @param mechanic
+ */
 function getMechanicHint(mechanic) {
     const hints = {
         'classic': '👆 Cliquez pour fermer !',
@@ -660,6 +757,9 @@ function getMechanicHint(mechanic) {
     return hints[mechanic] || hints['classic'];
 }
 
+/**
+ *
+ */
 function setupBossEventListeners() {
     const clickBtn = document.getElementById('boss-click-btn');
     if (clickBtn) {
@@ -672,6 +772,9 @@ function setupBossEventListeners() {
     }
 }
 
+/**
+ *
+ */
 function startBossMechanic() {
     const mechanic = bossState.activeMechanic;
     // Si on est dans une phase ou chaos, utiliser les params par défaut pour la sous-mécanique
@@ -715,6 +818,10 @@ function startBossMechanic() {
 }
 
 // === MÉCANIQUE : RÉGÉNÉRATION ===
+/**
+ *
+ * @param params
+ */
 function startRegenMechanic(params) {
     let lastClickTime = Date.now();
     
@@ -733,6 +840,10 @@ function startRegenMechanic(params) {
 }
 
 // === MÉCANIQUE : INVISIBLE ===
+/**
+ *
+ * @param params
+ */
 function startInvisibleMechanic(params) {
     // Valeurs par défaut
     const visibleDuration = params.visibleDuration || 2000;
@@ -774,12 +885,20 @@ function startInvisibleMechanic(params) {
 }
 
 // === MÉCANIQUE : POPUPS ===
+/**
+ *
+ * @param params
+ */
 function startPopupsMechanic(params) {
     bossTimers.popups = setInterval(() => {
         createBossPopup(params);
     }, params.popupInterval);
 }
 
+/**
+ *
+ * @param params
+ */
 function createBossPopup(params) {
     const container = document.getElementById('boss-popups');
     if (!container) return;
@@ -827,6 +946,10 @@ function createBossPopup(params) {
 }
 
 // === MÉCANIQUE : TIMER ===
+/**
+ *
+ * @param params
+ */
 function startTimerMechanic(params) {
     let timeRemaining = params.timeLimit;
     
@@ -848,10 +971,18 @@ function startTimerMechanic(params) {
 }
 
 // === MÉCANIQUE : PATTERN (QTE) ===
+/**
+ *
+ * @param params
+ */
 function startPatternMechanic(params) {
     generatePattern(params);
 }
 
+/**
+ *
+ * @param params
+ */
 function generatePattern(params) {
     bossState.currentPattern = [];
     bossState.patternIndex = 0;
@@ -864,6 +995,9 @@ function generatePattern(params) {
     showBossStatus(params.patternMessage, 'info');
 }
 
+/**
+ *
+ */
 function displayPattern() {
     const patternEl = document.getElementById('boss-pattern');
     if (!patternEl) return;
@@ -876,6 +1010,10 @@ function displayPattern() {
     }).join('');
 }
 
+/**
+ *
+ * @param e
+ */
 function handlePatternKey(e) {
     if (!currentBoss || currentBoss.mechanic !== 'pattern') return;
     
@@ -904,6 +1042,10 @@ function handlePatternKey(e) {
 }
 
 // Fonction pour traiter l'input du pattern (clavier ou gamepad)
+/**
+ *
+ * @param pressed
+ */
 function processPatternInput(pressed) {
     if (!currentBoss || currentBoss.mechanic !== 'pattern') return;
     
@@ -938,6 +1080,10 @@ function processPatternInput(pressed) {
 }
 
 // Support Gamepad pour le pattern (appelé depuis gamepad.js)
+/**
+ *
+ * @param direction
+ */
 function handlePatternGamepad(direction) {
     const directionMap = {
         'up': '⬆️',
@@ -953,11 +1099,18 @@ function handlePatternGamepad(direction) {
 }
 
 // === MÉCANIQUE : LAG ===
+/**
+ *
+ * @param params
+ */
 function startLagMechanic(params) {
     showBossStatus(params.lagMessage, 'warning');
     bossState.lagDelay = params.lagDelay;
 }
 
+/**
+ *
+ */
 function processLaggedClick() {
     setTimeout(() => {
         if (bossClicksRemaining > 0) {
@@ -975,6 +1128,10 @@ function processLaggedClick() {
 // === MÉCANIQUE : MOVING ===
 let lastMoveX = 0;
 
+/**
+ *
+ * @param params
+ */
 function startMovingMechanic(params) {
     showBossStatus(params.moveMessage, 'info');
     lastMoveX = 0;
@@ -1002,6 +1159,10 @@ function startMovingMechanic(params) {
 }
 
 // === MÉCANIQUE : BOUCLIER ===
+/**
+ *
+ * @param params
+ */
 function startShieldMechanic(params) {
     const toggleShield = () => {
         bossState.shieldActive = !bossState.shieldActive;
@@ -1025,11 +1186,18 @@ function startShieldMechanic(params) {
 }
 
 // === MÉCANIQUE : PHASES ===
+/**
+ *
+ * @param params
+ */
 function startPhasesMechanic(params) {
     bossState.phases = params.phases;
     updateBossPhase();
 }
 
+/**
+ *
+ */
 function updateBossPhase() {
     if (!bossState.phases) return;
     
@@ -1057,6 +1225,10 @@ function updateBossPhase() {
 }
 
 // === MÉCANIQUE : CHAOS ===
+/**
+ *
+ * @param params
+ */
 function startChaosMechanic(params) {
     showBossStatus(params.chaosMessage, 'danger');
     
@@ -1088,6 +1260,10 @@ function startChaosMechanic(params) {
     switchMechanic();
 }
 
+/**
+ *
+ * @param mechanic
+ */
 function getDefaultMechanicParams(mechanic) {
     const defaults = {
         'regen': { regenDelay: 2000, regenAmount: 5, regenMessage: '⚠️ Régénération !' },
@@ -1101,6 +1277,9 @@ function getDefaultMechanicParams(mechanic) {
 }
 
 // === GESTION DES CLICS ===
+/**
+ *
+ */
 function handleBossClick() {
     // Vérifier si des popups bloquent le clic
     const popupContainer = document.getElementById('boss-popups');
@@ -1155,6 +1334,9 @@ function handleBossClick() {
     }
 }
 
+/**
+ *
+ */
 function updateBossUI() {
     const progressBar = document.getElementById('boss-progress-bar');
     const clicksLeft = document.getElementById('boss-clicks-left');
@@ -1164,6 +1346,11 @@ function updateBossUI() {
     if (clicksLeft) clicksLeft.textContent = bossClicksRemaining;
 }
 
+/**
+ *
+ * @param message
+ * @param type
+ */
 function showBossStatus(message, type) {
     const status = document.getElementById('boss-status');
     if (status) {
@@ -1172,6 +1359,10 @@ function showBossStatus(message, type) {
     }
 }
 
+/**
+ *
+ * @param message
+ */
 function failBoss(message) {
     clearAllBossTimers();
     
@@ -1190,6 +1381,9 @@ function failBoss(message) {
     onEventComplete();
 }
 
+/**
+ *
+ */
 function clearAllBossTimers() {
     Object.values(bossTimers).forEach(timer => {
         clearInterval(timer);
@@ -1202,6 +1396,9 @@ function clearAllBossTimers() {
 }
 
 // Version qui ne réinitialise pas bossState (pour le chaos mode)
+/**
+ *
+ */
 function clearBossMechanicTimers() {
     Object.keys(bossTimers).forEach(key => {
         if (key !== 'chaos') {
@@ -1223,6 +1420,10 @@ function clearBossMechanicTimers() {
     }
 }
 
+/**
+ *
+ * @param victory
+ */
 function closeBoss(victory = true) {
     // Sauvegarder les infos du boss AVANT de tout nettoyer
     const bossInfo = currentBoss ? {
@@ -1270,6 +1471,9 @@ function closeBoss(victory = true) {
 let settingsMenuIndex = 0;
 let settingsMenuItems = [];
 
+/**
+ *
+ */
 function openSettingsMenu() {
     const existingModal = document.querySelector('.settings-modal');
     if (existingModal) {
@@ -1356,6 +1560,10 @@ function openSettingsMenu() {
     });
 }
 
+/**
+ *
+ * @param direction
+ */
 function cycleTheme(direction) {
     const currentIndex = THEMES.findIndex(t => t.id === gameState.currentTheme);
     let newIndex = currentIndex + direction;
@@ -1370,6 +1578,9 @@ function cycleTheme(direction) {
     if (themeNameEl) themeNameEl.textContent = newTheme.name;
 }
 
+/**
+ *
+ */
 function toggleSettingsSound() {
     gameState.soundEnabled = !gameState.soundEnabled;
     const btn = document.querySelector('#sound-toggle-btn');
@@ -1380,6 +1591,9 @@ function toggleSettingsSound() {
     saveGame();
 }
 
+/**
+ *
+ */
 function toggleSettingsParticles() {
     gameState.particlesEnabled = !gameState.particlesEnabled;
     const btn = document.querySelector('#particles-toggle-btn');
@@ -1390,12 +1604,19 @@ function toggleSettingsParticles() {
     saveGame();
 }
 
+/**
+ *
+ */
 function updateSettingsSelection() {
     settingsMenuItems.forEach((item, index) => {
         item.classList.toggle('gamepad-selected', index === settingsMenuIndex);
     });
 }
 
+/**
+ *
+ * @param direction
+ */
 function navigateSettingsMenu(direction) {
     const modal = document.querySelector('.settings-modal');
     if (!modal) return;
@@ -1408,6 +1629,9 @@ function navigateSettingsMenu(direction) {
     playSound('click');
 }
 
+/**
+ *
+ */
 function activateSettingsItem() {
     const modal = document.querySelector('.settings-modal');
     if (!modal) return;
@@ -1433,6 +1657,9 @@ function activateSettingsItem() {
 }
 
 // Menu Succès
+/**
+ *
+ */
 function openAchievementsMenu() {
     const modal = document.createElement('div');
     modal.className = 'achievements-modal modal-overlay';
@@ -1463,6 +1690,9 @@ function openAchievementsMenu() {
 }
 
 // Menu Encyclopédie
+/**
+ *
+ */
 function openEncyclopedia() {
     const modal = document.createElement('div');
     modal.className = 'encyclopedia-modal modal-overlay';
@@ -1496,6 +1726,9 @@ function openEncyclopedia() {
 }
 
 // Menu Statistiques
+/**
+ *
+ */
 function openStatsMenu() {
     const playTime = Math.floor((Date.now() - gameState.startTime) / 1000);
     const hours = Math.floor(playTime / 3600);
@@ -1561,6 +1794,9 @@ function openStatsMenu() {
 // ============================================
 // LEADERBOARD UI
 // ============================================
+/**
+ *
+ */
 async function openLeaderboard() {
     const modal = document.createElement('div');
     modal.className = 'leaderboard-modal modal-overlay';
@@ -1596,6 +1832,9 @@ async function openLeaderboard() {
     await refreshLeaderboard();
 }
 
+/**
+ *
+ */
 async function refreshLeaderboard() {
     const container = document.getElementById('leaderboard-list');
     if (!container) return;
@@ -1633,6 +1872,9 @@ async function refreshLeaderboard() {
     container.innerHTML = html;
 }
 
+/**
+ *
+ */
 async function submitToLeaderboard() {
     const input = document.getElementById('leaderboard-pseudo');
     const pseudo = input.value.trim();
@@ -1642,6 +1884,10 @@ async function submitToLeaderboard() {
     }
 }
 
+/**
+ *
+ * @param text
+ */
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
@@ -1649,6 +1895,9 @@ function escapeHtml(text) {
 }
 
 // Toggle functions
+/**
+ *
+ */
 function toggleSound() {
     gameState.soundEnabled = !gameState.soundEnabled;
     const btn = document.getElementById('sound-toggle');
@@ -1663,6 +1912,9 @@ function toggleSound() {
     saveGame();
 }
 
+/**
+ *
+ */
 function toggleParticles() {
     gameState.particlesEnabled = !gameState.particlesEnabled;
     const btn = document.getElementById('particles-toggle');
@@ -1680,6 +1932,10 @@ function toggleParticles() {
 // ============================================
 // THÈMES & SKINS
 // ============================================
+/**
+ *
+ * @param themeName
+ */
 function applyTheme(themeName) {
     document.body.className = document.body.className.replace(/theme-\w+/g, '');
     document.body.classList.add(`theme-${themeName}`);
@@ -1693,6 +1949,10 @@ function applyTheme(themeName) {
     saveGame();
 }
 
+/**
+ *
+ * @param skinId
+ */
 function applySkin(skinId) {
     const skin = SKINS.find(s => s.id === skinId);
     if (skin) {
@@ -1713,6 +1973,9 @@ function applySkin(skinId) {
 // ============================================
 // MENUS TABS (pour nouvelle interface)
 // ============================================
+/**
+ *
+ */
 function renderPrestigeUpgrades() {
     const container = document.getElementById('prestige-upgrades-list');
     if (!container) return;
@@ -1757,6 +2020,9 @@ function renderPrestigeUpgrades() {
     });
 }
 
+/**
+ *
+ */
 function renderSkins() {
     const container = document.getElementById('skins-list');
     if (!container) return;
@@ -1802,6 +2068,9 @@ function renderSkins() {
     });
 }
 
+/**
+ *
+ */
 function renderEncyclopedia() {
     const container = document.getElementById('encyclopedia-list');
     if (!container) return;
@@ -1827,11 +2096,17 @@ function renderEncyclopedia() {
     });
 }
 
+/**
+ *
+ */
 function renderUpgrades() {
     // La fonction updateUpgradesList existe déjà
     updateUpgradesList();
 }
 
+/**
+ *
+ */
 function updatePrestigeDisplay() {
     const pointsDisplay = document.getElementById('prestige-points-display');
     const multiplierDisplay = document.getElementById('prestige-multiplier');
@@ -1847,6 +2122,9 @@ function updatePrestigeDisplay() {
 }
 
 // Export/Import save
+/**
+ *
+ */
 function exportSave() {
     saveGame();
     const data = localStorage.getItem('nirdClicker_save');
@@ -1859,6 +2137,9 @@ function exportSave() {
     showNotification('💾 Sauvegarde exportée !', 'success');
 }
 
+/**
+ *
+ */
 function importSave() {
     const input = document.createElement('input');
     input.type = 'file';
@@ -1882,6 +2163,10 @@ function importSave() {
 }
 
 // Set buy multiplier
+/**
+ *
+ * @param value
+ */
 function setBuyMultiplier(value) {
     buyMultiplier = value;
     document.querySelectorAll('.multiplier-btn').forEach(btn => {
@@ -1893,6 +2178,9 @@ function setBuyMultiplier(value) {
 // ============================================
 // INITIALISATION
 // ============================================
+/**
+ *
+ */
 function initEventListeners() {
     // Clic principal
     document.getElementById('main-clicker').addEventListener('click', handleClick);
@@ -1956,7 +2244,7 @@ function initEventListeners() {
 // ============================================
 // EASTER EGG - SNAKE GAME
 // ============================================
-let snakeGame = {
+const snakeGame = {
     canvas: null,
     ctx: null,
     snake: [],
@@ -1971,6 +2259,9 @@ let snakeGame = {
     isRunning: false
 };
 
+/**
+ *
+ */
 function openSnakeGame() {
     const modal = document.getElementById('snake-modal');
     modal.classList.remove('hidden');
@@ -1993,6 +2284,9 @@ function openSnakeGame() {
     showNotification('🐍 Easter Egg découvert !', 'success');
 }
 
+/**
+ *
+ */
 function closeSnakeGame() {
     const modal = document.getElementById('snake-modal');
     if (modal) {
@@ -2001,6 +2295,9 @@ function closeSnakeGame() {
     stopSnakeGame();
 }
 
+/**
+ *
+ */
 function startSnakeGame() {
     // Reset du jeu
     snakeGame.snake = [
@@ -2027,6 +2324,9 @@ function startSnakeGame() {
     document.addEventListener('keydown', handleSnakeKeydown);
 }
 
+/**
+ *
+ */
 function stopSnakeGame() {
     snakeGame.isRunning = false;
     if (snakeGame.gameLoop) {
@@ -2042,6 +2342,10 @@ function stopSnakeGame() {
     }
 }
 
+/**
+ *
+ * @param e
+ */
 function handleSnakeKeydown(e) {
     if (!snakeGame.isRunning) return;
     
@@ -2059,6 +2363,10 @@ function handleSnakeKeydown(e) {
     }
 }
 
+/**
+ *
+ * @param dir
+ */
 function setSnakeDirection(dir) {
     if (!snakeGame.isRunning) return;
     
@@ -2073,6 +2381,9 @@ function setSnakeDirection(dir) {
     }
 }
 
+/**
+ *
+ */
 function spawnFood() {
     let validPosition = false;
     while (!validPosition) {
@@ -2088,6 +2399,9 @@ function spawnFood() {
     }
 }
 
+/**
+ *
+ */
 function updateSnakeGame() {
     if (!snakeGame.isRunning) return;
     
@@ -2133,6 +2447,9 @@ function updateSnakeGame() {
     drawSnakeGame();
 }
 
+/**
+ *
+ */
 function drawSnakeGame() {
     const ctx = snakeGame.ctx;
     const size = snakeGame.gridSize;
@@ -2198,6 +2515,9 @@ function drawSnakeGame() {
     }
 }
 
+/**
+ *
+ */
 function gameOverSnake() {
     stopSnakeGame();
     

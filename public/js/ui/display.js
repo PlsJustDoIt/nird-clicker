@@ -1,10 +1,11 @@
 /**
- * NIRD Clicker - Affichage UI
- * Mise à jour du score, stats, jauges
- * Licence MIT - GPT MEN'S - Nuit de l'Info 2025
+ * @file NIRD Clicker - Affichage UI
+ * @description Mise à jour du score, stats, jauges
+ * @license MIT
+ * @author GPT MEN'S - Nuit de l'Info 2025
  */
 
-// Variable pour optimiser les mises à jour des upgrades
+/** @type {number} Dernier score utilisé pour optimiser les mises à jour */
 var lastScoreForUpgrades = 0;
 
 // ============================================
