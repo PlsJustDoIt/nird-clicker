@@ -304,7 +304,7 @@ function processGamepadInput(gamepad) {
         } else if (milestoneModal) {
             // Fermer le milestone
             if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.A)) {
-                closeMilestoneModal();
+                closeMilestoneModalGamepad();
                 vibrateGamepad(30, 0.3);
             }
         } else if (isBossVisible) {
@@ -365,7 +365,7 @@ function processGamepadInput(gamepad) {
         }
         // Si un milestone est ouvert, X le ferme
         else if (milestoneModal && isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.X)) {
-            closeMilestoneModal();
+            closeMilestoneModalGamepad();
             vibrateGamepad(30, 0.3);
         }
         // Si l'attaque Facebook est en phase alerte, X lance la vidéo
@@ -715,18 +715,23 @@ function selectQuizAnswer() {
     }
 }
 
-function closeMilestoneModal() {
-    const milestoneModal = document.querySelector('.milestone-modal');
-    if (milestoneModal) {
-        // Chercher le bouton dans le milestone et le cliquer
-        const button = milestoneModal.querySelector('button');
-        if (button) {
-            button.click();
-        } else {
+function closeMilestoneModalGamepad() {
+    // Appeler la fonction globale de events.js si disponible
+    if (typeof window.closeMilestoneModal === 'function') {
+        window.closeMilestoneModal();
+    } else {
+        // Fallback si la fonction n'existe pas
+        const milestoneModal = document.querySelector('.milestone-modal');
+        if (milestoneModal) {
+            document.body.classList.remove('modal-open');
             milestoneModal.remove();
+            document.querySelectorAll('.confetti').forEach(c => c.remove());
+            if (typeof onEventComplete === 'function') {
+                onEventComplete();
+            }
         }
-        playSound('click');
     }
+    playSound('click');
 }
 
 // ============================================

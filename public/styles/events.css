@@ -180,4 +180,5 @@
     border-radius: 50%;
     animation: fall linear forwards;
     z-index: 1500;
+    pointer-events: none;
 }

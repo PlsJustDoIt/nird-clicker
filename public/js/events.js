@@ -55,7 +55,7 @@ function checkMilestoneEvents() {
 function showMilestoneModal(event) {
     playSound('levelup');
     
-    document.body.classList.add('modal-open'); // Bloquer le scroll
+    document.body.classList.add('modal-open');
     
     const modal = document.createElement('div');
     modal.className = 'milestone-modal';
@@ -64,20 +64,40 @@ function showMilestoneModal(event) {
             <h2>${event.title}</h2>
             <p>${event.message}</p>
             <div class="milestone-celebration">🎉🎊🎉</div>
-            <button onclick="closeMilestoneModal(this.parentElement.parentElement)">Continuer</button>
+            <button class="milestone-close-btn">Continuer</button>
         </div>
     `;
     document.body.appendChild(modal);
+    
+    const closeBtn = modal.querySelector('.milestone-close-btn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeMilestoneModal(modal);
+        });
+    }
+    
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeMilestoneModal(modal);
+        }
+    });
     
     createConfetti();
 }
 
 // Fermer la modal de milestone et traiter la queue
 function closeMilestoneModal(modal) {
-    document.body.classList.remove('modal-open');
-    if (modal) modal.remove();
+    if (!modal) {
+        modal = document.querySelector('.milestone-modal');
+    }
     
-    // Traiter la queue d'événements
+    document.body.classList.remove('modal-open');
+    
+    document.querySelectorAll('.milestone-modal').forEach(m => m.remove());
+    document.querySelectorAll('.confetti').forEach(c => c.remove());
+    
     if (typeof onEventComplete === 'function') {
         onEventComplete();
     }
