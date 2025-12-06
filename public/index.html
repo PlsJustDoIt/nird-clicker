@@ -27,6 +27,7 @@
                 <button id="achievements-btn" class="menu-btn" title="Succès">🏆</button>
                 <button id="encyclopedia-btn" class="menu-btn" title="Encyclopédie">📖</button>
                 <button id="settings-btn" class="menu-btn" title="Options">⚙️</button>
+                <button id="info-btn" class="menu-btn" title="Info">ℹ️</button>
             </nav>
             <div class="score-display">
                 <div class="main-score">
@@ -285,6 +286,29 @@
 
         <!-- Notifications flottantes -->
         <div id="floating-notifications"></div>
+
+        <!-- Modal Info -->
+        <div id="info-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h2>ℹ️ À propos</h2>
+                <button class="modal-close">✕</button>
+                <div class="info-content">
+                    <h3>But du projet</h3>
+                    <p>
+                        NIRD Clicker est un jeu ludique créé pour la Nuit de l'Info 2025. 
+                        Son but est de sensibiliser les joueurs à l'importance du logiciel libre et de l'open source 
+                        dans la quête de la souveraineté numérique. NIRD est l'acronyme de "Numérique, Indépendant, 
+                        Robuste et Durable".
+                    </p>
+                    <h3>Mentions Légales</h3>
+                    <p>
+                        Ce site est un projet étudiant réalisé dans le cadre de la Nuit de l'Info.
+                        Les informations présentes sur ce site sont fictives.
+                        Toute ressemblance avec des situations réelles serait purement fortuite.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts du jeu - Ordre de chargement important ! -->

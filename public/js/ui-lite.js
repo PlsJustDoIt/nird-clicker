@@ -136,6 +136,7 @@ function initEventListeners() {
     document.getElementById('encyclopedia-btn')?.addEventListener('click', openEncyclopedia);
     document.getElementById('stats-btn')?.addEventListener('click', openStatsMenu);
     document.getElementById('leaderboard-btn')?.addEventListener('click', openLeaderboard);
+    document.getElementById('info-btn')?.addEventListener('click', openInfoModal);
     
     // Easter Egg - Snake Game
     document.getElementById('easter-egg-btn')?.addEventListener('click', openSnakeGame);
