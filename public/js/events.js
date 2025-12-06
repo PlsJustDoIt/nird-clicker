@@ -265,39 +265,6 @@ setInterval(() => {
 }, 1000);
 
 // Debug console
-window.DEBUG = {
-    getState: () => gameState,
-    addScore: (amount) => {
-        gameState.score += amount;
-        gameState.totalScore += amount;
-        updateUI();
-        console.log(`+${amount} points ajoutés`);
-    },
-    triggerBoss: () => showBoss(),
-    triggerQuiz: () => showQuiz(),
-    resetGame: () => resetGame(),
-    unlockAll: () => {
-        UPGRADES.forEach(u => u.unlocked = true);
-        ACHIEVEMENTS.forEach(a => a.unlocked = true);
-        if (typeof SKINS !== 'undefined') {
-            gameState.skinsUnlocked = SKINS.map(s => s.id);
-        }
-        updateUI();
-        console.log('Tout débloqué !');
-    },
-    setPrestige: (level) => {
-        gameState.prestigeLevel = level;
-        calculateProductionPerSecond();
-        updateUI();
-        console.log(`Niveau de prestige: ${level}`);
-    },
-    giveMax: () => {
-        gameState.score = 999999999;
-        gameState.totalScore = 999999999;
-        updateUI();
-        console.log('Score maxé !');
-    }
-};
 
 console.log('%c🖥️ NIRD Clicker - Console Debug', 'font-size: 20px; color: #00d4aa;');
 console.log('%cUtilisez window.DEBUG pour accéder aux commandes de débogage.', 'color: #aaa;');
@@ -548,13 +515,22 @@ setTimeout(() => {
     scheduleFacebookAttack();
 }, 60000); // Première attaque possible après 1 minute
 
-// Ajouter au DEBUG
-if (window.DEBUG) {
-    window.DEBUG.triggerFacebookAttack = triggerFacebookAttack;
-}
+
 
 // Rendre les fonctions accessibles globalement pour les onclick HTML
 window.closeMilestoneModal = closeMilestoneModal;
 window.closeFacebookAttack = closeFacebookAttack;
 window.triggerFacebookAttack = triggerFacebookAttack;
 window.startFacebookVideo = startFacebookVideo;
+
+// Fonction utilitaire pour déclencher un event par id (à ajouter si absente)
+function triggerRandomEventById(id) {
+    if (typeof RANDOM_EVENTS === 'undefined') return;
+    const event = RANDOM_EVENTS.find(e => e.id === id);
+    if (event && typeof triggerRandomEvent === 'function') {
+        triggerRandomEvent(event);
+        console.log(`Event déclenché: ${id}`);
+    } else {
+        console.warn('Event non trouvé ou triggerRandomEvent non défini:', id);
+    }
+}
