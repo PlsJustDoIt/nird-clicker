@@ -6,6 +6,7 @@
 
 // Variable pour le multiplicateur d'achat
 let buyMultiplier = 1;
+var buyMode = 1; // Alias pour compatibilité avec les modules
 
 // ============================================
 // SYSTÈME DE QUEUE D'ÉVÉNEMENTS

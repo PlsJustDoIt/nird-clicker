@@ -306,18 +306,19 @@ window.addEventListener('beforeunload', (e) => {
     saveGame();
 });
 
-// Debug : exposer l'état pour le développement
-window.DEBUG = {
-    getState: () => gameState,
-    addScore: (amount) => {
-        gameState.score += amount;
-        gameState.totalScore += amount;
-        updateUI();
-    },
-    resetGame: resetGame,
-    triggerBoss: () => showBoss(),
-    // Triggers pour chaque boss spécifique
-    triggerBossWindows: () => showBoss('windows'),
+// Debug : exposer l'état pour le développement (différé pour éviter les erreurs de référence)
+document.addEventListener('DOMContentLoaded', () => {
+    window.DEBUG = {
+        getState: () => gameState,
+        addScore: (amount) => {
+            gameState.score += amount;
+            gameState.totalScore += amount;
+            updateUI();
+        },
+        resetGame: () => typeof resetGame === 'function' && resetGame(),
+        triggerBoss: () => typeof showBoss === 'function' && showBoss(),
+        // Triggers pour chaque boss spécifique
+        triggerBossWindows: () => showBoss('windows'),
     triggerBossGoogle: () => showBoss('google'),
     triggerBossFacebook: () => showBoss('facebook'),
     triggerBossAmazon: () => showBoss('amazon'),
@@ -327,25 +328,28 @@ window.DEBUG = {
     triggerBossNvidia: () => showBoss('nvidia'),
     triggerBossMetaAI: () => showBoss('meta-ai'),
     triggerBossSkynet: () => showBoss('skynet-gafam'),
-    triggerQuiz: showQuiz,
+    triggerQuiz: () => typeof showQuiz === 'function' && showQuiz(),
     addPrestige: (amount) => {
         gameState.prestigePoints += amount;
-        updatePrestigeDisplay();
+        if (typeof updatePrestigeDisplay === 'function') updatePrestigeDisplay();
     },
     unlockAllSkins: () => {
-        SKINS.forEach(s => gameState.skinsUnlocked.push(s.id));
-        renderSkins();
+        if (typeof SKINS !== 'undefined') {
+            SKINS.forEach(s => gameState.skinsUnlocked.push(s.id));
+            if (typeof renderSkins === 'function') renderSkins();
+        }
     },
-    showTip: showRandomTip,
-    switchTheme: applyTheme,
-    getUpgrades: () => gameState.upgrades,
+    showTip: () => typeof showRandomTip === 'function' && showRandomTip(),
+    switchTheme: (theme) => typeof applyTheme === 'function' && applyTheme(theme),
+    getUpgrades: () => typeof UPGRADES !== 'undefined' ? UPGRADES : [],
     setLevel: (level) => {
-        gameState.resistanceLevel = level;
-        updateVillageVisualization();
+        gameState.currentVillageLevel = level;
+        if (typeof updateVillageVisual === 'function') updateVillageVisual();
     }
 };
 
-console.log('💡 Conseil développeur : utilisez window.DEBUG pour déboguer le jeu');
-console.log('📚 Commandes : DEBUG.getState(), DEBUG.addScore(n), DEBUG.triggerBoss(), DEBUG.triggerQuiz()');
-console.log('🎨 Thèmes : DEBUG.switchTheme("dark"|"light"|"retro"|"nature")');
-console.log('👾 Boss : DEBUG.triggerBossWindows(), DEBUG.triggerBossGoogle(), DEBUG.triggerBossFacebook(), etc.');
+    console.log('💡 Conseil développeur : utilisez window.DEBUG pour déboguer le jeu');
+    console.log('📚 Commandes : DEBUG.getState(), DEBUG.addScore(n), DEBUG.triggerBoss(), DEBUG.triggerQuiz()');
+    console.log('🎨 Thèmes : DEBUG.switchTheme("dark"|"light"|"retro"|"nature")');
+    console.log('👾 Boss : DEBUG.triggerBossWindows(), DEBUG.triggerBossGoogle(), DEBUG.triggerBossFacebook(), etc.');
+});

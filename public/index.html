@@ -287,12 +287,32 @@
         <div id="floating-notifications"></div>
     </div>
 
-    <!-- Scripts du jeu -->
-    <script src="./js/balancing.js"></script>  <!-- Équilibrage : upgrades, coûts, progression -->
+    <!-- Scripts du jeu - Ordre de chargement important ! -->
+    <!-- 1. Utils & Core (pas de dépendances) -->
+    <script src="./js/utils/helpers.js"></script>
+    <script src="./js/core/state.js"></script>
+    <script src="./js/core/audio.js"></script>
+    <script src="./js/core/save.js"></script>
+    <script src="./js/core/loop.js"></script>
+    
+    <!-- 2. Données (dépend de utils) -->
+    <script src="./js/balancing.js"></script>
+    
+    <!-- 3. Logique & UI core (version allégée) -->
     <script src="./js/gameLogic.js"></script>
-    <script src="./js/ui.js"></script>
+    <script src="./js/ui-lite.js"></script>
     <script src="./js/events.js"></script>
-    <script src="./js/gamepad.js"></script>    <!-- Support manette -->
+    
+    <!-- 4. UI Modules optimisés (écrasent les fonctions legacy si nécessaire) -->
+    <script src="./js/ui/display.js"></script>
+    <script src="./js/ui/animations.js"></script>
+    <script src="./js/ui/notifications.js"></script>
+    <script src="./js/ui/modals.js"></script>
+    <script src="./js/ui/upgrades-ui.js"></script>
+    <script src="./js/ui/boss.js"></script>
+    
+    <!-- 5. Gamepad & Point d'entrée -->
+    <script src="./js/gamepad.js"></script>
     <script src="./js/main.js"></script>
 </body>
 </html>
