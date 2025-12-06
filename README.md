@@ -23,8 +23,9 @@ cp .env.example .env
 
 ### 3. Lancer le jeu
 ```bash
-npm start
-# Accéder à http://localhost:45975
+npm run dev  # utilise nodemon
+```
+# Accéder à http://localhost:3000
 ```
 
 ## 🎮 Fonctionnalités
@@ -50,7 +51,7 @@ npm start
 ### Variables d'environnement (.env)
 ```env
 NODE_ENV=development
-PORT=45975
+PORT=3000
 DB_HOST=localhost
 DB_USER=root
 DB_PASS=
