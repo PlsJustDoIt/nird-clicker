@@ -288,6 +288,91 @@ const UPGRADES = [
         unlocked: false,
         unlockAt: 5000000000000,
         icon: '✨'
+    },
+    // === TIER 8+ : WTF COSMIQUE ===
+    {
+        id: 'univers-simule',
+        name: '🪐 Univers Simulé',
+        description: 'Vous créez une simulation entière dédiée au libre.',
+        info: '💡 Chaque bug dans la matrice rapporte des points.',
+        baseCost: 5e13,
+        baseProduction: 6e10,
+        owned: 0,
+        unlocked: false,
+        unlockAt: 2e13,
+        icon: '🪐'
+    },
+    {
+        id: 'dieu-du-code',
+        name: '🧙‍♂️ Dieu du Code',
+        description: 'Un être omnipotent compile le libre dans toutes les dimensions.',
+        info: '💡 Il commit sur tous les repos de l\'univers.',
+        baseCost: 2e14,
+        baseProduction: 2.5e11,
+        owned: 0,
+        unlocked: false,
+        unlockAt: 1e14,
+        icon: '🧙‍♂️'
+    },
+    {
+        id: 'big-bang-open',
+        name: '💥 Big Bang Open Source',
+        description: 'Le libre explose à la création d\'un nouvel univers.',
+        info: '💡 Chaque atome contient un repo git.',
+        baseCost: 1e15,
+        baseProduction: 1e12,
+        owned: 0,
+        unlocked: false,
+        unlockAt: 5e14,
+        icon: '💥'
+    },
+    {
+        id: 'multivers-libre',
+        name: '🌌 Multivers Libre',
+        description: 'Tous les univers parallèles sont open source.',
+        info: '💡 Les lois de la physique sont sous licence GPL.',
+        baseCost: 5e15,
+        baseProduction: 5e12,
+        owned: 0,
+        unlocked: false,
+        unlockAt: 2e15,
+        icon: '🌌'
+    },
+    {
+        id: 'simulation-divine',
+        name: '👼 Simulation Divine',
+        description: 'Vous simulez des dieux qui simulent des informaticiens.',
+        info: '💡 Inception de simulation, points exponentiels.',
+        baseCost: 2e16,
+        baseProduction: 2e13,
+        owned: 0,
+        unlocked: false,
+        unlockAt: 1e16,
+        icon: '👼'
+    },
+    {
+        id: 'kernel-cosmique',
+        name: '🪐 Kernel Cosmique',
+        description: 'Le noyau de l\'univers est open source.',
+        info: '💡 Un commit = un big crunch.',
+        baseCost: 1e17,
+        baseProduction: 1e14,
+        owned: 0,
+        unlocked: false,
+        unlockAt: 5e16,
+        icon: '🪐'
+    },
+    {
+        id: 'root-final',
+        name: '🗝️ Root Final',
+        description: 'Vous obtenez le mot de passe root de la réalité.',
+        info: '💡 sudo rm -rf /universe',
+        baseCost: 1e18,
+        baseProduction: 1e15,
+        owned: 0,
+        unlocked: false,
+        unlockAt: 5e17,
+        icon: '🗝️'
     }
 ];
 
@@ -410,6 +495,70 @@ const CLICK_UPGRADES = [
         icon: '🌌',
         cost: 500000000,
         bonus: 2500,
+        purchased: false
+    },
+    // === TIER 5+ : CLICS ABSURDES ===
+    {
+        id: 'clic-quantique',
+        name: '🪙 Clic Quantique',
+        description: '+10 000 points par clic',
+        icon: '🪙',
+        cost: 2e9,
+        bonus: 10000,
+        purchased: false
+    },
+    {
+        id: 'clic-multivers',
+        name: '🌠 Clic Multiversel',
+        description: '+50 000 points par clic',
+        icon: '🌠',
+        cost: 1e10,
+        bonus: 50000,
+        purchased: false
+    },
+    {
+        id: 'clic-divin',
+        name: '👆 Clic Divin',
+        description: '+250 000 points par clic',
+        icon: '👆',
+        cost: 5e10,
+        bonus: 250000,
+        purchased: false
+    },
+    {
+        id: 'clic-simulation',
+        name: '🖱️ Clic Simulé',
+        description: '+1 000 000 points par clic',
+        icon: '🖱️',
+        cost: 2e11,
+        bonus: 1000000,
+        purchased: false
+    },
+    {
+        id: 'clic-cosmique',
+        name: '🌌 Clic Cosmique',
+        description: '+5 000 000 points par clic',
+        icon: '🌌',
+        cost: 1e12,
+        bonus: 5000000,
+        purchased: false
+    },
+    {
+        id: 'clic-root',
+        name: '🗝️ Clic Root',
+        description: '+25 000 000 points par clic',
+        icon: '🗝️',
+        cost: 5e12,
+        bonus: 25000000,
+        purchased: false
+    },
+    {
+        id: 'clic-final',
+        name: '💀 Clic Final',
+        description: '+100 000 000 points par clic',
+        icon: '💀',
+        cost: 2e13,
+        bonus: 100000000,
         purchased: false
     }
 ];
@@ -574,6 +723,63 @@ const PRESTIGE_UPGRADES = [
         cost: 50,
         icon: '🌌',
         effect: { type: 'singularity', value: 10 }
+    },
+    // === TIER 6+ : PRESTIGES COSMIQUES ===
+    {
+        id: 'pp_wtf_universe',
+        name: '🪐 Univers WTF',
+        description: 'Débloque des upgrades absurdes et double tous les multiplicateurs.',
+        cost: 100,
+        icon: '🪐',
+        effect: { type: 'allMultipliers', value: 2 }
+    },
+    {
+        id: 'pp_god_mode',
+        name: '🧙‍♂️ Mode Dieu',
+        description: 'Active le mode Dieu : +1000% production et clics.',
+        cost: 200,
+        icon: '🧙‍♂️',
+        effect: { type: 'godMode', value: 10 }
+    },
+    {
+        id: 'pp_big_bang',
+        name: '💥 Big Bang Prestige',
+        description: 'Réinitialise tout sauf les prestiges, mais x100 production.',
+        cost: 300,
+        icon: '💥',
+        effect: { type: 'bigBang', value: 100 }
+    },
+    {
+        id: 'pp_multivers',
+        name: '🌌 Multivers Prestige',
+        description: 'Chaque prestige multiplie tous les gains par 5.',
+        cost: 500,
+        icon: '🌌',
+        effect: { type: 'prestigeMultiplier', value: 5 }
+    },
+    {
+        id: 'pp_simulation',
+        name: '👼 Simulation Prestige',
+        description: 'Simule un joueur supplémentaire qui joue pour vous.',
+        cost: 750,
+        icon: '👼',
+        effect: { type: 'autoPlayer', value: 1 }
+    },
+    {
+        id: 'pp_kernel',
+        name: '🪐 Kernel Prestige',
+        description: 'Le kernel du jeu est réécrit pour booster tous les calculs.',
+        cost: 1000,
+        icon: '🪐',
+        effect: { type: 'kernelBoost', value: 10 }
+    },
+    {
+        id: 'pp_root_final',
+        name: '🗝️ Root Prestige',
+        description: 'Vous avez le root du jeu. x1000 tout.',
+        cost: 5000,
+        icon: '🗝️',
+        effect: { type: 'rootAll', value: 1000 }
     }
 ];
 
