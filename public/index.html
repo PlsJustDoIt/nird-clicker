@@ -284,6 +284,44 @@
             </div>
         </div>
 
+        <!-- Modal Attaque OpenAI -->
+        <div id="openai-attack-modal" class="modal-overlay hidden">
+            <div class="openai-attack-overlay"></div>
+
+            <!-- Écran d'alerte initial -->
+            <div id="openai-alert-screen" class="openai-alert-screen facebook-alert-screen">
+                <div class="alert-content">
+                    <div class="alert-icon-container">
+                        <span class="alert-icon">🤖</span>
+                        <span class="alert-danger">⚠️</span>
+                    </div>
+                    <h1 class="alert-title">ALERTE OPENAI !!!!</h1>
+                    <p class="alert-message">Une intrusion OpenAI a été détectée !</p>
+                    <p class="alert-submessage">Un modèle tente d'exfiltrer des données sensibles !</p>
+                    <button id="openai-alert-btn" class="alert-launch-btn">🚨 VOIR L'ATTAQUE</button>
+                </div>
+            </div>
+
+            <!-- Contenu vidéo (caché initialement) -->
+            <div id="openai-video-screen" class="openai-attack-content facebook-attack-content hidden">
+                <button id="openai-close-x" class="openai-close-x facebook-close-x" onclick="closeOpenaiAttack()">✕</button>
+                <div class="openai-attack-video-container facebook-attack-video-container">
+                    <video id="openai-attack-video" class="facebook-attack-video">
+                        <source src="./videos/openai.mp4" type="video/mp4">
+                        Votre navigateur ne supporte pas la vidéo.
+                    </video>
+                    <div class="video-glitch-effect"></div>
+                </div>
+                <div class="openai-attack-footer facebook-attack-footer">
+                    <p class="attack-warning">🔴 RIPOSTE EN COURS...</p>
+                    <div class="attack-progress">
+                        <div id="openai-attack-progress-bar"></div>
+                    </div>
+                    <button id="openai-attack-close-btn" class="hidden" onclick="closeOpenaiAttack()">🛡️ DONNÉES PROTÉGÉES - Continuer</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Notifications flottantes -->
         <div id="floating-notifications"></div>
 

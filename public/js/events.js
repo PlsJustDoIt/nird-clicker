@@ -558,3 +558,165 @@ window.closeMilestoneModal = closeMilestoneModal;
 window.closeFacebookAttack = closeFacebookAttack;
 window.triggerFacebookAttack = triggerFacebookAttack;
 window.startFacebookVideo = startFacebookVideo;
+
+// ============================================
+// ATTAQUE OPENAI (MODE VIDÉO) - basé sur l'attaque Facebook
+// ============================================
+let openaiAttackActive = false;
+let openaiAttackInterval = null;
+let openaiBonusGiven = false;
+
+function triggerOpenaiAttack() {
+    if (openaiAttackActive) return;
+    openaiAttackActive = true;
+    openaiBonusGiven = false;
+
+    const modal = document.getElementById('openai-attack-modal');
+    const alertScreen = document.getElementById('openai-alert-screen');
+    const videoScreen = document.getElementById('openai-video-screen');
+    const alertBtn = document.getElementById('openai-alert-btn');
+
+    // Reset - montrer l'alerte, cacher la vidéo
+    alertScreen.classList.remove('hidden');
+    videoScreen.classList.add('hidden');
+
+    // Afficher le modal
+    modal.classList.remove('hidden');
+    document.body.classList.add('modal-open');
+
+    if (typeof showNotification === 'function') {
+        showNotification('⚠️ ALERTE : OpenAI tente une intrusion !', 'danger');
+    }
+
+    alertBtn.onclick = startOpenaiVideo;
+}
+
+function startOpenaiVideo() {
+    const alertScreen = document.getElementById('openai-alert-screen');
+    const videoScreen = document.getElementById('openai-video-screen');
+    const video = document.getElementById('openai-attack-video');
+    const progressBar = document.getElementById('openai-attack-progress-bar');
+    const closeBtn = document.getElementById('openai-attack-close-btn');
+    const warningText = document.querySelector('#openai-video-screen .attack-warning');
+
+    alertScreen.classList.add('hidden');
+    videoScreen.classList.remove('hidden');
+
+    progressBar.style.width = '0%';
+    closeBtn.classList.add('hidden');
+    warningText.textContent = '🔴 RIPOSTE EN COURS...';
+
+    video.currentTime = 0;
+    video.muted = false;
+    video.volume = 1;
+    video.play().catch(err => console.log('OpenAI video play error:', err));
+
+    // Réutiliser la vibration globale si disponible
+    startVideoVibration();
+
+    if (typeof playSound === 'function') {
+        playSound('boss');
+    }
+
+    video.onended = () => {
+        stopVideoVibration();
+        if (!openaiBonusGiven) {
+            openaiBonusGiven = true;
+            const bonus = Math.floor((gameState.productionPerSecond || 0) * 30 + 600);
+            gameState.score += bonus;
+            gameState.totalScore += bonus;
+            if (typeof showNotification === 'function') {
+                showNotification(`🛡️ OpenAI repoussé ! +${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points !`, 'success');
+            }
+            if (typeof createConfetti === 'function') createConfetti();
+        }
+        setTimeout(() => {
+            closeOpenaiAttack();
+        }, 500);
+    };
+}
+
+function finishOpenaiAttack() {
+    const progressBar = document.getElementById('openai-attack-progress-bar');
+    const closeBtn = document.getElementById('openai-attack-close-btn');
+    const warningText = document.querySelector('#openai-video-screen .attack-warning');
+
+    if (openaiAttackInterval) {
+        clearInterval(openaiAttackInterval);
+        openaiAttackInterval = null;
+    }
+
+    progressBar.style.width = '100%';
+    closeBtn.classList.remove('hidden');
+    warningText.textContent = '🟢 PROTECTION ACTIVÉE !';
+
+    if (!openaiBonusGiven) {
+        openaiBonusGiven = true;
+        const bonus = Math.floor(gameState.productionPerSecond * 30 + 600);
+        if (typeof playSound === 'function') playSound('achievement');
+        warningText.innerHTML = `✅ DONNÉES PROTÉGÉES ! <span style="color: #00d4aa;">+${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points</span>`;
+    }
+}
+
+function closeOpenaiAttack() {
+    const modal = document.getElementById('openai-attack-modal');
+    const video = document.getElementById('openai-attack-video');
+    const alertScreen = document.getElementById('openai-alert-screen');
+    const videoScreen = document.getElementById('openai-video-screen');
+
+    if (!modal) return;
+
+    stopVideoVibration();
+
+    if (video) {
+        video.pause();
+        video.currentTime = 0;
+        video.onended = null;
+    }
+
+    modal.classList.add('hidden');
+    document.body.classList.remove('modal-open');
+    if (alertScreen) alertScreen.classList.remove('hidden');
+    if (videoScreen) videoScreen.classList.add('hidden');
+
+    if (openaiAttackInterval) {
+        clearInterval(openaiAttackInterval);
+        openaiAttackInterval = null;
+    }
+
+    if (!openaiBonusGiven) {
+        openaiBonusGiven = true;
+        const bonus = Math.floor(gameState.productionPerSecond * 30 + 600);
+        gameState.score += bonus;
+        gameState.totalScore += bonus;
+        if (typeof showNotification === 'function') showNotification(`🛡️ OpenAI repoussé ! +${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points !`, 'success');
+        if (typeof createConfetti === 'function') createConfetti();
+    }
+
+    if (typeof updateUI === 'function') updateUI();
+
+    openaiAttackActive = false;
+
+    if (typeof saveGame === 'function') saveGame();
+}
+
+function scheduleOpenaiAttack() {
+    const minDelay = 180000; // 3 minutes
+    const maxDelay = 300000; // 5 minutes
+    const delay = Math.random() * (maxDelay - minDelay) + minDelay;
+
+    setTimeout(() => {
+        if (gameState.totalScore >= 7000 && !openaiAttackActive) {
+            triggerOpenaiAttack();
+        }
+        scheduleOpenaiAttack();
+    }, delay);
+}
+
+setTimeout(() => {
+    scheduleOpenaiAttack();
+}, 60000);
+
+window.closeOpenaiAttack = closeOpenaiAttack;
+window.triggerOpenaiAttack = triggerOpenaiAttack;
+window.startOpenaiVideo = startOpenaiVideo;

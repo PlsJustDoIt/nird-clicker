@@ -222,6 +222,16 @@
         inset 0 0 20px rgba(0, 0, 0, 0.8);
 }
 
+/* Also apply same video styling for OpenAI when using the shared class */
+.facebook-attack-video {
+    width: 100%;
+    border-radius: 12px;
+    border: 3px solid #333;
+    box-shadow: 
+        0 0 30px rgba(255, 68, 68, 0.5),
+        inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
 .video-glitch-effect {
     position: absolute;
     top: 1.5rem;
