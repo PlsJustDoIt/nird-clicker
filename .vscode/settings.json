@@ -1,0 +1,29 @@
+{
+    // ESLint
+    "eslint.enable": true,
+    "eslint.validate": ["javascript"],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    
+    // JavaScript
+    "javascript.validate.enable": false,
+    "js/ts.implicitProjectConfig.checkJs": false,
+    
+    // Formatage
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": null,
+    "[javascript]": {
+        "editor.defaultFormatter": null
+    },
+    
+    // Fichiers
+    "files.associations": {
+        "*.js": "javascript"
+    },
+    
+    // Exclusions
+    "files.exclude": {
+        "node_modules": true
+    }
+}

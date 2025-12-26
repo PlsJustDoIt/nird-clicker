@@ -1,49 +1,57 @@
 /**
- * NIRD Clicker - Logique du jeu (Version Complète)
- * Gestion de l'état, des calculs, prestige, quiz, missions et progression
- * Licence MIT - GPT MEN'S - Nuit de l'Info 2025
+ * @file NIRD Clicker - Logique du jeu (Version Complète)
+ * @description Gestion des calculs, prestige, quiz, missions et progression
+ * @license MIT
+ * @author GPT MEN'S - Nuit de l'Info 2025
+ * 
+ * Note: gameState, audio et save sont maintenant dans core/
  */
 
-// État global du jeu
-let gameState = {
-    score: 0,
-    totalScore: 0,
-    totalClicks: 0,
-    totalUpgrades: 0,
-    clickPower: 1,
-    productionPerSecond: 0,
-    bossDefeated: 0,
-    activeEffects: [],
-    lastSave: Date.now(),
-    startTime: Date.now(),
-    currentVillageLevel: 0,
-    // Nouveaux champs
-    prestigeLevel: 0,
-    prestigePoints: 0,
-    prestigeUpgrades: {},
-    currentSkin: 'default',
-    skinsUnlocked: ['default'],
-    quizCorrect: 0,
-    maxCombo: 0,
-    currentCombo: 0,
-    soundEnabled: true,
-    particlesEnabled: true,
-    currentTheme: 'dark',
-    tutorialCompleted: false,
-    dailyMissions: [],
-    dailyMissionsDate: null,
-    sessionClicks: 0,
-    sessionScore: 0,
-    sessionUpgrades: 0,
-    sessionBoss: 0,
-    sessionQuiz: 0,
-    triggeredMilestones: []
-};
+// ============================================
+// COMPATIBILITÉ - Ces variables sont définies dans core/
+// Si core/ n'est pas chargé, on les définit ici en fallback
+// ============================================
+if (typeof gameState === 'undefined') {
+    console.warn('⚠️ core/state.js non chargé, utilisation du fallback');
+    var gameState = {
+        score: 0,
+        totalScore: 0,
+        totalClicks: 0,
+        totalUpgrades: 0,
+        clickPower: 1,
+        productionPerSecond: 0,
+        bossDefeated: 0,
+        activeEffects: [],
+        lastSave: Date.now(),
+        startTime: Date.now(),
+        currentVillageLevel: 0,
+        prestigeLevel: 0,
+        prestigePoints: 0,
+        prestigeUpgrades: {},
+        currentSkin: 'default',
+        skinsUnlocked: ['default'],
+        quizCorrect: 0,
+        maxCombo: 0,
+        currentCombo: 0,
+        soundEnabled: true,
+        particlesEnabled: true,
+        currentTheme: 'dark',
+        tutorialCompleted: false,
+        dailyMissions: [],
+        dailyMissionsDate: null,
+        sessionClicks: 0,
+        sessionScore: 0,
+        sessionUpgrades: 0,
+        sessionBoss: 0,
+        sessionQuiz: 0,
+        triggeredMilestones: []
+    };
+}
 
-// Audio context pour les sons
-let audioContext = null;
-
-// Initialisation du jeu
+/**
+ * Initialise le jeu
+ * Charge la sauvegarde, calcule la production et démarre le game loop
+ */
 function initGame() {
     loadGame();
     calculateProductionPerSecond();
@@ -65,95 +73,68 @@ function initGame() {
     scheduleTips();
 }
 
-// Initialisation audio
-function initAudio() {
-    try {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    } catch (e) {
-        console.log('Audio non supporté');
-    }
-}
-
-// Jouer un son synthétisé
-function playSound(type) {
-    if (!gameState.soundEnabled || !audioContext) return;
+// ============================================
+// Note: initAudio() et playSound() sont dans core/audio.js
+// On garde un fallback si le module n'est pas chargé
+// ============================================
+if (typeof initAudio === 'undefined') {
+    var audioContext = null;
     
-    try {
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        switch(type) {
-            case 'click':
-                oscillator.frequency.value = 800;
-                oscillator.type = 'sine';
-                gainNode.gain.value = 0.1;
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.05);
-                break;
-            case 'upgrade':
-                oscillator.frequency.value = 523;
-                oscillator.type = 'triangle';
-                gainNode.gain.value = 0.15;
-                oscillator.start();
-                oscillator.frequency.exponentialRampToValueAtTime(1047, audioContext.currentTime + 0.15);
-                oscillator.stop(audioContext.currentTime + 0.2);
-                break;
-            case 'achievement':
-                oscillator.frequency.value = 440;
-                oscillator.type = 'sine';
-                gainNode.gain.value = 0.2;
-                oscillator.start();
-                oscillator.frequency.setValueAtTime(554, audioContext.currentTime + 0.1);
-                oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.2);
-                oscillator.stop(audioContext.currentTime + 0.4);
-                break;
-            case 'boss':
-                oscillator.frequency.value = 200;
-                oscillator.type = 'sawtooth';
-                gainNode.gain.value = 0.2;
-                oscillator.start();
-                oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.3);
-                oscillator.stop(audioContext.currentTime + 0.3);
-                break;
-            case 'levelup':
-                oscillator.frequency.value = 330;
-                oscillator.type = 'sine';
-                gainNode.gain.value = 0.2;
-                oscillator.start();
-                oscillator.frequency.setValueAtTime(440, audioContext.currentTime + 0.1);
-                oscillator.frequency.setValueAtTime(554, audioContext.currentTime + 0.2);
-                oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.3);
-                oscillator.stop(audioContext.currentTime + 0.5);
-                break;
-            case 'prestige':
-                oscillator.frequency.value = 220;
-                oscillator.type = 'sine';
-                gainNode.gain.value = 0.25;
-                oscillator.start();
-                oscillator.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.5);
-                oscillator.stop(audioContext.currentTime + 0.6);
-                break;
+    /**
+     *
+     */
+    function initAudio() {
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            console.log('Audio non supporté');
         }
-    } catch (e) {
-        console.log('Erreur audio:', e);
+    }
+    
+    /**
+     *
+     * @param type
+     */
+    function playSound(type) {
+        if (!gameState.soundEnabled || !audioContext) return;
+        // Version simplifiée en fallback
+        try {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.value = 440;
+            oscillator.type = 'sine';
+            gainNode.gain.value = 0.1;
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.1);
+        } catch (e) {}
     }
 }
 
-// Calcul de la vraie puissance de clic (avec bonus prestige)
+/**
+ * Calcule la vraie puissance de clic (avec bonus prestige)
+ * @returns {number} Puissance de clic effective
+ */
 function getEffectiveClickPower() {
     const prestigeBonus = 1 + (gameState.prestigeLevel * PRESTIGE_BONUS_PER_LEVEL);
     return Math.floor(gameState.clickPower * prestigeBonus);
 }
 
-// Calcul du coût d'une upgrade
+
+/**
+ * Calcule le coût actuel d'une upgrade
+ * @param {Upgrade} upgrade - L'upgrade dont on veut le coût
+ * @returns {number} Coût de la prochaine unité
+ */
 function getUpgradeCost(upgrade) {
     return Math.floor(upgrade.baseCost * Math.pow(COST_MULTIPLIER, upgrade.owned));
 }
 
-// Calcul de la production par seconde (avec bonus prestige)
+/**
+ * Calcule la production passive par seconde (avec bonus prestige)
+ * @returns {number} Production par seconde
+ */
 function calculateProductionPerSecond() {
     let baseProduction = 0;
     
@@ -181,7 +162,10 @@ function calculateProductionPerSecond() {
     return gameState.productionPerSecond;
 }
 
-// Gestion du clic
+/**
+ * Gère un clic sur le bouton principal
+ * Ajoute les points, met à jour le combo, joue le son et met à jour l'UI
+ */
 function handleClick() {
     // Utiliser la vraie puissance de clic (avec bonus prestige)
     const points = getEffectiveClickPower();
@@ -222,7 +206,10 @@ function handleClick() {
     }
 }
 
-// Gestion du combo de clics
+/**
+ * Met à jour le combo de clics
+ * Reset automatiquement après 1.5 secondes sans clic
+ */
 function updateCombo() {
     gameState.currentCombo++;
     
@@ -238,17 +225,14 @@ function updateCombo() {
     }, 1500);
 }
 
-// Mode d'achat actuel (1, 10, 50, 'max')
-let buyMode = 1;
+// NOTE: buyMode et setBuyMode sont maintenant dans ui/upgrades-ui.js
 
-// Changer le mode d'achat
-function setBuyMode(mode) {
-    buyMode = mode;
-    updateBuyModeButtons();
-    updateUpgradesList();
-}
-
-// Calculer le coût total pour acheter N upgrades
+/**
+ * Calcule le coût total pour acheter N upgrades
+ * @param {Upgrade} upgrade - L'upgrade à acheter
+ * @param {number} count - Nombre d'unités à acheter
+ * @returns {number} Coût total
+ */
 function getMultiUpgradeCost(upgrade, count) {
     let totalCost = 0;
     for (let i = 0; i < count; i++) {
@@ -257,7 +241,11 @@ function getMultiUpgradeCost(upgrade, count) {
     return totalCost;
 }
 
-// Calculer combien d'upgrades on peut acheter avec le score actuel
+/**
+ * Calcule combien d'upgrades on peut acheter avec le score actuel
+ * @param {Upgrade} upgrade - L'upgrade à analyser
+ * @returns {{count: number, totalCost: number}} Nombre et coût total
+ */
 function getMaxAffordable(upgrade) {
     let count = 0;
     let totalCost = 0;
@@ -275,7 +263,12 @@ function getMaxAffordable(upgrade) {
     return { count, totalCost };
 }
 
-// Acheter une upgrade (avec support multi-achat)
+/**
+ * Achète une upgrade de production (avec support multi-achat)
+ * @param {string} upgradeId - ID de l'upgrade à acheter
+ * @param {number|null} [forceCount=null] - Forcer un nombre d'achats
+ * @returns {boolean} True si l'achat a réussi
+ */
 function buyUpgrade(upgradeId, forceCount = null) {
     const upgrade = UPGRADES.find(u => u.id === upgradeId);
     if (!upgrade) return false;
@@ -323,7 +316,11 @@ function buyUpgrade(upgradeId, forceCount = null) {
     }
 }
 
-// Acheter une amélioration de clic
+/**
+ * Achète une amélioration de clic
+ * @param {string} upgradeId - ID de l'amélioration à acheter
+ * @returns {boolean} True si l'achat a réussi
+ */
 function buyClickUpgrade(upgradeId) {
     const upgrade = CLICK_UPGRADES.find(u => u.id === upgradeId);
     if (!upgrade || upgrade.purchased) return false;
@@ -343,7 +340,11 @@ function buyClickUpgrade(upgradeId) {
     return false;
 }
 
-// Acheter un skin
+/**
+ * Achète ou équipe un skin
+ * @param {string} skinId - ID du skin
+ * @returns {boolean} True si l'achat/équipement a réussi
+ */
 function buySkin(skinId) {
     // Chercher dans SKINS
     let skin = null;
@@ -388,7 +389,10 @@ function buySkin(skinId) {
     return false;
 }
 
-// Appliquer un skin
+/**
+ * Applique un skin au jeu
+ * @param {string} skinId - ID du skin à appliquer
+ */
 function applySkin(skinId) {
     // Chercher dans SKINS
     let skin = null;
@@ -405,6 +409,9 @@ function applySkin(skinId) {
 }
 
 // Vérifier les débloquages
+/**
+ *
+ */
 function checkUnlocks() {
     UPGRADES.forEach(upgrade => {
         if (!upgrade.unlocked && upgrade.unlockAt && gameState.totalScore >= upgrade.unlockAt) {
@@ -433,6 +440,9 @@ function checkUnlocks() {
 }
 
 // Mettre à jour le visuel du village
+/**
+ *
+ */
 function updateVillageVisual() {
     const villageContainer = document.getElementById('village-visual');
     if (villageContainer) {
@@ -447,6 +457,9 @@ function updateVillageVisual() {
 }
 
 // Vérifier les succès
+/**
+ *
+ */
 function checkAchievements() {
     ACHIEVEMENTS.forEach(achievement => {
         if (!achievement.unlocked && achievement.condition(gameState)) {
@@ -460,15 +473,24 @@ function checkAchievements() {
 // ============================================
 // SYSTÈME DE PRESTIGE
 // ============================================
+/**
+ *
+ */
 function canPrestige() {
     return gameState.totalScore >= PRESTIGE_THRESHOLD;
 }
 
+/**
+ *
+ */
 function calculatePrestigePoints() {
     if (!canPrestige()) return 0;
     return Math.floor(Math.sqrt(gameState.totalScore / PRESTIGE_THRESHOLD));
 }
 
+/**
+ *
+ */
 function doPrestige() {
     if (!canPrestige()) {
         showNotification(`Besoin de ${formatNumber(PRESTIGE_THRESHOLD)} points pour prestige !`, 'error');
@@ -481,6 +503,9 @@ function doPrestige() {
 }
 
 // Exécute le prestige directement sans confirmation
+/**
+ *
+ */
 function doPrestigeDirectly() {
     if (!canPrestige()) {
         return false;
@@ -525,16 +550,26 @@ function doPrestigeDirectly() {
 }
 
 // Alias pour la compatibilité
+/**
+ *
+ */
 function performPrestige() {
     return doPrestige();
 }
 
 // Alias pour gamepad.js
+/**
+ *
+ */
 function doPrestigeWithoutConfirm() {
     return doPrestigeDirectly();
 }
 
 // Acheter une amélioration de prestige
+/**
+ *
+ * @param upgradeId
+ */
 function buyPrestigeUpgrade(upgradeId) {
     if (typeof PRESTIGE_UPGRADES === 'undefined') return false;
     
@@ -587,14 +622,16 @@ function buyPrestigeUpgrade(upgradeId) {
 // ============================================
 // SYSTÈME DE QUIZ
 // ============================================
-let currentQuiz = null;
+var currentQuiz = null;
 
+// Note: scheduleQuiz n'est plus nécessaire, géré par core/loop.js
+// On garde la fonction vide pour compatibilité
+/**
+ *
+ */
 function scheduleQuiz() {
-    setInterval(() => {
-        if (gameState.totalScore >= 500 && !currentQuiz && Math.random() < 0.3) {
-            showQuiz();
-        }
-    }, QUIZ_INTERVAL);
+    // Géré par core/loop.js - tickQuiz()
+    console.log('📝 Quiz scheduling géré par core/loop.js');
 }
 
 /**
@@ -659,6 +696,11 @@ function _showQuizInternal() {
     });
 }
 
+/**
+ *
+ * @param e
+ * @param question
+ */
 function handleQuizAnswer(e, question) {
     const isCorrect = e.target.dataset.correct === 'true';
     
@@ -680,11 +722,17 @@ function handleQuizAnswer(e, question) {
     closeQuiz();
 }
 
+/**
+ *
+ */
 function skipQuiz() {
     showNotification('Quiz passé', 'info');
     closeQuiz();
 }
 
+/**
+ *
+ */
 function closeQuiz() {
     currentQuiz = null;
     document.body.classList.remove('modal-open'); // Réactiver le scroll
@@ -700,6 +748,9 @@ function closeQuiz() {
 // ============================================
 // MISSIONS QUOTIDIENNES
 // ============================================
+/**
+ *
+ */
 function initDailyMissions() {
     const today = new Date().toDateString();
     
@@ -725,10 +776,16 @@ function initDailyMissions() {
 }
 
 // Alias pour la compatibilité
+/**
+ *
+ */
 function generateDailyMissions() {
     initDailyMissions();
 }
 
+/**
+ *
+ */
 function checkDailyMissions() {
     gameState.dailyMissions.forEach(mission => {
         if (mission.completed) return;
@@ -760,14 +817,18 @@ function checkDailyMissions() {
 // ============================================
 // TIPS ÉDUCATIFS
 // ============================================
+// Note: scheduleTips n'est plus nécessaire, géré par core/loop.js
+/**
+ *
+ */
 function scheduleTips() {
-    setInterval(() => {
-        if (gameState.totalScore >= 100 && Math.random() < 0.2) {
-            showRandomTip();
-        }
-    }, TIP_INTERVAL);
+    // Géré par core/loop.js - tickTips()
+    console.log('💡 Tips scheduling géré par core/loop.js');
 }
 
+/**
+ *
+ */
 function showRandomTip() {
     const tip = EDUCATIONAL_TIPS[Math.floor(Math.random() * EDUCATIONAL_TIPS.length)];
     showNotification(tip, 'tip', 6000);
@@ -776,6 +837,10 @@ function showRandomTip() {
 // ============================================
 // THÈMES
 // ============================================
+/**
+ *
+ * @param themeId
+ */
 function setTheme(themeId) {
     const theme = THEMES.find(t => t.id === themeId);
     if (!theme) return;
@@ -786,6 +851,10 @@ function setTheme(themeId) {
     showNotification(`${theme.name} activé !`, 'success');
 }
 
+/**
+ *
+ * @param themeId
+ */
 function applyTheme(themeId) {
     document.body.className = document.body.className.replace(/theme-\w+/g, '');
     const theme = THEMES.find(t => t.id === themeId);
@@ -797,6 +866,9 @@ function applyTheme(themeId) {
 // ============================================
 // TUTORIEL
 // ============================================
+/**
+ *
+ */
 function startTutorial() {
     const steps = [
         { target: '#main-clicker', message: '👆 Cliquez sur le PC pour gagner des points de souveraineté !' },
@@ -807,6 +879,9 @@ function startTutorial() {
     
     let currentStep = 0;
     
+    /**
+     *
+     */
     function showStep() {
         if (currentStep >= steps.length) {
             gameState.tutorialCompleted = true;
@@ -846,58 +921,71 @@ function startTutorial() {
 
 // ============================================
 // BOUCLE DE JEU
+// Note: startGameLoop est maintenant dans core/loop.js
+// On garde un fallback si le module n'est pas chargé
 // ============================================
-function startGameLoop() {
-    // Production automatique
-    setInterval(() => {
-        if (gameState.productionPerSecond > 0) {
-            gameState.score += gameState.productionPerSecond;
-            gameState.totalScore += gameState.productionPerSecond;
-            gameState.sessionScore += gameState.productionPerSecond;
-            checkUnlocks();
-            checkAchievements();
-            checkDailyMissions();
-            updateScoreDisplay();
-            
-            // Toujours mettre à jour les upgrades en mode MAX
-            if (buyMode === 'max') {
-                updateUpgradesList();
+if (typeof startGameLoop === 'undefined') {
+    console.warn('⚠️ core/loop.js non chargé, utilisation du fallback');
+    
+    /**
+     *
+     */
+    function startGameLoop() {
+        // Production automatique
+        setInterval(() => {
+            if (gameState.productionPerSecond > 0) {
+                gameState.score += gameState.productionPerSecond;
+                gameState.totalScore += gameState.productionPerSecond;
+                gameState.sessionScore += gameState.productionPerSecond;
+                checkUnlocks();
+                checkAchievements();
+                checkDailyMissions();
+                updateScoreDisplay();
+                
+                if (buyMode === 'max') {
+                    updateUpgradesList();
+                }
             }
-        }
-    }, 1000);
-    
-    // Sauvegarde automatique
-    setInterval(saveGame, SAVE_INTERVAL);
-    
-    // Nettoyage des effets
-    setInterval(() => {
-        const now = Date.now();
-        gameState.activeEffects = gameState.activeEffects.filter(e => e.endTime > now);
-        calculateProductionPerSecond();
-    }, 1000);
-    
-    // Événements aléatoires
-    setInterval(tryRandomEvent, 5000);
-    
-    // Boss GAFAM
-    scheduleBoss();
-    
-    // Mise à jour périodique de l'UI (pour les boutons MAX)
-    setInterval(() => updateUpgradesList(), 1000);
-}
-
-// Programmer l'apparition du boss
-function scheduleBoss() {
-    const delay = BOSS_INTERVAL_MIN + Math.random() * (BOSS_INTERVAL_MAX - BOSS_INTERVAL_MIN);
-    setTimeout(() => {
-        if (gameState.totalScore >= 100) {
-            showBoss();
-        }
+        }, 1000);
+        
+        // Sauvegarde automatique
+        setInterval(saveGame, SAVE_INTERVAL);
+        
+        // Nettoyage des effets
+        setInterval(() => {
+            const now = Date.now();
+            gameState.activeEffects = gameState.activeEffects.filter(e => e.endTime > now);
+            calculateProductionPerSecond();
+        }, 1000);
+        
+        // Événements aléatoires
+        setInterval(tryRandomEvent, 5000);
+        
+        // Boss GAFAM
         scheduleBoss();
-    }, delay);
+        
+        // Mise à jour périodique de l'UI
+        setInterval(() => updateUpgradesList(), 1000);
+    }
+    
+    /**
+     *
+     */
+    function scheduleBoss() {
+        const delay = BOSS_INTERVAL_MIN + Math.random() * (BOSS_INTERVAL_MAX - BOSS_INTERVAL_MIN);
+        setTimeout(() => {
+            if (gameState.totalScore >= 100) {
+                showBoss();
+            }
+            scheduleBoss();
+        }, delay);
+    }
 }
 
 // Événement aléatoire
+/**
+ *
+ */
 function tryRandomEvent() {
     if (gameState.totalScore < 500) return;
     
@@ -909,6 +997,10 @@ function tryRandomEvent() {
 }
 
 // Déclencher un événement
+/**
+ *
+ * @param event
+ */
 function triggerEvent(event) {
     showEventBanner(event.name, event.description);
     
@@ -928,163 +1020,172 @@ function triggerEvent(event) {
 
 // ============================================
 // SAUVEGARDE / CHARGEMENT
+// Note: Ces fonctions sont maintenant dans core/save.js
+// On garde un fallback si le module n'est pas chargé
 // ============================================
-let isResetting = false;
-
-function saveGame() {
-    // Ne pas sauvegarder si on est en train de reset
-    if (isResetting) return;
+if (typeof saveGame === 'undefined') {
+    console.warn('⚠️ core/save.js non chargé, utilisation du fallback');
     
-    const saveData = {
-        score: gameState.score,
-        totalScore: gameState.totalScore,
-        totalClicks: gameState.totalClicks,
-        totalUpgrades: gameState.totalUpgrades,
-        clickPower: gameState.clickPower,
-        bossDefeated: gameState.bossDefeated,
-        startTime: gameState.startTime,
-        currentVillageLevel: gameState.currentVillageLevel,
-        prestigeLevel: gameState.prestigeLevel,
-        prestigePoints: gameState.prestigePoints,
-        prestigeUpgrades: gameState.prestigeUpgrades,
-        currentSkin: gameState.currentSkin,
-        quizCorrect: gameState.quizCorrect,
-        maxCombo: gameState.maxCombo,
-        soundEnabled: gameState.soundEnabled,
-        particlesEnabled: gameState.particlesEnabled,
-        currentTheme: gameState.currentTheme,
-        tutorialCompleted: gameState.tutorialCompleted,
-        dailyMissions: gameState.dailyMissions,
-        dailyMissionsDate: gameState.dailyMissionsDate,
-        sessionClicks: gameState.sessionClicks,
-        sessionScore: gameState.sessionScore,
-        sessionUpgrades: gameState.sessionUpgrades,
-        sessionBoss: gameState.sessionBoss,
-        sessionQuiz: gameState.sessionQuiz,
-        triggeredMilestones: gameState.triggeredMilestones,
-        upgrades: UPGRADES.map(u => ({ id: u.id, owned: u.owned, unlocked: u.unlocked })),
-        clickUpgrades: CLICK_UPGRADES.map(u => ({ id: u.id, purchased: u.purchased })),
-        achievements: ACHIEVEMENTS.map(a => ({ id: a.id, unlocked: a.unlocked })),
-        skinsUnlocked: gameState.skinsUnlocked,
-        savedAt: Date.now()
-    };
+    var isResetting = false;
     
-    localStorage.setItem('nirdClicker_save', JSON.stringify(saveData));
-    gameState.lastSave = Date.now();
-}
-
-function loadGame() {
-    const savedData = localStorage.getItem('nirdClicker_save');
+    /**
+     *
+     */
+    function saveGame() {
+        if (isResetting) return;
+        
+        const saveData = {
+            score: gameState.score,
+            totalScore: gameState.totalScore,
+            totalClicks: gameState.totalClicks,
+            totalUpgrades: gameState.totalUpgrades,
+            clickPower: gameState.clickPower,
+            bossDefeated: gameState.bossDefeated,
+            startTime: gameState.startTime,
+            currentVillageLevel: gameState.currentVillageLevel,
+            prestigeLevel: gameState.prestigeLevel,
+            prestigePoints: gameState.prestigePoints,
+            prestigeUpgrades: gameState.prestigeUpgrades,
+            currentSkin: gameState.currentSkin,
+            quizCorrect: gameState.quizCorrect,
+            maxCombo: gameState.maxCombo,
+            soundEnabled: gameState.soundEnabled,
+            particlesEnabled: gameState.particlesEnabled,
+            currentTheme: gameState.currentTheme,
+            tutorialCompleted: gameState.tutorialCompleted,
+            dailyMissions: gameState.dailyMissions,
+            dailyMissionsDate: gameState.dailyMissionsDate,
+            sessionClicks: gameState.sessionClicks,
+            sessionScore: gameState.sessionScore,
+            sessionUpgrades: gameState.sessionUpgrades,
+            sessionBoss: gameState.sessionBoss,
+            sessionQuiz: gameState.sessionQuiz,
+            triggeredMilestones: gameState.triggeredMilestones,
+            upgrades: UPGRADES.map(u => ({ id: u.id, owned: u.owned, unlocked: u.unlocked })),
+            clickUpgrades: CLICK_UPGRADES.map(u => ({ id: u.id, purchased: u.purchased })),
+            achievements: ACHIEVEMENTS.map(a => ({ id: a.id, unlocked: a.unlocked })),
+            skinsUnlocked: gameState.skinsUnlocked,
+            savedAt: Date.now()
+        };
+        
+        localStorage.setItem('nirdClicker_save', JSON.stringify(saveData));
+        gameState.lastSave = Date.now();
+    }
     
-    if (savedData) {
-        try {
-            const data = JSON.parse(savedData);
-            
-            // Charger tous les champs
-            Object.keys(data).forEach(key => {
-                if (gameState.hasOwnProperty(key) && data[key] !== undefined) {
-                    gameState[key] = data[key];
-                }
-            });
-            
-            // Restaurer les upgrades
-            if (data.upgrades) {
-                data.upgrades.forEach(saved => {
-                    const upgrade = UPGRADES.find(u => u.id === saved.id);
-                    if (upgrade) {
-                        upgrade.owned = saved.owned;
-                        upgrade.unlocked = saved.unlocked;
+    /**
+     *
+     */
+    function loadGame() {
+        const savedData = localStorage.getItem('nirdClicker_save');
+        
+        if (savedData) {
+            try {
+                const data = JSON.parse(savedData);
+                
+                Object.keys(data).forEach(key => {
+                    if (gameState.hasOwnProperty(key) && data[key] !== undefined) {
+                        gameState[key] = data[key];
                     }
                 });
-            }
-            
-            // Restaurer les click upgrades
-            if (data.clickUpgrades) {
-                data.clickUpgrades.forEach(saved => {
-                    const upgrade = CLICK_UPGRADES.find(u => u.id === saved.id);
-                    if (upgrade) upgrade.purchased = saved.purchased;
-                });
-            }
-            
-            // Restaurer les succès
-            if (data.achievements) {
-                data.achievements.forEach(saved => {
-                    const achievement = ACHIEVEMENTS.find(a => a.id === saved.id);
-                    if (achievement) achievement.unlocked = saved.unlocked;
-                });
-            }
-            
-            // Restaurer les skins
-            if (data.skinsUnlocked) {
-                gameState.skinsUnlocked = data.skinsUnlocked;
-            } else if (data.skins) {
-                // Migration depuis l'ancien format
-                gameState.skinsUnlocked = data.skins.filter(s => s.owned).map(s => s.id);
-                if (!gameState.skinsUnlocked.includes('default')) {
-                    gameState.skinsUnlocked.unshift('default');
-                }
-            }
-            
-            // Gains hors-ligne
-            if (data.savedAt) {
-                const offlineTime = (Date.now() - data.savedAt) / 1000;
-                const offlineProduction = calculateProductionPerSecond();
-                const offlineGain = Math.floor(offlineProduction * offlineTime * 0.1);
                 
-                if (offlineGain > 0 && offlineTime > 60) {
-                    gameState.score += offlineGain;
-                    gameState.totalScore += offlineGain;
-                    setTimeout(() => {
-                        showNotification(`🌙 Gains hors-ligne : +${formatNumber(offlineGain)} points !`, 'offline');
-                    }, 1000);
+                if (data.upgrades) {
+                    data.upgrades.forEach(saved => {
+                        const upgrade = UPGRADES.find(u => u.id === saved.id);
+                        if (upgrade) {
+                            upgrade.owned = saved.owned;
+                            upgrade.unlocked = saved.unlocked;
+                        }
+                    });
                 }
+                
+                if (data.clickUpgrades) {
+                    data.clickUpgrades.forEach(saved => {
+                        const upgrade = CLICK_UPGRADES.find(u => u.id === saved.id);
+                        if (upgrade) upgrade.purchased = saved.purchased;
+                    });
+                }
+                
+                if (data.achievements) {
+                    data.achievements.forEach(saved => {
+                        const achievement = ACHIEVEMENTS.find(a => a.id === saved.id);
+                        if (achievement) achievement.unlocked = saved.unlocked;
+                    });
+                }
+                
+                if (data.skinsUnlocked) {
+                    gameState.skinsUnlocked = data.skinsUnlocked;
+                } else if (data.skins) {
+                    gameState.skinsUnlocked = data.skins.filter(s => s.owned).map(s => s.id);
+                    if (!gameState.skinsUnlocked.includes('default')) {
+                        gameState.skinsUnlocked.unshift('default');
+                    }
+                }
+                
+                if (data.savedAt) {
+                    const offlineTime = (Date.now() - data.savedAt) / 1000;
+                    const offlineProduction = calculateProductionPerSecond();
+                    const offlineGain = Math.floor(offlineProduction * offlineTime * 0.1);
+                    
+                    if (offlineGain > 0 && offlineTime > 60) {
+                        gameState.score += offlineGain;
+                        gameState.totalScore += offlineGain;
+                        setTimeout(() => {
+                            showNotification(`🌙 Gains hors-ligne : +${formatNumber(offlineGain)} points !`, 'offline');
+                        }, 1000);
+                    }
+                }
+                
+                console.log('Partie chargée !');
+            } catch (e) {
+                console.error('Erreur lors du chargement :', e);
             }
-            
-            console.log('Partie chargée !');
-        } catch (e) {
-            console.error('Erreur lors du chargement :', e);
         }
     }
-}
-
-// Reset du jeu
-function resetGame() {
-    console.log('Reset du jeu...');
     
-    // Bloquer la sauvegarde automatique
-    isResetting = true;
-    
-    try {
-        // Supprimer TOUT le localStorage
-        localStorage.clear();
-        console.log('localStorage.clear() exécuté');
-    } catch (e) {
-        console.error('Erreur lors du clear:', e);
+    /**
+     *
+     */
+    function resetGame() {
+        isResetting = true;
+        try {
+            localStorage.clear();
+        } catch (e) {
+            console.error('Erreur lors du clear:', e);
+        }
+        window.location.reload(true);
     }
-    
-    // Vérification
-    console.log('Après suppression, nirdClicker_save =', localStorage.getItem('nirdClicker_save'));
-    
-    // Forcer le rechargement immédiatement
-    window.location.reload(true);
 }
 
 // ============================================
 // UTILITAIRES
+// Note: Ces fonctions sont maintenant dans utils/helpers.js
+// On garde un fallback si le module n'est pas chargé
 // ============================================
-function formatNumber(num) {
-    if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
-    if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
-    if (num >= 1000) return (num / 1000).toFixed(2) + 'K';
-    return Math.floor(num).toString();
+if (typeof formatNumber === 'undefined') {
+    /**
+     *
+     * @param num
+     */
+    function formatNumber(num) {
+        if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
+        if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(2) + 'K';
+        return Math.floor(num).toString();
+    }
 }
 
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+if (typeof shuffleArray === 'undefined') {
+    /**
+     *
+     * @param array
+     */
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
     }
-    return array;
 }
 
 // ============================================
@@ -1092,6 +1193,9 @@ function shuffleArray(array) {
 // ============================================
 
 // Récupérer le leaderboard
+/**
+ *
+ */
 async function fetchLeaderboard() {
     try {
         const response = await fetch('/api/leaderboard');
@@ -1107,6 +1211,10 @@ async function fetchLeaderboard() {
 }
 
 // Soumettre le score au leaderboard
+/**
+ *
+ * @param pseudo
+ */
 async function submitScore(pseudo) {
     if (!pseudo || pseudo.length < 2) {
         showNotification('Pseudo trop court (min 2 caractères)', 'error');
@@ -1153,6 +1261,10 @@ async function submitScore(pseudo) {
 }
 
 // Récupérer le rang du joueur
+/**
+ *
+ * @param pseudo
+ */
 async function fetchPlayerRank(pseudo) {
     try {
         const response = await fetch(`/api/leaderboard/rank/${encodeURIComponent(pseudo)}`);
@@ -1168,6 +1280,10 @@ async function fetchPlayerRank(pseudo) {
 }
 
 // Formater le temps de jeu
+/**
+ *
+ * @param seconds
+ */
 function formatPlayTime(seconds) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -1176,3 +1292,23 @@ function formatPlayTime(seconds) {
     }
     return `${minutes}m`;
 }
+
+// Exposer les fonctions globalement
+window.initGame = initGame;
+window.showQuiz = showQuiz;
+window.handleClick = handleClick;
+window.buyUpgrade = buyUpgrade;
+window.buyClickUpgrade = buyClickUpgrade;
+window.buySkin = buySkin;
+window.doPrestige = doPrestige;
+window.resetGame = resetGame;
+window.getEffectiveClickPower = getEffectiveClickPower;
+window.canPrestige = canPrestige;
+window.calculatePrestigePoints = calculatePrestigePoints;
+window.buyPrestigeUpgrade = buyPrestigeUpgrade;
+window.getMultiUpgradeCost = getMultiUpgradeCost;
+window.getMaxAffordable = getMaxAffordable;
+window.checkAchievements = checkAchievements;
+window.checkDailyMissions = checkDailyMissions;
+window.submitScore = submitScore;
+window.fetchLeaderboard = fetchLeaderboard;

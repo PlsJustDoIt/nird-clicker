@@ -20,7 +20,7 @@ npm install
 npm run dev # utilise nodemon
 
 # Accéder au jeu
-# http://localhost:45975
+# http://localhost:3000
 ```
 
 ## 📁 Structure du projet
