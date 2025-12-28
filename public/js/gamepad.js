@@ -280,7 +280,15 @@ function processGamepadInput(gamepad) {
     const isFacebookAttackVisible = facebookModal && !facebookModal.classList.contains('hidden');
     const isFacebookAlertPhase = isFacebookAttackVisible && facebookAlertScreen && !facebookAlertScreen.classList.contains('hidden');
     const isFacebookVideoPhase = isFacebookAttackVisible && facebookVideoScreen && !facebookVideoScreen.classList.contains('hidden');
-    const hasActivePopup = quizModal || milestoneModal || isFacebookAttackVisible || isBossVisible || prestigePopup;
+    // OpenAI modal detection (mirrors Facebook behavior)
+    const openaiModal = document.getElementById('openai-attack-modal');
+    const openaiAlertScreen = document.getElementById('openai-alert-screen');
+    const openaiVideoScreen = document.getElementById('openai-video-screen');
+    const isOpenaiAttackVisible = openaiModal && !openaiModal.classList.contains('hidden');
+    const isOpenaiAlertPhase = isOpenaiAttackVisible && openaiAlertScreen && !openaiAlertScreen.classList.contains('hidden');
+    const isOpenaiVideoPhase = isOpenaiAttackVisible && openaiVideoScreen && !openaiVideoScreen.classList.contains('hidden');
+
+    const hasActivePopup = quizModal || milestoneModal || isFacebookAttackVisible || isOpenaiAttackVisible || isBossVisible || prestigePopup;
     
     // Bouton A - Clic principal OU activer item du menu settings OU valider quiz/event
     if (isButtonPressed(gamepad, GAMEPAD_BUTTONS.A)) {
@@ -325,10 +333,28 @@ function processGamepadInput(gamepad) {
                     vibrateGamepad(100, 0.8);
                 }
             }
+        } else if (isOpenaiAlertPhase) {
+            // Lancer la vidéo de l'attaque OpenAI
+            if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.A)) {
+                const alertBtn = document.getElementById('openai-alert-btn');
+                if (alertBtn) {
+                    alertBtn.click();
+                    vibrateGamepad(100, 0.8);
+                }
+            }
         } else if (isFacebookVideoPhase) {
             // Fermer si le bouton est visible
             if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.A)) {
                 const closeBtn = document.getElementById('facebook-attack-close-btn');
+                if (closeBtn && !closeBtn.classList.contains('hidden')) {
+                    closeBtn.click();
+                    vibrateGamepad(50, 0.5);
+                }
+            }
+        } else if (isOpenaiVideoPhase) {
+            // Fermer OpenAI si le bouton est visible
+            if (isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.A)) {
+                const closeBtn = document.getElementById('openai-attack-close-btn');
                 if (closeBtn && !closeBtn.classList.contains('hidden')) {
                     closeBtn.click();
                     vibrateGamepad(50, 0.5);
@@ -374,6 +400,22 @@ function processGamepadInput(gamepad) {
             if (alertBtn) {
                 alertBtn.click();
                 vibrateGamepad(100, 0.8);
+            }
+        }
+        // Si l'attaque OpenAI est en phase alerte, X lance la vidéo
+        else if (isOpenaiAlertPhase && isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.X)) {
+            const alertBtn = document.getElementById('openai-alert-btn');
+            if (alertBtn) {
+                alertBtn.click();
+                vibrateGamepad(100, 0.8);
+            }
+        }
+        // Si l'attaque OpenAI est en phase vidéo, X ferme (si le bouton est visible)
+        else if (isOpenaiVideoPhase && isButtonJustPressed(gamepad, GAMEPAD_BUTTONS.X)) {
+            const closeBtn = document.getElementById('openai-attack-close-btn');
+            if (closeBtn && !closeBtn.classList.contains('hidden')) {
+                closeBtn.click();
+                vibrateGamepad(50, 0.5);
             }
         }
         // Si l'attaque Facebook est en phase vidéo, X ferme (si le bouton est visible)
@@ -1272,6 +1314,16 @@ function closeAllModals() {
             closeFacebookAttack();
         } else {
             facebookModal.classList.add('hidden');
+        }
+        closed = true;
+    }
+    // Fermer l'attaque OpenAI
+    const openaiModal = document.getElementById('openai-attack-modal');
+    if (openaiModal && !openaiModal.classList.contains('hidden')) {
+        if (typeof closeOpenaiAttack === 'function') {
+            closeOpenaiAttack();
+        } else {
+            openaiModal.classList.add('hidden');
         }
         closed = true;
     }

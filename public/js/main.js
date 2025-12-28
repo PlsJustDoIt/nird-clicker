@@ -321,6 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
         triggerBossWindows: () => showBoss('windows'),
     triggerBossGoogle: () => showBoss('google'),
     triggerBossFacebook: () => showBoss('facebook'),
+    triggerOpenaiAttack: () => triggerOpenaiAttack(),
     triggerBossAmazon: () => showBoss('amazon'),
     triggerBossApple: () => showBoss('apple'),
     triggerBossTeams: () => showBoss('microsoft-teams'),
