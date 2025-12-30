@@ -167,9 +167,7 @@ function getMechanicHint(mechanic) {
         // === MÉCANIQUES WTF ===
         'randomClickValue': '🌀 Chaque clic a une valeur aléatoire !',
         'multiplierRandom': '🛸 Parfois vos clics sont multipliés x10 !',
-        'delayedClicks': '🌍 Vos clics arrivent avec du retard...',
         'buggyClicks': '👾 Certains clics sont annulés ou doublés !',
-        'movingTarget': '🟩 La cible se déplace très vite !',
         'rootRandom': '🗝️ 1% de tout perdre, 1% de jackpot !'
     };
     return hints[mechanic] || hints['classic'];
@@ -217,9 +215,7 @@ function startBossMechanic() {
         // === MÉCANIQUES WTF ===
         case 'randomClickValue': startRandomClickValueMechanic(params); break;
         case 'multiplierRandom': startMultiplierRandomMechanic(params); break;
-        case 'delayedClicks': startDelayedClicksMechanic(params); break;
         case 'buggyClicks': startBuggyClicksMechanic(params); break;
-        case 'movingTarget': startMovingTargetMechanic(params); break;
         case 'rootRandom': startRootRandomMechanic(params); break;
     }
 }
@@ -639,9 +635,7 @@ function getDefaultMechanicParams(mechanic) {
         // === MÉCANIQUES WTF ===
         'randomClickValue': { min: 1, max: 5, message: '🌀 Valeur aléatoire !' },
         'multiplierRandom': { chance: 0.1, multiplier: 5, message: '🛸 Multiplicateur !' },
-        'delayedClicks': { delay: 800, message: '🌍 Clics retardés !' },
         'buggyClicks': { cancelChance: 0.15, doubleChance: 0.1, message: '👾 Clics buggés !' },
-        'movingTarget': { moveInterval: 600, moveMessage: '🟩 Cible mobile !' },
         'rootRandom': { wipeChance: 0.01, jackpotChance: 0.01, message: '🗝️ Root aléatoire !' }
     };
     return defaults[mechanic] || {};
@@ -673,16 +667,6 @@ function startMultiplierRandomMechanic(params) {
     showBossStatus(params.message || '🛸 Multiplicateur secret !', 'info');
 }
 
-// === MÉCANIQUE : DELAYED CLICKS (Terre Plate) ===
-/**
- * Les clics sont retardés (similaire à lag mais avec message différent)
- * @param {Object} params - Paramètres de la mécanique
- */
-function startDelayedClicksMechanic(params) {
-    bossState.delayedClicksDelay = params.delay || 1000;
-    showBossStatus(params.message || '🌍 Clics retardés !', 'warning');
-}
-
 // === MÉCANIQUE : BUGGY CLICKS (Théorie de la Simulation) ===
 /**
  * Certains clics sont annulés, d'autres doublés
@@ -692,27 +676,6 @@ function startBuggyClicksMechanic(params) {
     bossState.cancelChance = params.cancelChance || 0.2;
     bossState.doubleChance = params.doubleChance || 0.1;
     showBossStatus(params.message || '👾 Clics buggés !', 'warning');
-}
-
-// === MÉCANIQUE : MOVING TARGET (Glitch dans la Matrice) ===
-/**
- * La cible se déplace très rapidement
- * @param {Object} params - Paramètres de la mécanique
- */
-function startMovingTargetMechanic(params) {
-    showBossStatus(params.moveMessage || '🟩 Cible mobile !', 'info');
-    lastMoveX = 0;
-    
-    bossTimers.movingTarget = setInterval(() => {
-        const clickZone = document.getElementById('boss-click-zone');
-        if (clickZone) {
-            // Mouvement plus agressif que moving normal
-            const newX = (Math.random() - 0.5) * 200;
-            const newY = (Math.random() - 0.5) * 100;
-            clickZone.style.transform = `translate(${newX}px, ${newY}px)`;
-            clickZone.style.transition = `transform ${params.moveInterval * 0.3}ms ease-out`;
-        }
-    }, params.moveInterval || 800);
 }
 
 // === MÉCANIQUE : ROOT RANDOM (Accès Root Universel) ===

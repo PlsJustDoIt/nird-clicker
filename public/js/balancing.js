@@ -1008,10 +1008,10 @@ const BOSS_TYPES = [
         clicksRequired: 300,
         reward: 40000,
         color: '#00bfff',
-        mechanic: 'delayedClicks',
+        mechanic: 'lag',  // Réutilise la mécanique 'lag' existante
         mechanicParams: {
-            delay: 1000,
-            message: 'Les clics mettent 1s à arriver...'
+            lagDelay: 1000,           // 1s de délai (plus long que Teams)
+            lagMessage: '🌍 Les clics flottent...'
         }
     },
     {
@@ -1051,10 +1051,10 @@ const BOSS_TYPES = [
         clicksRequired: 500,
         reward: 100000,
         color: '#00ff00',
-        mechanic: 'movingTarget',
+        mechanic: 'moving',  // Réutilise la mécanique 'moving' existante
         mechanicParams: {
-            moveInterval: 800,
-            moveMessage: 'Le boss se déplace sans cesse !'
+            moveInterval: 800,        // Plus rapide que TikTok (1500ms)
+            moveMessage: '🟩 Le boss se déplace sans cesse !'
         }
     },
     {
