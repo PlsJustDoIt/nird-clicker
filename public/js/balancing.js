@@ -848,6 +848,20 @@ const BOSS_TYPES = [
         }
     },
     {
+        id: 'openai',
+        name: 'OpenAI Alert',
+        icon: '🤖',
+        message: 'OpenAI tente une intrusion via un modèle malveillant...',
+        clicksRequired: 28,
+        reward: 160,
+        color: '#10A37F',
+        mechanic: 'video',
+        mechanicParams: {
+            videoIntroDelay: 1000,
+            popupTexts: ['🤖 Alarme : modèle suspect détecté', '🔒 Tentative d\'exfiltration', '⚠️ Alerte OpenAI']
+        }
+    },
+    {
         id: 'amazon',
         name: 'Amazon Prime',
         icon: '📦',

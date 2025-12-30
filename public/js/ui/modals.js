@@ -588,6 +588,28 @@ function importSave() {
     input.click();
 }
 
+/**
+ * Ouvre la modale d'information
+ */
+function openInfoModal() {
+    const modal = document.getElementById('info-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        
+        const closeBtn = modal.querySelector('.modal-close');
+        if (closeBtn) {
+            closeBtn.onclick = () => modal.classList.add('hidden');
+        }
+        
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        };
+    }
+}
+
+
 // Exposer globalement
 window.openSettingsMenu = openSettingsMenu;
 window.openAchievementsMenu = openAchievementsMenu;
@@ -606,3 +628,4 @@ window.cycleTheme = cycleTheme;
 window.navigateSettingsMenu = navigateSettingsMenu;
 window.activateSettingsItem = activateSettingsItem;
 window.escapeHtml = escapeHtml;
+window.openInfoModal = openInfoModal;
