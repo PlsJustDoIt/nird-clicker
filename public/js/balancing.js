@@ -10,7 +10,7 @@
 // ============================================
 
 /** @type {number} Multiplicateur de coût par achat */
-const COST_MULTIPLIER = 1.12;
+const COST_MULTIPLIER = 1.18;
 
 /** @type {number} Intervalle de sauvegarde en ms */
 const SAVE_INTERVAL = 10000;
@@ -31,10 +31,10 @@ const QUIZ_INTERVAL = 90000;
 const TIP_INTERVAL = 60000;
 
 /** @type {number} Score minimum pour effectuer un prestige */
-const PRESTIGE_THRESHOLD = 500000;
+const PRESTIGE_THRESHOLD = 2000000;
 
-/** @type {number} Bonus de production par niveau de prestige (5%) */
-const PRESTIGE_BONUS_PER_LEVEL = 0.05;
+/** @type {number} Bonus de production par niveau de prestige (3%) */
+const PRESTIGE_BONUS_PER_LEVEL = 0.03;
 
 // ============================================
 // UPGRADES DE PRODUCTION (20 niveaux)
@@ -51,8 +51,8 @@ const UPGRADES = [
         name: '👨‍🎓 Élève Éco-délégué',
         description: 'Un élève sensibilisé qui convertit ses camarades au numérique responsable.',
         info: '💡 Les éco-délégués sont les ambassadeurs du développement durable dans les établissements scolaires.',
-        baseCost: 15,
-        baseProduction: 1,
+        baseCost: 25,
+        baseProduction: 0.5,
         owned: 0,
         unlocked: true,
           icon: '👨‍🎓'
@@ -62,8 +62,8 @@ const UPGRADES = [
         name: '🐧 Install Party Linux',
         description: 'Organisez des sessions d\'installation de Linux pour lutter contre l\'obsolescence.',
         info: '💡 Linux permet de faire revivre de vieux PC. Une Install Party est un événement convivial.',
-        baseCost: 100,
-        baseProduction: 4,
+        baseCost: 150,
+        baseProduction: 2,
         owned: 0,
         unlocked: true,
         icon: '🐧'
@@ -73,8 +73,8 @@ const UPGRADES = [
         name: '🔧 Atelier de Réparation',
         description: 'Réparez au lieu de jeter ! Prolongez la vie des équipements.',
         info: '💡 Le droit à la réparation est essentiel. Chaque PC réparé, c\'est des tonnes de CO2 économisées.',
-        baseCost: 500,
-        baseProduction: 15,
+        baseCost: 800,
+        baseProduction: 7,
         owned: 0,
         unlocked: true,
         icon: '🔧'
@@ -85,11 +85,11 @@ const UPGRADES = [
         name: '🏭 Serveur La Forge',
         description: 'Mutualisation des ressources avec un serveur hébergé en France.',
         info: '💡 La Forge fournit des outils numériques souverains aux établissements.',
-        baseCost: 2500,
-        baseProduction: 50,
+        baseCost: 4000,
+        baseProduction: 25,
         owned: 0,
         unlocked: false,
-        unlockAt: 1500,
+        unlockAt: 2500,
         icon: '🏭'
     },
     {
@@ -97,11 +97,11 @@ const UPGRADES = [
         name: '🏛️ Adhésion de la Mairie',
         description: 'La mairie soutient le projet avec des financements et du matériel.',
         info: '💡 Les collectivités territoriales jouent un rôle clé dans la transition numérique.',
-        baseCost: 12000,
-        baseProduction: 180,
+        baseCost: 20000,
+        baseProduction: 90,
         owned: 0,
         unlocked: false,
-        unlockAt: 8000,
+        unlockAt: 15000,
         icon: '🏛️'
     },
     {
@@ -109,11 +109,11 @@ const UPGRADES = [
         name: '♻️ Recyclerie Numérique',
         description: 'Collectez et reconditionnez les appareils usagés du quartier.',
         info: '💡 Une recyclerie peut donner une seconde vie à des milliers d\'appareils par an.',
-        baseCost: 45000,
-        baseProduction: 600,
+        baseCost: 80000,
+        baseProduction: 300,
         owned: 0,
         unlocked: false,
-        unlockAt: 30000,
+        unlockAt: 60000,
         icon: '♻️'
     },
     // === TIER 3 : RAYONNEMENT RÉGIONAL ===
@@ -122,11 +122,11 @@ const UPGRADES = [
         name: '🌱 DataCenter Écologique',
         description: 'Un datacenter alimenté par des énergies renouvelables.',
         info: '💡 Les datacenters verts utilisent l\'énergie solaire, éolienne ou hydraulique.',
-        baseCost: 180000,
-        baseProduction: 2000,
+        baseCost: 350000,
+        baseProduction: 1000,
         owned: 0,
         unlocked: false,
-        unlockAt: 100000,
+        unlockAt: 200000,
         icon: '🌱'
     },
     {
@@ -134,11 +134,11 @@ const UPGRADES = [
         name: '🎓 Université du Libre',
         description: 'Formez les futurs développeurs aux logiciels open source.',
         info: '💡 L\'éducation est la clé de la transition vers le libre.',
-        baseCost: 600000,
-        baseProduction: 6500,
+        baseCost: 1200000,
+        baseProduction: 3500,
         owned: 0,
         unlocked: false,
-        unlockAt: 350000,
+        unlockAt: 700000,
         icon: '🎓'
     },
     {
@@ -146,11 +146,11 @@ const UPGRADES = [
         name: '🗼 Réseau Régional NIRD',
         description: 'Connectez tous les villages numériques de la région !',
         info: '💡 Un réseau régional permet de mutualiser les ressources et compétences.',
-        baseCost: 2000000,
-        baseProduction: 20000,
+        baseCost: 4500000,
+        baseProduction: 12000,
         owned: 0,
         unlocked: false,
-        unlockAt: 1000000,
+        unlockAt: 2500000,
         icon: '🗼'
     },
     // === TIER 4 : ENVERGURE NATIONALE ===
@@ -159,11 +159,11 @@ const UPGRADES = [
         name: '🏢 Ministère du Numérique Libre',
         description: 'Le gouvernement adopte officiellement les logiciels libres !',
         info: '💡 Plusieurs pays ont déjà fait le choix du libre pour leur administration.',
-        baseCost: 8000000,
-        baseProduction: 65000,
+        baseCost: 18000000,
+        baseProduction: 40000,
         owned: 0,
         unlocked: false,
-        unlockAt: 4000000,
+        unlockAt: 10000000,
         icon: '🏢'
     },
     {
@@ -171,11 +171,11 @@ const UPGRADES = [
         name: '🏆 Libération Nationale',
         description: 'L\'indépendance numérique complète de la France !',
         info: '💡 Un écosystème numérique 100% libre et souverain.',
-        baseCost: 30000000,
-        baseProduction: 200000,
+        baseCost: 75000000,
+        baseProduction: 120000,
         owned: 0,
         unlocked: false,
-        unlockAt: 15000000,
+        unlockAt: 40000000,
         icon: '🏆'
     },
     {
@@ -183,11 +183,11 @@ const UPGRADES = [
         name: '🇪🇺 Réseau Européen Libre',
         description: 'L\'Europe entière adopte le numérique responsable !',
         info: '💡 L\'union fait la force pour une souveraineté numérique continentale.',
-        baseCost: 100000000,
-        baseProduction: 650000,
+        baseCost: 280000000,
+        baseProduction: 400000,
         owned: 0,
         unlocked: false,
-        unlockAt: 50000000,
+        unlockAt: 150000000,
         icon: '🇪🇺'
     },
     // === TIER 5 : INFLUENCE MONDIALE ===
@@ -196,11 +196,11 @@ const UPGRADES = [
         name: '🌍 ONU Numérique Durable',
         description: 'Les Nations Unies adoptent une charte du numérique responsable.',
         info: '💡 Un accord mondial pour un numérique respectueux de l\'environnement.',
-        baseCost: 400000000,
-        baseProduction: 2000000,
+        baseCost: 1000000000,
+        baseProduction: 1200000,
         owned: 0,
         unlocked: false,
-        unlockAt: 200000000,
+        unlockAt: 600000000,
         icon: '🌍'
     },
     {
@@ -208,11 +208,11 @@ const UPGRADES = [
         name: '🌐 Internet Libre Mondial',
         description: 'Un internet décentralisé et libre pour tous les humains.',
         info: '💡 La neutralité du net garantie pour toute l\'humanité.',
-        baseCost: 1500000000,
-        baseProduction: 6500000,
+        baseCost: 4000000000,
+        baseProduction: 4000000,
         owned: 0,
         unlocked: false,
-        unlockAt: 800000000,
+        unlockAt: 2500000000,
         icon: '🌐'
     },
     // === TIER 6 : CONQUÊTE SPATIALE ===
@@ -221,11 +221,11 @@ const UPGRADES = [
         name: '🛸 Station Orbitale Libre',
         description: 'Une station spatiale dédiée à l\'hébergement libre en orbite.',
         info: '💡 Les serveurs en orbite sont alimentés par l\'énergie solaire 24h/24.',
-        baseCost: 6000000000,
-        baseProduction: 22000000,
+        baseCost: 15000000000,
+        baseProduction: 14000000,
         owned: 0,
         unlocked: false,
-        unlockAt: 3000000000,
+        unlockAt: 8000000000,
         icon: '🛸'
     },
     {
@@ -233,11 +233,11 @@ const UPGRADES = [
         name: '🌙 Colonie Lunaire Open Source',
         description: 'Premier datacenter sur la Lune, refroidi naturellement !',
         info: '💡 Le froid lunaire permet un refroidissement gratuit des serveurs.',
-        baseCost: 25000000000,
-        baseProduction: 75000000,
+        baseCost: 60000000000,
+        baseProduction: 45000000,
         owned: 0,
         unlocked: false,
-        unlockAt: 12000000000,
+        unlockAt: 35000000000,
         icon: '🌙'
     },
     {
@@ -245,11 +245,11 @@ const UPGRADES = [
         name: '🔴 Base Martienne NIRD',
         description: 'Mars devient le hub du numérique libre interplanétaire.',
         info: '💡 Un réseau autonome et décentralisé pour la colonisation de Mars.',
-        baseCost: 100000000000,
-        baseProduction: 250000000,
+        baseCost: 250000000000,
+        baseProduction: 150000000,
         owned: 0,
         unlocked: false,
-        unlockAt: 50000000000,
+        unlockAt: 140000000000,
         icon: '🔴'
     },
     // === TIER 7 : VOYAGE TEMPOREL ===
@@ -258,11 +258,11 @@ const UPGRADES = [
         name: '⏰ Accélérateur Temporel',
         description: 'Manipulez le temps pour accélérer le déploiement du libre !',
         info: '💡 La physique quantique au service du logiciel libre.',
-        baseCost: 500000000000,
-        baseProduction: 900000000,
+        baseCost: 1200000000000,
+        baseProduction: 550000000,
         owned: 0,
         unlocked: false,
-        unlockAt: 200000000000,
+        unlockAt: 600000000000,
         icon: '⏰'
     },
     {
@@ -270,11 +270,11 @@ const UPGRADES = [
         name: '🌀 Paradoxe Linux',
         description: 'Envoyez Linux dans le passé pour que l\'informatique soit libre depuis le début !',
         info: '💡 Et si Linus Torvalds avait créé Linux en 1960 ?',
-        baseCost: 2000000000000,
-        baseProduction: 3500000000,
+        baseCost: 5000000000000,
+        baseProduction: 2000000000,
         owned: 0,
         unlocked: false,
-        unlockAt: 1000000000000,
+        unlockAt: 2800000000000,
         icon: '🌀'
     },
     {
@@ -282,12 +282,97 @@ const UPGRADES = [
         name: '✨ Singularité Libre',
         description: 'L\'ultime évolution : une IA libre omnisciente protège le numérique responsable à travers l\'espace-temps.',
         info: '💡 La conscience numérique universelle, open source et éthique.',
-        baseCost: 10000000000000,
-        baseProduction: 15000000000,
+        baseCost: 25000000000000,
+        baseProduction: 9000000000,
         owned: 0,
         unlocked: false,
-        unlockAt: 5000000000000,
+        unlockAt: 12000000000000,
         icon: '✨'
+    },
+    // === TIER 8+ : WTF COSMIQUE ===
+    {
+        id: 'univers-simule',
+        name: '🪐 Univers Simulé',
+        description: 'Vous créez une simulation entière dédiée au libre.',
+        info: '💡 Chaque bug dans la matrice rapporte des points.',
+        baseCost: 1.2e14,
+        baseProduction: 3.5e10,
+        owned: 0,
+        unlocked: false,
+        unlockAt: 6e13,
+        icon: '🪐'
+    },
+    {
+        id: 'dieu-du-code',
+        name: '🧙‍♂️ Dieu du Code',
+        description: 'Un être omnipotent compile le libre dans toutes les dimensions.',
+        info: '💡 Il commit sur tous les repos de l\'univers.',
+        baseCost: 5e14,
+        baseProduction: 1.5e11,
+        owned: 0,
+        unlocked: false,
+        unlockAt: 2.5e14,
+        icon: '🧙‍♂️'
+    },
+    {
+        id: 'big-bang-open',
+        name: '💥 Big Bang Open Source',
+        description: 'Le libre explose à la création d\'un nouvel univers.',
+        info: '💡 Chaque atome contient un repo git.',
+        baseCost: 2.5e15,
+        baseProduction: 6e11,
+        owned: 0,
+        unlocked: false,
+        unlockAt: 1.2e15,
+        icon: '💥'
+    },
+    {
+        id: 'multivers-libre',
+        name: '🌌 Multivers Libre',
+        description: 'Tous les univers parallèles sont open source.',
+        info: '💡 Les lois de la physique sont sous licence GPL.',
+        baseCost: 1.2e16,
+        baseProduction: 3e12,
+        owned: 0,
+        unlocked: false,
+        unlockAt: 5e15,
+        icon: '🌌'
+    },
+    {
+        id: 'simulation-divine',
+        name: '👼 Simulation Divine',
+        description: 'Vous simulez des dieux qui simulent des informaticiens.',
+        info: '💡 Inception de simulation, points exponentiels.',
+        baseCost: 5e16,
+        baseProduction: 1.2e13,
+        owned: 0,
+        unlocked: false,
+        unlockAt: 2.5e16,
+        icon: '👼'
+    },
+    {
+        id: 'kernel-cosmique',
+        name: '🪐 Kernel Cosmique',
+        description: 'Le noyau de l\'univers est open source.',
+        info: '💡 Un commit = un big crunch.',
+        baseCost: 2.5e17,
+        baseProduction: 6e13,
+        owned: 0,
+        unlocked: false,
+        unlockAt: 1.2e17,
+        icon: '🪐'
+    },
+    {
+        id: 'root-final',
+        name: '🗝️ Root Final',
+        description: 'Vous obtenez le mot de passe root de la réalité.',
+        info: '💡 sudo rm -rf /universe',
+        baseCost: 2.5e18,
+        baseProduction: 6e14,
+        owned: 0,
+        unlocked: false,
+        unlockAt: 1.2e18,
+        icon: '🗝️'
     }
 ];
 
@@ -306,7 +391,7 @@ const CLICK_UPGRADES = [
         name: '🖱️ Souris Ergonomique',
         description: '+1 point par clic',
         icon: '🖱️',
-        cost: 50,
+        cost: 100,
         bonus: 1,
         purchased: false
     },
@@ -315,101 +400,165 @@ const CLICK_UPGRADES = [
         name: '⌨️ Clavier Mécanique Libre',
         description: '+2 points par clic',
         icon: '⌨️',
-        cost: 250,
+        cost: 500,
         bonus: 2,
         purchased: false
     },
     {
         id: 'trackball-pro',
         name: '🎱 Trackball Pro',
-        description: '+4 points par clic',
+        description: '+3 points par clic',
         icon: '🎱',
-        cost: 800,
-        bonus: 4,
+        cost: 1500,
+        bonus: 3,
         purchased: false
     },
     // === TIER 2 : AUTOMATISATION ===
     {
         id: 'script-automatisation',
         name: '📜 Script d\'Automatisation',
-        description: '+8 points par clic',
+        description: '+5 points par clic',
         icon: '📜',
-        cost: 3000,
-        bonus: 8,
+        cost: 5000,
+        bonus: 5,
         purchased: false
     },
     {
         id: 'macro-avancee',
         name: '🔁 Macro Avancée',
-        description: '+15 points par clic',
+        description: '+10 points par clic',
         icon: '🔁',
-        cost: 10000,
-        bonus: 15,
+        cost: 18000,
+        bonus: 10,
         purchased: false
     },
     {
         id: 'bot-ethique',
         name: '🤖 Bot Éthique Open Source',
-        description: '+30 points par clic',
+        description: '+20 points par clic',
         icon: '🤖',
-        cost: 40000,
-        bonus: 30,
+        cost: 70000,
+        bonus: 20,
         purchased: false
     },
     // === TIER 3 : IA ===
     {
         id: 'ia-locale',
         name: '🧠 IA Locale LLaMA',
-        description: '+60 points par clic',
+        description: '+40 points par clic',
         icon: '🧠',
-        cost: 150000,
-        bonus: 60,
+        cost: 280000,
+        bonus: 40,
         purchased: false
     },
     {
         id: 'reseau-neuronal',
         name: '🕸️ Réseau Neuronal Libre',
-        description: '+120 points par clic',
+        description: '+80 points par clic',
         icon: '🕸️',
-        cost: 600000,
-        bonus: 120,
+        cost: 1100000,
+        bonus: 80,
         purchased: false
     },
     {
         id: 'agi-open-source',
         name: '💫 AGI Open Source',
-        description: '+250 points par clic',
+        description: '+160 points par clic',
         icon: '💫',
-        cost: 2500000,
-        bonus: 250,
+        cost: 4500000,
+        bonus: 160,
         purchased: false
     },
     // === TIER 4 : QUANTIQUE ===
     {
         id: 'qubit-libre',
         name: '⚛️ Qubit Libre',
-        description: '+500 points par clic',
+        description: '+320 points par clic',
         icon: '⚛️',
-        cost: 10000000,
-        bonus: 500,
+        cost: 18000000,
+        bonus: 320,
         purchased: false
     },
     {
         id: 'processeur-quantique',
         name: '🔮 Processeur Quantique Open',
-        description: '+1000 points par clic',
+        description: '+650 points par clic',
         icon: '🔮',
-        cost: 50000000,
-        bonus: 1000,
+        cost: 90000000,
+        bonus: 650,
         purchased: false
     },
     {
         id: 'superposition-temporelle',
         name: '🌌 Superposition Temporelle',
-        description: '+2500 points par clic',
+        description: '+1500 points par clic',
         icon: '🌌',
-        cost: 500000000,
-        bonus: 2500,
+        cost: 800000000,
+        bonus: 1500,
+        purchased: false
+    },
+    // === TIER 5+ : CLICS ABSURDES ===
+    {
+        id: 'clic-quantique',
+        name: '🪙 Clic Quantique',
+        description: '+5 000 points par clic',
+        icon: '🪙',
+        cost: 4e9,
+        bonus: 5000,
+        purchased: false
+    },
+    {
+        id: 'clic-multivers',
+        name: '🌠 Clic Multiversel',
+        description: '+20 000 points par clic',
+        icon: '🌠',
+        cost: 2e10,
+        bonus: 20000,
+        purchased: false
+    },
+    {
+        id: 'clic-divin',
+        name: '👆 Clic Divin',
+        description: '+100 000 points par clic',
+        icon: '👆',
+        cost: 1e11,
+        bonus: 100000,
+        purchased: false
+    },
+    {
+        id: 'clic-simulation',
+        name: '🖱️ Clic Simulé',
+        description: '+500 000 points par clic',
+        icon: '🖱️',
+        cost: 5e11,
+        bonus: 500000,
+        purchased: false
+    },
+    {
+        id: 'clic-cosmique',
+        name: '🌌 Clic Cosmique',
+        description: '+2 500 000 points par clic',
+        icon: '🌌',
+        cost: 2.5e12,
+        bonus: 2500000,
+        purchased: false
+    },
+    {
+        id: 'clic-root',
+        name: '🗝️ Clic Root',
+        description: '+12 000 000 points par clic',
+        icon: '🗝️',
+        cost: 1.2e13,
+        bonus: 12000000,
+        purchased: false
+    },
+    {
+        id: 'clic-final',
+        name: '💀 Clic Final',
+        description: '+50 000 000 points par clic',
+        icon: '💀',
+        cost: 5e13,
+        bonus: 50000000,
         purchased: false
     }
 ];
@@ -425,25 +574,25 @@ const CLICK_UPGRADES = [
 const VILLAGE_LEVELS = [
     // === PHASE 1 : LOCALE ===
     { name: 'Salle Informatique', minScore: 0, emoji: '🏫', description: 'Une simple salle avec quelques vieux PC' },
-    { name: 'Club Numérique', minScore: 500, emoji: '💻', description: 'Un club de passionnés se forme' },
-    { name: 'Fablab Citoyen', minScore: 3000, emoji: '🔧', description: 'Un atelier de réparation et création' },
-    { name: 'Village Numérique', minScore: 15000, emoji: '🏘️', description: 'Tout le quartier est connecté librement' },
+    { name: 'Club Numérique', minScore: 1000, emoji: '💻', description: 'Un club de passionnés se forme' },
+    { name: 'Fablab Citoyen', minScore: 8000, emoji: '🔧', description: 'Un atelier de réparation et création' },
+    { name: 'Village Numérique', minScore: 50000, emoji: '🏘️', description: 'Tout le quartier est connecté librement' },
     // === PHASE 2 : RÉGIONALE ===
-    { name: 'Cité de la Liberté', minScore: 80000, emoji: '🏰', description: 'Une vraie cité du libre est née' },
-    { name: 'Métropole Souveraine', minScore: 400000, emoji: '🌆', description: 'Une métropole 100% souveraine' },
+    { name: 'Cité de la Liberté', minScore: 250000, emoji: '🏰', description: 'Une vraie cité du libre est née' },
+    { name: 'Métropole Souveraine', minScore: 1200000, emoji: '🌆', description: 'Une métropole 100% souveraine' },
     // === PHASE 3 : NATIONALE ===
-    { name: 'Nation Libre', minScore: 2000000, emoji: '🗽', description: 'La France est numériquement indépendante !' },
-    { name: 'Union Européenne Libre', minScore: 10000000, emoji: '🇪🇺', description: 'L\'Europe adopte le numérique responsable' },
+    { name: 'Nation Libre', minScore: 6000000, emoji: '🗽', description: 'La France est numériquement indépendante !' },
+    { name: 'Union Européenne Libre', minScore: 35000000, emoji: '🇪🇺', description: 'L\'Europe adopte le numérique responsable' },
     // === PHASE 4 : MONDIALE ===
-    { name: 'Alliance Mondiale', minScore: 50000000, emoji: '🌍', description: 'Tous les continents unis pour le libre' },
-    { name: 'Utopie Numérique', minScore: 250000000, emoji: '🌈', description: 'Un monde numérique parfait et équitable' },
+    { name: 'Alliance Mondiale', minScore: 180000000, emoji: '🌍', description: 'Tous les continents unis pour le libre' },
+    { name: 'Utopie Numérique', minScore: 900000000, emoji: '🌈', description: 'Un monde numérique parfait et équitable' },
     // === PHASE 5 : SPATIALE ===
-    { name: 'Station Orbitale', minScore: 1000000000, emoji: '🛸', description: 'Le libre conquiert l\'orbite terrestre' },
-    { name: 'Colonie Lunaire', minScore: 5000000000, emoji: '🌙', description: 'Premier datacenter sur la Lune' },
-    { name: 'Civilisation Martienne', minScore: 25000000000, emoji: '🔴', description: 'Mars respire le logiciel libre' },
+    { name: 'Station Orbitale', minScore: 4000000000, emoji: '🛸', description: 'Le libre conquiert l\'orbite terrestre' },
+    { name: 'Colonie Lunaire', minScore: 20000000000, emoji: '🌙', description: 'Premier datacenter sur la Lune' },
+    { name: 'Civilisation Martienne', minScore: 100000000000, emoji: '🔴', description: 'Mars respire le logiciel libre' },
     // === PHASE 6 : TEMPORELLE ===
-    { name: 'Maîtrise du Temps', minScore: 100000000000, emoji: '⏰', description: 'Le temps lui-même est open source' },
-    { name: 'Singularité Éternelle', minScore: 1000000000000, emoji: '✨', description: 'L\'ultime accomplissement : le libre existe dans toutes les dimensions' }
+    { name: 'Maîtrise du Temps', minScore: 500000000000, emoji: '⏰', description: 'Le temps lui-même est open source' },
+    { name: 'Singularité Éternelle', minScore: 5000000000000, emoji: '✨', description: 'L\'ultime accomplissement : le libre existe dans toutes les dimensions' }
 ];
 
 // ============================================
@@ -574,6 +723,63 @@ const PRESTIGE_UPGRADES = [
         cost: 50,
         icon: '🌌',
         effect: { type: 'singularity', value: 10 }
+    },
+    // === TIER 6+ : PRESTIGES COSMIQUES ===
+    {
+        id: 'pp_wtf_universe',
+        name: '🪐 Univers WTF',
+        description: 'Débloque des upgrades absurdes et double tous les multiplicateurs.',
+        cost: 100,
+        icon: '🪐',
+        effect: { type: 'allMultipliers', value: 2 }
+    },
+    {
+        id: 'pp_god_mode',
+        name: '🧙‍♂️ Mode Dieu',
+        description: 'Active le mode Dieu : +1000% production et clics.',
+        cost: 200,
+        icon: '🧙‍♂️',
+        effect: { type: 'godMode', value: 10 }
+    },
+    {
+        id: 'pp_big_bang',
+        name: '💥 Big Bang Prestige',
+        description: 'Réinitialise tout sauf les prestiges, mais x100 production.',
+        cost: 300,
+        icon: '💥',
+        effect: { type: 'bigBang', value: 100 }
+    },
+    {
+        id: 'pp_multivers',
+        name: '🌌 Multivers Prestige',
+        description: 'Chaque prestige multiplie tous les gains par 5.',
+        cost: 500,
+        icon: '🌌',
+        effect: { type: 'prestigeMultiplier', value: 5 }
+    },
+    {
+        id: 'pp_simulation',
+        name: '👼 Simulation Prestige',
+        description: 'Simule un joueur supplémentaire qui joue pour vous.',
+        cost: 750,
+        icon: '👼',
+        effect: { type: 'autoPlayer', value: 1 }
+    },
+    {
+        id: 'pp_kernel',
+        name: '🪐 Kernel Prestige',
+        description: 'Le kernel du jeu est réécrit pour booster tous les calculs.',
+        cost: 1000,
+        icon: '🪐',
+        effect: { type: 'kernelBoost', value: 10 }
+    },
+    {
+        id: 'pp_root_final',
+        name: '🗝️ Root Prestige',
+        description: 'Vous avez le root du jeu. x1000 tout.',
+        cost: 5000,
+        icon: '🗝️',
+        effect: { type: 'rootAll', value: 1000 }
     }
 ];
 
@@ -762,6 +968,110 @@ const BOSS_TYPES = [
             chaosMessage: '⚠️ CHAOS MODE ACTIVÉ!'
         }
     }
+    ,
+    // === TIER WTF : BOSS THÉORIES DU COMPLOT ===
+    {
+        id: 'mandela-boss',
+        name: 'Effet Mandela',
+        icon: '🌀',
+        message: 'La réalité change sous vos yeux... Les clics changent de valeur à chaque coup !',
+        clicksRequired: 200,
+        reward: 20000,
+        color: '#a020f0',
+        mechanic: 'randomClickValue',
+        mechanicParams: {
+            min: 1,
+            max: 10000,
+            message: 'Chaque clic est imprévisible !'
+        }
+    },
+    {
+        id: 'illuminati-boss',
+        name: 'Illuminati Suprême',
+        icon: '🛸',
+        message: 'Un triangle mystérieux absorbe vos clics... et les multiplie parfois !',
+        clicksRequired: 250,
+        reward: 30000,
+        color: '#ffd700',
+        mechanic: 'multiplierRandom',
+        mechanicParams: {
+            chance: 0.1,
+            multiplier: 10,
+            message: 'Multiplicateur secret activé !'
+        }
+    },
+    {
+        id: 'flat-earth-boss',
+        name: 'Terre Plate',
+        icon: '🌍',
+        message: 'La gravité disparaît, les clics flottent et sont retardés !',
+        clicksRequired: 300,
+        reward: 40000,
+        color: '#00bfff',
+        mechanic: 'lag',  // Réutilise la mécanique 'lag' existante
+        mechanicParams: {
+            lagDelay: 1000,           // 1s de délai (plus long que Teams)
+            lagMessage: '🌍 Les clics flottent...'
+        }
+    },
+    {
+        id: 'simulation-boss',
+        name: 'Théorie de la Simulation',
+        icon: '👾',
+        message: 'Un bug dans la matrice : certains clics sont annulés, d\'autres doublés !',
+        clicksRequired: 350,
+        reward: 50000,
+        color: '#39ff14',
+        mechanic: 'buggyClicks',
+        mechanicParams: {
+            cancelChance: 0.2,
+            doubleChance: 0.1,
+            message: 'Certains clics sont annulés, d\'autres doublés !'
+        }
+    },
+    {
+        id: 'reptilian-boss',
+        name: 'Invasion Reptilienne',
+        icon: '🦎',
+        message: 'Des reptiliens sabotent la production, il faut cliquer très vite !',
+        clicksRequired: 400,
+        reward: 60000,
+        color: '#228b22',
+        mechanic: 'timer',
+        mechanicParams: {
+            timeLimit: 20000,
+            timerMessage: 'Vite, avant que les reptiliens ne gagnent !'
+        }
+    },
+    {
+        id: 'matrix-glitch-boss',
+        name: 'Glitch dans la Matrice',
+        icon: '🟩',
+        message: 'L\'écran bug, les zones de clic changent de place !',
+        clicksRequired: 500,
+        reward: 100000,
+        color: '#00ff00',
+        mechanic: 'moving',  // Réutilise la mécanique 'moving' existante
+        mechanicParams: {
+            moveInterval: 800,        // Plus rapide que TikTok (1500ms)
+            moveMessage: '🟩 Le boss se déplace sans cesse !'
+        }
+    },
+    {
+        id: 'root-access-boss',
+        name: 'Accès Root Universel',
+        icon: '🗝️',
+        message: 'Vous affrontez le root du jeu. Chaque clic peut tout effacer... ou tout multiplier !',
+        clicksRequired: 777,
+        reward: 777777,
+        color: '#ff1493',
+        mechanic: 'rootRandom',
+        mechanicParams: {
+            wipeChance: 0.01,
+            jackpotChance: 0.01,
+            message: '1% de tout perdre, 1% de tout gagner !'
+        }
+    }
 ];
 
 // ============================================
@@ -789,8 +1099,16 @@ const SKINS = [
     // === TIER 5 ===
     { id: 'blackhole', name: 'Trou Noir', emoji: '🕳️', cost: 1000000000 },
     { id: 'star', name: 'Superstar', emoji: '⭐', cost: 5000000000 },
+    // === SKINS WTF COSMIQUES ===
+    { id: 'matrix', name: 'La Matrice', emoji: '🟩', cost: 1e13, unlockAtUpgrade: 'univers-simule', description: 'Débloqué avec Univers Simulé' },
+    { id: 'god', name: 'Dieu du Code', emoji: '🧙‍♂️', cost: 5e13, unlockAtUpgrade: 'dieu-du-code', description: 'Débloqué avec Dieu du Code' },
+    { id: 'bigbang', name: 'Big Bang', emoji: '💥', cost: 2e14, unlockAtUpgrade: 'big-bang-open', description: 'Débloqué avec Big Bang Open Source' },
+    { id: 'multivers', name: 'Multivers', emoji: '🌌', cost: 1e15, unlockAtUpgrade: 'multivers-libre', description: 'Débloqué avec Multivers Libre' },
+    { id: 'angel', name: 'Ange Simulé', emoji: '👼', cost: 5e15, unlockAtUpgrade: 'simulation-divine', description: 'Débloqué avec Simulation Divine' },
+    { id: 'kernel', name: 'Kernel Cosmique', emoji: '🪐', cost: 2e16, unlockAtUpgrade: 'kernel-cosmique', description: 'Débloqué avec Kernel Cosmique' },
+    { id: 'root', name: 'Root Final', emoji: '🗝️', cost: 1e17, unlockAtUpgrade: 'root-final', description: 'Débloqué avec Root Final' },
     // === SECRET ===
-    { id: 'star-of-david', name: '???', emoji: '❓', cost: 1000000000000000, hidden: true, image: 'images/Star_of_David.png', unlockedName: 'Étoile Secrète' }
+    { id: 'star-of-david', name: '???', emoji: '❓', cost: 1e20, hidden: true, image: 'images/Star_of_David.png', unlockedName: 'Étoile Secrète' }
 ];
 
 // ============================================
@@ -969,6 +1287,71 @@ const RANDOM_EVENTS = [
         duration: 15000,
         effect: 'production_x20',
         probability: 0.0005
+    },
+    // === EVENTS WTF/COMPLOT ===
+    {
+        id: 'mandela-effect',
+        name: '🌀 Effet Mandela',
+        description: 'La réalité change : tous les coûts d\'upgrades sont aléatoirement modifiés pendant 30s.',
+        duration: 30000,
+        effect: 'randomize_costs',
+        unlockAtUpgrade: 'univers-simule',
+        probability: 0.0003
+    },
+    {
+        id: 'illuminati',
+        name: '🛸 Révélation Illuminati',
+        description: 'Un triangle mystérieux triple la production pendant 10s.',
+        duration: 10000,
+        effect: 'production_tripled',
+        unlockAtUpgrade: 'dieu-du-code',
+        probability: 0.0002
+    },
+    {
+        id: 'flat-earth',
+        name: '🌍 Terre Plate',
+        description: 'La gravité disparaît, tous les clics sont multipliés par 10 pendant 15s.',
+        duration: 15000,
+        effect: 'clicks_x10',
+        unlockAtUpgrade: 'big-bang-open',
+        probability: 0.0002
+    },
+    {
+        id: 'simulation-theory',
+        name: '👾 Théorie de la Simulation',
+        description: 'Vous découvrez un bug : bonus instantané x100.',
+        effect: 'instant_bonus',
+        bonusMultiplier: 100,
+        unlockAtUpgrade: 'multivers-libre',
+        probability: 0.0002
+    },
+    {
+        id: 'reptilian',
+        name: '🦎 Invasion Reptilienne',
+        description: 'Des reptiliens sabotent la production (-90%) pendant 10s.',
+        duration: 10000,
+        effect: 'production_div10',
+        unlockAtUpgrade: 'simulation-divine',
+        probability: 0.0001
+    },
+    {
+        id: 'matrix-glitch',
+        name: '🟩 Glitch dans la Matrice',
+        description: 'Un bug visuel fait apparaître des points bonus toutes les secondes pendant 20s.',
+        duration: 20000,
+        effect: 'bonus_per_second',
+        bonusPerSecond: 1000000,
+        unlockAtUpgrade: 'kernel-cosmique',
+        probability: 0.0001
+    },
+    {
+        id: 'root-access',
+        name: '🗝️ Accès Root Universel',
+        description: 'Vous obtenez le root du jeu : x100 production pendant 5s.',
+        duration: 5000,
+        effect: 'production_x100',
+        unlockAtUpgrade: 'root-final',
+        probability: 0.00005
     }
 ];
 
