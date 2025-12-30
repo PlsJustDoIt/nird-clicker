@@ -163,7 +163,14 @@ function getMechanicHint(mechanic) {
         'moving': '🎯 Il bouge ! Suivez-le !',
         'shield': '🛡️ Attendez que le bouclier tombe !',
         'phases': '⚡ Plusieurs phases à affronter !',
-        'chaos': '💀 CHAOS : Tout peut arriver !'
+        'chaos': '💀 CHAOS : Tout peut arriver !',
+        // === MÉCANIQUES WTF ===
+        'randomClickValue': '🌀 Chaque clic a une valeur aléatoire !',
+        'multiplierRandom': '🛸 Parfois vos clics sont multipliés x10 !',
+        'delayedClicks': '🌍 Vos clics arrivent avec du retard...',
+        'buggyClicks': '👾 Certains clics sont annulés ou doublés !',
+        'movingTarget': '🟩 La cible se déplace très vite !',
+        'rootRandom': '🗝️ 1% de tout perdre, 1% de jackpot !'
     };
     return hints[mechanic] || hints['classic'];
 }
@@ -207,6 +214,13 @@ function startBossMechanic() {
         case 'shield': startShieldMechanic(params); break;
         case 'phases': startPhasesMechanic(params); break;
         case 'chaos': startChaosMechanic(params); break;
+        // === MÉCANIQUES WTF ===
+        case 'randomClickValue': startRandomClickValueMechanic(params); break;
+        case 'multiplierRandom': startMultiplierRandomMechanic(params); break;
+        case 'delayedClicks': startDelayedClicksMechanic(params); break;
+        case 'buggyClicks': startBuggyClicksMechanic(params); break;
+        case 'movingTarget': startMovingTargetMechanic(params); break;
+        case 'rootRandom': startRootRandomMechanic(params); break;
     }
 }
 
@@ -621,9 +635,95 @@ function getDefaultMechanicParams(mechanic) {
         'shield': { shieldDuration: 1500, shieldCooldown: 2000, shieldMessage: '🛡️ Bouclier !' },
         'moving': { moveInterval: 1000, moveMessage: '🎯 Il bouge !' },
         'lag': { lagDelay: 500, lagMessage: '🔄 LAG !' },
-        'invisible': { visibleDuration: 2000, invisibleDuration: 1500, invisibleMessage: '👁️ Invisible !' }
+        'invisible': { visibleDuration: 2000, invisibleDuration: 1500, invisibleMessage: '👁️ Invisible !' },
+        // === MÉCANIQUES WTF ===
+        'randomClickValue': { min: 1, max: 5, message: '🌀 Valeur aléatoire !' },
+        'multiplierRandom': { chance: 0.1, multiplier: 5, message: '🛸 Multiplicateur !' },
+        'delayedClicks': { delay: 800, message: '🌍 Clics retardés !' },
+        'buggyClicks': { cancelChance: 0.15, doubleChance: 0.1, message: '👾 Clics buggés !' },
+        'movingTarget': { moveInterval: 600, moveMessage: '🟩 Cible mobile !' },
+        'rootRandom': { wipeChance: 0.01, jackpotChance: 0.01, message: '🗝️ Root aléatoire !' }
     };
     return defaults[mechanic] || {};
+}
+
+// ============================================
+// MÉCANIQUES WTF (Théories du Complot)
+// ============================================
+
+// === MÉCANIQUE : RANDOM CLICK VALUE (Effet Mandela) ===
+/**
+ * Chaque clic a une valeur aléatoire entre min et max
+ * @param {Object} params - Paramètres de la mécanique
+ */
+function startRandomClickValueMechanic(params) {
+    bossState.randomClickMin = params.min || 1;
+    bossState.randomClickMax = params.max || 5;
+    showBossStatus(params.message || '🌀 Valeur aléatoire !', 'info');
+}
+
+// === MÉCANIQUE : MULTIPLIER RANDOM (Illuminati) ===
+/**
+ * Chance de multiplier les clics
+ * @param {Object} params - Paramètres de la mécanique
+ */
+function startMultiplierRandomMechanic(params) {
+    bossState.multiplierChance = params.chance || 0.1;
+    bossState.multiplierValue = params.multiplier || 5;
+    showBossStatus(params.message || '🛸 Multiplicateur secret !', 'info');
+}
+
+// === MÉCANIQUE : DELAYED CLICKS (Terre Plate) ===
+/**
+ * Les clics sont retardés (similaire à lag mais avec message différent)
+ * @param {Object} params - Paramètres de la mécanique
+ */
+function startDelayedClicksMechanic(params) {
+    bossState.delayedClicksDelay = params.delay || 1000;
+    showBossStatus(params.message || '🌍 Clics retardés !', 'warning');
+}
+
+// === MÉCANIQUE : BUGGY CLICKS (Théorie de la Simulation) ===
+/**
+ * Certains clics sont annulés, d'autres doublés
+ * @param {Object} params - Paramètres de la mécanique
+ */
+function startBuggyClicksMechanic(params) {
+    bossState.cancelChance = params.cancelChance || 0.2;
+    bossState.doubleChance = params.doubleChance || 0.1;
+    showBossStatus(params.message || '👾 Clics buggés !', 'warning');
+}
+
+// === MÉCANIQUE : MOVING TARGET (Glitch dans la Matrice) ===
+/**
+ * La cible se déplace très rapidement
+ * @param {Object} params - Paramètres de la mécanique
+ */
+function startMovingTargetMechanic(params) {
+    showBossStatus(params.moveMessage || '🟩 Cible mobile !', 'info');
+    lastMoveX = 0;
+    
+    bossTimers.movingTarget = setInterval(() => {
+        const clickZone = document.getElementById('boss-click-zone');
+        if (clickZone) {
+            // Mouvement plus agressif que moving normal
+            const newX = (Math.random() - 0.5) * 200;
+            const newY = (Math.random() - 0.5) * 100;
+            clickZone.style.transform = `translate(${newX}px, ${newY}px)`;
+            clickZone.style.transition = `transform ${params.moveInterval * 0.3}ms ease-out`;
+        }
+    }, params.moveInterval || 800);
+}
+
+// === MÉCANIQUE : ROOT RANDOM (Accès Root Universel) ===
+/**
+ * Chance de tout perdre ou de jackpot
+ * @param {Object} params - Paramètres de la mécanique
+ */
+function startRootRandomMechanic(params) {
+    bossState.wipeChance = params.wipeChance || 0.01;
+    bossState.jackpotChance = params.jackpotChance || 0.01;
+    showBossStatus(params.message || '🗝️ Root aléatoire !', 'danger');
 }
 
 // ============================================
@@ -631,7 +731,7 @@ function getDefaultMechanicParams(mechanic) {
 // ============================================
 
 /**
- *
+ * Gère un clic sur le boss
  */
 function handleBossClick() {
     const popupContainer = document.getElementById('boss-popups');
@@ -664,6 +764,102 @@ function handleBossClick() {
         return;
     }
     
+    // === MÉCANIQUES WTF ===
+    const mechanic = bossState.activeMechanic || currentBoss.mechanic;
+    
+    // Mécanique: Delayed Clicks (Terre Plate)
+    if (mechanic === 'delayedClicks') {
+        const delay = bossState.delayedClicksDelay || 1000;
+        showBossStatus('🌍 Clic en attente...', 'info');
+        setTimeout(() => {
+            if (bossClicksRemaining > 0) {
+                bossClicksRemaining--;
+                updateBossUI();
+                if (typeof playSound === 'function') playSound('click');
+                showBossStatus('🌍 Clic arrivé !', 'success');
+                if (bossClicksRemaining <= 0) closeBoss(true);
+            }
+        }, delay);
+        return;
+    }
+    
+    // Mécanique: Root Random (Accès Root Universel)
+    if (mechanic === 'rootRandom') {
+        const roll = Math.random();
+        
+        // 1% de chance de tout perdre
+        if (roll < bossState.wipeChance) {
+            showBossStatus('💀 WIPE ! Vous avez tout perdu...', 'danger');
+            if (typeof playSound === 'function') playSound('boss');
+            failBoss('💀 Le root vous a effacé... Boss perdu !');
+            return;
+        }
+        
+        // 1% de chance de jackpot (victoire instantanée)
+        if (roll < bossState.wipeChance + bossState.jackpotChance) {
+            showBossStatus('🎰 JACKPOT ! Victoire instantanée !', 'success');
+            bossClicksRemaining = 0;
+            updateBossUI();
+            if (typeof playSound === 'function') playSound('achievement');
+            closeBoss(true);
+            return;
+        }
+    }
+    
+    // Mécanique: Buggy Clicks (Théorie de la Simulation)
+    if (mechanic === 'buggyClicks') {
+        const roll = Math.random();
+        
+        // Chance d'annuler le clic
+        if (roll < bossState.cancelChance) {
+            showBossStatus('❌ Clic annulé par la matrice !', 'danger');
+            if (typeof playSound === 'function') playSound('boss');
+            return;
+        }
+        
+        // Chance de doubler le clic
+        if (roll < bossState.cancelChance + bossState.doubleChance) {
+            bossClicksRemaining -= 2;
+            showBossStatus('✨ Clic doublé !', 'success');
+            if (typeof playSound === 'function') playSound('achievement');
+            updateBossUI();
+            if (bossClicksRemaining <= 0) closeBoss(true);
+            return;
+        }
+    }
+    
+    // Mécanique: Random Click Value (Effet Mandela)
+    if (mechanic === 'randomClickValue') {
+        const min = bossState.randomClickMin || 1;
+        const max = bossState.randomClickMax || 5;
+        const damage = Math.floor(Math.random() * (max - min + 1)) + min;
+        bossClicksRemaining -= damage;
+        showBossStatus(`🌀 Clic de valeur ${damage} !`, damage > (max / 2) ? 'success' : 'info');
+        if (typeof playSound === 'function') playSound('click');
+        updateBossUI();
+        if (bossState.onHit) bossState.onHit();
+        if (bossClicksRemaining <= 0) closeBoss(true);
+        return;
+    }
+    
+    // Mécanique: Multiplier Random (Illuminati)
+    if (mechanic === 'multiplierRandom') {
+        let damage = 1;
+        if (Math.random() < bossState.multiplierChance) {
+            damage = bossState.multiplierValue || 5;
+            showBossStatus(`🛸 x${damage} ! Multiplicateur secret !`, 'success');
+            if (typeof playSound === 'function') playSound('achievement');
+        } else {
+            if (typeof playSound === 'function') playSound('click');
+        }
+        bossClicksRemaining -= damage;
+        updateBossUI();
+        if (bossState.onHit) bossState.onHit();
+        if (bossClicksRemaining <= 0) closeBoss(true);
+        return;
+    }
+    
+    // Clic normal pour les autres mécaniques
     bossClicksRemaining--;
     if (typeof playSound === 'function') playSound('click');
     

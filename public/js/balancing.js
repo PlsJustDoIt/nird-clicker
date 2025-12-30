@@ -1085,8 +1085,6 @@ const SKINS = [
     // === TIER 5 ===
     { id: 'blackhole', name: 'Trou Noir', emoji: '🕳️', cost: 1000000000 },
     { id: 'star', name: 'Superstar', emoji: '⭐', cost: 5000000000 },
-    // === SECRET ===
-    { id: 'star-of-david', name: '???', emoji: '❓', cost: 1000000000000000, hidden: true, image: 'images/Star_of_David.png', unlockedName: 'Étoile Secrète' },
     // === SKINS WTF COSMIQUES ===
     { id: 'matrix', name: 'La Matrice', emoji: '🟩', cost: 1e13, unlockAtUpgrade: 'univers-simule', description: 'Débloqué avec Univers Simulé' },
     { id: 'god', name: 'Dieu du Code', emoji: '🧙‍♂️', cost: 5e13, unlockAtUpgrade: 'dieu-du-code', description: 'Débloqué avec Dieu du Code' },
@@ -1094,7 +1092,9 @@ const SKINS = [
     { id: 'multivers', name: 'Multivers', emoji: '🌌', cost: 1e15, unlockAtUpgrade: 'multivers-libre', description: 'Débloqué avec Multivers Libre' },
     { id: 'angel', name: 'Ange Simulé', emoji: '👼', cost: 5e15, unlockAtUpgrade: 'simulation-divine', description: 'Débloqué avec Simulation Divine' },
     { id: 'kernel', name: 'Kernel Cosmique', emoji: '🪐', cost: 2e16, unlockAtUpgrade: 'kernel-cosmique', description: 'Débloqué avec Kernel Cosmique' },
-    { id: 'root', name: 'Root Final', emoji: '🗝️', cost: 1e17, unlockAtUpgrade: 'root-final', description: 'Débloqué avec Root Final' }
+    { id: 'root', name: 'Root Final', emoji: '🗝️', cost: 1e17, unlockAtUpgrade: 'root-final', description: 'Débloqué avec Root Final' },
+    // === SECRET ===
+    { id: 'star-of-david', name: '???', emoji: '❓', cost: 1e20, hidden: true, image: 'images/Star_of_David.png', unlockedName: 'Étoile Secrète' }
 ];
 
 // ============================================
