@@ -523,14 +523,156 @@ window.closeFacebookAttack = closeFacebookAttack;
 window.triggerFacebookAttack = triggerFacebookAttack;
 window.startFacebookVideo = startFacebookVideo;
 
-// Fonction utilitaire pour déclencher un event par id (à ajouter si absente)
+// ============================================
+// SYSTÈME D'ÉVÉNEMENTS ALÉATOIRES
+// ============================================
+
+/**
+ * Déclenche un événement aléatoire et applique ses effets
+ * @param {Object} event - L'événement à déclencher
+ */
+function triggerRandomEvent(event) {
+    if (!event) return;
+    
+    // Afficher la notification
+    if (typeof showNotification === 'function') {
+        showNotification(`${event.name} - ${event.description}`, 'event');
+    }
+    
+    // Jouer le son
+    if (typeof playSound === 'function') {
+        playSound('event');
+    }
+    
+    // Appliquer l'effet selon son type
+    switch(event.effect) {
+        case 'instant_bonus':
+            // Bonus instantané basé sur la production
+            const bonus = Math.floor(gameState.productionPerSecond * (event.bonusMultiplier || 10));
+            gameState.score += bonus;
+            gameState.totalScore += bonus;
+            if (typeof showNotification === 'function') {
+                showNotification(`+${formatNumber(bonus)} points !`, 'success');
+            }
+            break;
+            
+        case 'production_doubled':
+            gameState.activeEffects.push({
+                type: 'production_doubled',
+                endTime: Date.now() + (event.duration || 10000)
+            });
+            if (typeof calculateProductionPerSecond === 'function') calculateProductionPerSecond();
+            break;
+            
+        case 'production_tripled':
+            gameState.activeEffects.push({
+                type: 'production_tripled',
+                endTime: Date.now() + (event.duration || 10000)
+            });
+            if (typeof calculateProductionPerSecond === 'function') calculateProductionPerSecond();
+            break;
+            
+        case 'production_x5':
+            gameState.activeEffects.push({
+                type: 'production_x5',
+                endTime: Date.now() + (event.duration || 10000)
+            });
+            if (typeof calculateProductionPerSecond === 'function') calculateProductionPerSecond();
+            break;
+            
+        case 'production_x10':
+            gameState.activeEffects.push({
+                type: 'production_x10',
+                endTime: Date.now() + (event.duration || 10000)
+            });
+            if (typeof calculateProductionPerSecond === 'function') calculateProductionPerSecond();
+            break;
+            
+        case 'production_x20':
+            gameState.activeEffects.push({
+                type: 'production_x20',
+                endTime: Date.now() + (event.duration || 10000)
+            });
+            if (typeof calculateProductionPerSecond === 'function') calculateProductionPerSecond();
+            break;
+            
+        case 'production_x100':
+            gameState.activeEffects.push({
+                type: 'production_x100',
+                endTime: Date.now() + (event.duration || 5000)
+            });
+            if (typeof calculateProductionPerSecond === 'function') calculateProductionPerSecond();
+            break;
+            
+        case 'production_halved':
+            gameState.activeEffects.push({
+                type: 'production_halved',
+                endTime: Date.now() + (event.duration || 10000)
+            });
+            if (typeof calculateProductionPerSecond === 'function') calculateProductionPerSecond();
+            break;
+            
+        case 'production_div10':
+            gameState.activeEffects.push({
+                type: 'production_div10',
+                endTime: Date.now() + (event.duration || 10000)
+            });
+            if (typeof calculateProductionPerSecond === 'function') calculateProductionPerSecond();
+            break;
+            
+        case 'clicks_x10':
+            gameState.activeEffects.push({
+                type: 'clicks_x10',
+                endTime: Date.now() + (event.duration || 10000)
+            });
+            break;
+            
+        case 'randomize_costs':
+            // Effet Mandela : les coûts sont temporairement aléatoires
+            gameState.activeEffects.push({
+                type: 'randomize_costs',
+                endTime: Date.now() + (event.duration || 30000)
+            });
+            if (typeof renderUpgrades === 'function') renderUpgrades();
+            break;
+            
+        case 'bonus_per_second':
+            // Bonus par seconde pendant la durée
+            const bonusPerSec = event.bonusPerSecond || 1000;
+            const duration = event.duration || 20000;
+            const interval = setInterval(() => {
+                gameState.score += bonusPerSec;
+                gameState.totalScore += bonusPerSec;
+                if (typeof updateUI === 'function') updateUI();
+            }, 1000);
+            setTimeout(() => clearInterval(interval), duration);
+            break;
+            
+        default:
+            console.log(`Effet non géré: ${event.effect}`);
+    }
+    
+    // Mettre à jour l'UI
+    if (typeof updateUI === 'function') updateUI();
+    
+    // Confettis pour les événements positifs
+    if (event.effect && !event.effect.includes('halved') && !event.effect.includes('div')) {
+        if (typeof createConfetti === 'function') createConfetti();
+    }
+}
+
+// Fonction utilitaire pour déclencher un event par id
 function triggerRandomEventById(id) {
     if (typeof RANDOM_EVENTS === 'undefined') return;
     const event = RANDOM_EVENTS.find(e => e.id === id);
-    if (event && typeof triggerRandomEvent === 'function') {
+    if (event) {
         triggerRandomEvent(event);
         console.log(`Event déclenché: ${id}`);
     } else {
-        console.warn('Event non trouvé ou triggerRandomEvent non défini:', id);
+        console.warn('Event non trouvé:', id);
     }
 }
+
+// Exposer les fonctions globalement pour DEBUG
+window.triggerRandomEvent = triggerRandomEvent;
+window.triggerRandomEventById = triggerRandomEventById;
