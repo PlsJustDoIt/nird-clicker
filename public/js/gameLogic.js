@@ -176,6 +176,10 @@ function handleClick() {
     gameState.sessionClicks++;
     gameState.sessionScore += points;
     
+    // Mise à jour immédiate du compteur de clics
+    const totalClicksEl = document.getElementById('total-clicks');
+    if (totalClicksEl) totalClicksEl.textContent = formatNumber(gameState.totalClicks);
+    
     // Gestion du combo
     updateCombo();
     
