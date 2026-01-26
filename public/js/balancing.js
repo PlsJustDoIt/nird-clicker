@@ -10,7 +10,7 @@
 // ============================================
 
 /** @type {number} Multiplicateur de coût par achat */
-const COST_MULTIPLIER = 1.18;
+const COST_MULTIPLIER = 1.25;
 
 /** @type {number} Intervalle de sauvegarde en ms */
 const SAVE_INTERVAL = 10000;
@@ -31,7 +31,7 @@ const QUIZ_INTERVAL = 90000;
 const TIP_INTERVAL = 60000;
 
 /** @type {number} Score minimum pour effectuer un prestige */
-const PRESTIGE_THRESHOLD = 2000000;
+const PRESTIGE_THRESHOLD = 5000000;
 
 /** @type {number} Bonus de production par niveau de prestige (3%) */
 const PRESTIGE_BONUS_PER_LEVEL = 0.03;
@@ -295,11 +295,11 @@ const UPGRADES = [
         name: '🪐 Univers Simulé',
         description: 'Vous créez une simulation entière dédiée au libre.',
         info: '💡 Chaque bug dans la matrice rapporte des points.',
-        baseCost: 1.2e14,
-        baseProduction: 3.5e10,
+        baseCost: 3e14,
+        baseProduction: 2.5e10,
         owned: 0,
         unlocked: false,
-        unlockAt: 6e13,
+        unlockAt: 1.5e14,
         icon: '🪐'
     },
     {
@@ -307,11 +307,11 @@ const UPGRADES = [
         name: '🧙‍♂️ Dieu du Code',
         description: 'Un être omnipotent compile le libre dans toutes les dimensions.',
         info: '💡 Il commit sur tous les repos de l\'univers.',
-        baseCost: 5e14,
-        baseProduction: 1.5e11,
+        baseCost: 1.5e15,
+        baseProduction: 1e11,
         owned: 0,
         unlocked: false,
-        unlockAt: 2.5e14,
+        unlockAt: 7e14,
         icon: '🧙‍♂️'
     },
     {
@@ -319,11 +319,11 @@ const UPGRADES = [
         name: '💥 Big Bang Open Source',
         description: 'Le libre explose à la création d\'un nouvel univers.',
         info: '💡 Chaque atome contient un repo git.',
-        baseCost: 2.5e15,
-        baseProduction: 6e11,
+        baseCost: 8e15,
+        baseProduction: 4e11,
         owned: 0,
         unlocked: false,
-        unlockAt: 1.2e15,
+        unlockAt: 4e15,
         icon: '💥'
     },
     {
@@ -331,11 +331,11 @@ const UPGRADES = [
         name: '🌌 Multivers Libre',
         description: 'Tous les univers parallèles sont open source.',
         info: '💡 Les lois de la physique sont sous licence GPL.',
-        baseCost: 1.2e16,
-        baseProduction: 3e12,
+        baseCost: 4e16,
+        baseProduction: 2e12,
         owned: 0,
         unlocked: false,
-        unlockAt: 5e15,
+        unlockAt: 2e16,
         icon: '🌌'
     },
     {
@@ -343,11 +343,11 @@ const UPGRADES = [
         name: '👼 Simulation Divine',
         description: 'Vous simulez des dieux qui simulent des informaticiens.',
         info: '💡 Inception de simulation, points exponentiels.',
-        baseCost: 5e16,
-        baseProduction: 1.2e13,
+        baseCost: 2e17,
+        baseProduction: 8e12,
         owned: 0,
         unlocked: false,
-        unlockAt: 2.5e16,
+        unlockAt: 1e17,
         icon: '👼'
     },
     {
@@ -355,11 +355,11 @@ const UPGRADES = [
         name: '🪐 Kernel Cosmique',
         description: 'Le noyau de l\'univers est open source.',
         info: '💡 Un commit = un big crunch.',
-        baseCost: 2.5e17,
-        baseProduction: 6e13,
+        baseCost: 1e18,
+        baseProduction: 4e13,
         owned: 0,
         unlocked: false,
-        unlockAt: 1.2e17,
+        unlockAt: 5e17,
         icon: '🪐'
     },
     {
@@ -367,11 +367,11 @@ const UPGRADES = [
         name: '🗝️ Root Final',
         description: 'Vous obtenez le mot de passe root de la réalité.',
         info: '💡 sudo rm -rf /universe',
-        baseCost: 2.5e18,
-        baseProduction: 6e14,
+        baseCost: 8e18,
+        baseProduction: 3e14,
         owned: 0,
         unlocked: false,
-        unlockAt: 1.2e18,
+        unlockAt: 4e18,
         icon: '🗝️'
     }
 ];
@@ -501,64 +501,64 @@ const CLICK_UPGRADES = [
     {
         id: 'clic-quantique',
         name: '🪙 Clic Quantique',
-        description: '+5 000 points par clic',
+        description: '+3 500 points par clic',
         icon: '🪙',
-        cost: 4e9,
-        bonus: 5000,
+        cost: 8e9,
+        bonus: 3500,
         purchased: false
     },
     {
         id: 'clic-multivers',
         name: '🌠 Clic Multiversel',
-        description: '+20 000 points par clic',
+        description: '+12 000 points par clic',
         icon: '🌠',
-        cost: 2e10,
-        bonus: 20000,
+        cost: 5e10,
+        bonus: 12000,
         purchased: false
     },
     {
         id: 'clic-divin',
         name: '👆 Clic Divin',
-        description: '+100 000 points par clic',
+        description: '+50 000 points par clic',
         icon: '👆',
-        cost: 1e11,
-        bonus: 100000,
+        cost: 3e11,
+        bonus: 50000,
         purchased: false
     },
     {
         id: 'clic-simulation',
         name: '🖱️ Clic Simulé',
-        description: '+500 000 points par clic',
+        description: '+200 000 points par clic',
         icon: '🖱️',
-        cost: 5e11,
-        bonus: 500000,
+        cost: 1.5e12,
+        bonus: 200000,
         purchased: false
     },
     {
         id: 'clic-cosmique',
         name: '🌌 Clic Cosmique',
-        description: '+2 500 000 points par clic',
+        description: '+800 000 points par clic',
         icon: '🌌',
-        cost: 2.5e12,
-        bonus: 2500000,
+        cost: 8e12,
+        bonus: 800000,
         purchased: false
     },
     {
         id: 'clic-root',
         name: '🗝️ Clic Root',
-        description: '+12 000 000 points par clic',
+        description: '+3 500 000 points par clic',
         icon: '🗝️',
-        cost: 1.2e13,
-        bonus: 12000000,
+        cost: 5e13,
+        bonus: 3500000,
         purchased: false
     },
     {
         id: 'clic-final',
         name: '💀 Clic Final',
-        description: '+50 000 000 points par clic',
+        description: '+15 000 000 points par clic',
         icon: '💀',
-        cost: 5e13,
-        bonus: 50000000,
+        cost: 3e14,
+        bonus: 15000000,
         purchased: false
     }
 ];
@@ -587,12 +587,12 @@ const VILLAGE_LEVELS = [
     { name: 'Alliance Mondiale', minScore: 180000000, emoji: '🌍', description: 'Tous les continents unis pour le libre' },
     { name: 'Utopie Numérique', minScore: 900000000, emoji: '🌈', description: 'Un monde numérique parfait et équitable' },
     // === PHASE 5 : SPATIALE ===
-    { name: 'Station Orbitale', minScore: 4000000000, emoji: '🛸', description: 'Le libre conquiert l\'orbite terrestre' },
-    { name: 'Colonie Lunaire', minScore: 20000000000, emoji: '🌙', description: 'Premier datacenter sur la Lune' },
-    { name: 'Civilisation Martienne', minScore: 100000000000, emoji: '🔴', description: 'Mars respire le logiciel libre' },
+    { name: 'Station Orbitale', minScore: 8000000000, emoji: '🛸', description: 'Le libre conquiert l\'orbite terrestre' },
+    { name: 'Colonie Lunaire', minScore: 50000000000, emoji: '🌙', description: 'Premier datacenter sur la Lune' },
+    { name: 'Civilisation Martienne', minScore: 300000000000, emoji: '🔴', description: 'Mars respire le logiciel libre' },
     // === PHASE 6 : TEMPORELLE ===
-    { name: 'Maîtrise du Temps', minScore: 500000000000, emoji: '⏰', description: 'Le temps lui-même est open source' },
-    { name: 'Singularité Éternelle', minScore: 5000000000000, emoji: '✨', description: 'L\'ultime accomplissement : le libre existe dans toutes les dimensions' }
+    { name: 'Maîtrise du Temps', minScore: 2000000000000, emoji: '⏰', description: 'Le temps lui-même est open source' },
+    { name: 'Singularité Éternelle', minScore: 20000000000000, emoji: '✨', description: 'L\'ultime accomplissement : le libre existe dans toutes les dimensions' }
 ];
 
 // ============================================
