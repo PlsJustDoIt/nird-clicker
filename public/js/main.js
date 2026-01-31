@@ -308,6 +308,8 @@ window.addEventListener('beforeunload', (e) => {
 
 // Debug : exposer l'état pour le développement (différé pour éviter les erreurs de référence)
 document.addEventListener('DOMContentLoaded', () => {
+
+    // Centralisation de window.DEBUG ici (main.js)
     window.DEBUG = {
         getState: () => gameState,
         addScore: (amount) => {
@@ -319,35 +321,52 @@ document.addEventListener('DOMContentLoaded', () => {
         triggerBoss: () => typeof showBoss === 'function' && showBoss(),
         // Triggers pour chaque boss spécifique
         triggerBossWindows: () => showBoss('windows'),
-    triggerBossGoogle: () => showBoss('google'),
-    triggerBossFacebook: () => showBoss('facebook'),
-    triggerOpenaiAttack: () => triggerOpenaiAttack(),
-    triggerBossAmazon: () => showBoss('amazon'),
-    triggerBossApple: () => showBoss('apple'),
-    triggerBossTeams: () => showBoss('microsoft-teams'),
-    triggerBossTiktok: () => showBoss('tiktok'),
-    triggerBossNvidia: () => showBoss('nvidia'),
-    triggerBossMetaAI: () => showBoss('meta-ai'),
-    triggerBossSkynet: () => showBoss('skynet-gafam'),
-    triggerQuiz: () => typeof showQuiz === 'function' && showQuiz(),
-    addPrestige: (amount) => {
-        gameState.prestigePoints += amount;
-        if (typeof updatePrestigeDisplay === 'function') updatePrestigeDisplay();
-    },
-    unlockAllSkins: () => {
-        if (typeof SKINS !== 'undefined') {
-            SKINS.forEach(s => gameState.skinsUnlocked.push(s.id));
-            if (typeof renderSkins === 'function') renderSkins();
+        triggerBossGoogle: () => showBoss('google'),
+        triggerBossFacebook: () => showBoss('facebook'),
+        triggerOpenaiAttack: () => typeof triggerOpenaiAttack === 'function' && triggerOpenaiAttack(),
+        triggerBossAmazon: () => showBoss('amazon'),
+        triggerBossApple: () => showBoss('apple'),
+        triggerBossTeams: () => showBoss('microsoft-teams'),
+        triggerBossTiktok: () => showBoss('tiktok'),
+        triggerBossNvidia: () => showBoss('nvidia'),
+        triggerBossMetaAI: () => showBoss('meta-ai'),
+        triggerBossSkynet: () => showBoss('skynet-gafam'),
+        // Triggers pour les boss WTF théorie du complot
+        triggerMandelaBoss: () => showBoss('mandela-boss'),
+        triggerIlluminatiBoss: () => showBoss('illuminati-boss'),
+        triggerFlatEarthBoss: () => showBoss('flat-earth-boss'),
+        triggerSimulationBoss: () => showBoss('simulation-boss'),
+        triggerReptilianBoss: () => showBoss('reptilian-boss'),
+        triggerMatrixGlitchBoss: () => showBoss('matrix-glitch-boss'),
+        triggerRootAccessBoss: () => showBoss('root-access-boss'),
+        // Triggers pour les events WTF/Complot
+        triggerMandelaEffect: () => typeof triggerRandomEventById === 'function' && triggerRandomEventById('mandela-effect'),
+        triggerIlluminati: () => typeof triggerRandomEventById === 'function' && triggerRandomEventById('illuminati'),
+        triggerFlatEarth: () => typeof triggerRandomEventById === 'function' && triggerRandomEventById('flat-earth'),
+        triggerSimulationTheory: () => typeof triggerRandomEventById === 'function' && triggerRandomEventById('simulation-theory'),
+        triggerReptilian: () => typeof triggerRandomEventById === 'function' && triggerRandomEventById('reptilian'),
+        triggerMatrixGlitch: () => typeof triggerRandomEventById === 'function' && triggerRandomEventById('matrix-glitch'),
+        triggerRootAccess: () => typeof triggerRandomEventById === 'function' && triggerRandomEventById('root-access'),
+        triggerFacebookAttack: () => typeof triggerFacebookAttack === 'function' && triggerFacebookAttack(),
+        triggerQuiz: () => typeof showQuiz === 'function' && showQuiz(),
+        addPrestige: (amount) => {
+            gameState.prestigePoints += amount;
+            if (typeof updatePrestigeDisplay === 'function') updatePrestigeDisplay();
+        },
+        unlockAllSkins: () => {
+            if (typeof SKINS !== 'undefined') {
+                SKINS.forEach(s => gameState.skinsUnlocked.push(s.id));
+                if (typeof renderSkins === 'function') renderSkins();
+            }
+        },
+        showTip: () => typeof showRandomTip === 'function' && showRandomTip(),
+        switchTheme: (theme) => typeof applyTheme === 'function' && applyTheme(theme),
+        getUpgrades: () => typeof UPGRADES !== 'undefined' ? UPGRADES : [],
+        setLevel: (level) => {
+            gameState.currentVillageLevel = level;
+            if (typeof updateVillageVisual === 'function') updateVillageVisual();
         }
-    },
-    showTip: () => typeof showRandomTip === 'function' && showRandomTip(),
-    switchTheme: (theme) => typeof applyTheme === 'function' && applyTheme(theme),
-    getUpgrades: () => typeof UPGRADES !== 'undefined' ? UPGRADES : [],
-    setLevel: (level) => {
-        gameState.currentVillageLevel = level;
-        if (typeof updateVillageVisual === 'function') updateVillageVisual();
-    }
-};
+    };
 
     console.log('💡 Conseil développeur : utilisez window.DEBUG pour déboguer le jeu');
     console.log('📚 Commandes : DEBUG.getState(), DEBUG.addScore(n), DEBUG.triggerBoss(), DEBUG.triggerQuiz()');
