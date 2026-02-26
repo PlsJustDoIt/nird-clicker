@@ -16,6 +16,7 @@ if (typeof gameState === 'undefined') {
     var gameState = {
         score: 0,
         totalScore: 0,
+        lifetimeScore: 0,
         totalClicks: 0,
         totalUpgrades: 0,
         clickPower: 1,
@@ -172,6 +173,7 @@ function handleClick() {
     
     gameState.score += points;
     gameState.totalScore += points;
+    gameState.lifetimeScore += points;
     gameState.totalClicks++;
     gameState.sessionClicks++;
     gameState.sessionScore += points;
@@ -944,6 +946,7 @@ if (typeof startGameLoop === 'undefined') {
             if (gameState.productionPerSecond > 0) {
                 gameState.score += gameState.productionPerSecond;
                 gameState.totalScore += gameState.productionPerSecond;
+                gameState.lifetimeScore += gameState.productionPerSecond;
                 gameState.sessionScore += gameState.productionPerSecond;
                 checkUnlocks();
                 checkAchievements();
@@ -1237,7 +1240,7 @@ async function submitScore(pseudo) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 pseudo: pseudo,
-                score: gameState.totalScore,
+                score: gameState.lifetimeScore,
                 totalClicks: gameState.totalClicks,
                 prestigeLevel: gameState.prestigeLevel,
                 bossDefeated: gameState.bossDefeated,
