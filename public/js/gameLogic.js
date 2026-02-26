@@ -180,6 +180,10 @@ function handleClick() {
     const totalClicksEl = document.getElementById('total-clicks');
     if (totalClicksEl) totalClicksEl.textContent = formatNumber(gameState.totalClicks);
     
+    // Mise à jour immédiate du compteur de PC libérés
+    const pcLiberatedEl = document.getElementById('pc-liberated');
+    if (pcLiberatedEl) pcLiberatedEl.textContent = formatNumber(gameState.totalUpgrades);
+    
     // Gestion du combo
     updateCombo();
     
