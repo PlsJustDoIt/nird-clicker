@@ -1812,7 +1812,7 @@ async function openLeaderboard() {
             </div>
             
             <div class="leaderboard-stats">
-                <span>Ton score : <strong>${formatNumber(gameState.totalScore)}</strong></span>
+                <span>Ton score total : <strong>${formatNumber(gameState.lifetimeScore)}</strong></span>
             </div>
             
             <div id="leaderboard-list" class="leaderboard-list">
