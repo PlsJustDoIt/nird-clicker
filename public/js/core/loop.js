@@ -153,6 +153,7 @@ function tickProduction() {
     if (gameState.productionPerSecond > 0) {
         gameState.score += gameState.productionPerSecond;
         gameState.totalScore += gameState.productionPerSecond;
+        gameState.lifetimeScore += gameState.productionPerSecond;
         gameState.sessionScore += gameState.productionPerSecond;
         
         // Vérifications légères

@@ -13,6 +13,7 @@ var gameState = {
     // Score
     score: 0,
     totalScore: 0,
+    lifetimeScore: 0,  // Score total cumulé (jamais remis à zéro)
     
     // Clics
     totalClicks: 0,
@@ -438,6 +439,7 @@ function getStateForSave() {
     return {
         score: gameState.score,
         totalScore: gameState.totalScore,
+        lifetimeScore: gameState.lifetimeScore,
         totalClicks: gameState.totalClicks,
         totalUpgrades: gameState.totalUpgrades,
         clickPower: gameState.clickPower,
