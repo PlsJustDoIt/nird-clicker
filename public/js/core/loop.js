@@ -58,14 +58,14 @@ var isGameLoopRunning = false;
  */
 function startGameLoop() {
     if (isGameLoopRunning) {
-        console.warn('⚠️ Game loop déjà en cours');
+        console.warn('Game loop déjà en cours');
         return;
     }
     
     isGameLoopRunning = true;
     lastTickTime = Date.now();
     
-    console.log('🎮 Game loop démarré (tick rate: ' + TICK_RATE + 'ms)');
+    console.log('Game loop démarré (tick rate: ' + TICK_RATE + 'ms)');
     
     // Un seul setInterval pour tout !
     gameLoopId = setInterval(gameTick, TICK_RATE);
@@ -83,7 +83,7 @@ function stopGameLoop() {
         gameLoopId = null;
     }
     isGameLoopRunning = false;
-    console.log('🛑 Game loop arrêté');
+    console.log('Game loop arrêté');
 }
 
 /**
@@ -303,7 +303,7 @@ function getLoopStats() {
 function setTickInterval(key, ticks) {
     if (Object.prototype.hasOwnProperty.call(TICK_INTERVALS, key)) {
         TICK_INTERVALS[key] = ticks;
-        console.log(`⚙️ Intervalle "${key}" changé à ${ticks} ticks`);
+        console.log(`Intervalle "${key}" changé à ${ticks} ticks`);
     }
 }
 

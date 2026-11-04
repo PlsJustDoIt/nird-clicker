@@ -15,7 +15,7 @@
  * @param {string} type - Type: 'info', 'success', 'error', 'warning', 'achievement', 'bonus', 'tip'
  * @param {number} duration - Durée d'affichage en ms
  */
-function showNotification(message, type = 'info', duration = 3000) {
+function showNotification(message, type = 'info', duration = 3000, iconName = null) {
     const container = document.getElementById('floating-notifications');
     if (!container) {
         console.warn('Container de notifications non trouvé');
@@ -28,22 +28,24 @@ function showNotification(message, type = 'info', duration = 3000) {
     
     // Icône selon le type
     const icons = {
-        'info': 'ℹ️',
-        'success': '✅',
-        'error': '❌',
-        'warning': '⚠️',
-        'achievement': '🏆',
-        'bonus': '🎁',
-        'tip': '💡',
-        'unlock': '🔓',
-        'level-up': '🎉',
-        'mission': '🎯',
-        'offline': '🌙'
+        'info': 'info',
+        'success': 'check-circle',
+        'error': 'x-circle',
+        'warning': 'warning',
+        'danger': 'warning',
+        'achievement': 'trophy',
+        'bonus': 'gift',
+        'tip': 'lightbulb',
+        'unlock': 'unlock',
+        'level-up': 'trending',
+        'mission': 'target',
+        'offline': 'moon',
+        'combo': 'flame',
+        'prestige': 'cycle'
     };
     
-    if (icons[type]) {
-        notification.innerHTML = `<span class="notif-icon">${icons[type]}</span> ${message}`;
-    }
+    const iconKey = iconName || icons[type] || 'info';
+    notification.innerHTML = `<span class="notif-icon">${icon(iconKey)}</span><span class="notif-text">${message}</span>`;
     
     container.appendChild(notification);
     
@@ -74,13 +76,13 @@ function showNotification(message, type = 'info', duration = 3000) {
  * @param {string} description - Description
  * @param {number} duration - Durée d'affichage en ms
  */
-function showEventBanner(title, description, duration = 5000) {
+function showEventBanner(title, description, duration = 5000, iconName = 'zap') {
     const banner = document.getElementById('event-banner');
     const text = document.getElementById('event-text');
     
     if (!banner || !text) return;
     
-    text.innerHTML = `<strong>${title}</strong> - ${description}`;
+    text.innerHTML = `<span class="event-icon">${icon(iconName)}</span><strong>${title}</strong><span class="event-desc">${description}</span>`;
     banner.classList.remove('hidden');
     
     // Animation d'entrée

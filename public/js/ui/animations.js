@@ -22,93 +22,69 @@ function showClickFeedback(_points) {
 }
 
 /**
- * Crée un nombre flottant après un clic
- * @param {number} points - Points gagnés
+ * Calcule la position d'un clic relative à la zone de clic
+ * @param {MouseEvent|undefined} event - Événement souris (absent au clavier/manette)
+ * @returns {{x: number, y: number, zone: HTMLElement}|null} Position relative
  */
-function createFloatingNumber(points) {
-    const clickArea = document.getElementById('click-area');
-    if (!clickArea) return;
-    
+function getClickPoint(event) {
+    const zone = document.getElementById('click-zone');
+    if (!zone) return null;
+    const zr = zone.getBoundingClientRect();
+    if (event && typeof event.clientX === 'number' && (event.clientX || event.clientY)) {
+        return { x: event.clientX - zr.left, y: event.clientY - zr.top, zone };
+    }
+    const clicker = document.getElementById('main-clicker');
+    const cr = clicker ? clicker.getBoundingClientRect() : zr;
+    return {
+        x: cr.left - zr.left + cr.width / 2 + (Math.random() - 0.5) * cr.width * 0.4,
+        y: cr.top - zr.top + cr.height * 0.35 + (Math.random() - 0.5) * 30,
+        zone
+    };
+}
+
+/**
+ * Crée un nombre flottant à l'endroit du clic
+ * @param {number} points - Points gagnés
+ * @param {MouseEvent} [event] - Événement de clic
+ */
+function createFloatingNumber(points, event) {
+    const pt = getClickPoint(event);
+    if (!pt) return;
+
     const floater = document.createElement('div');
     floater.className = 'floating-number';
     floater.textContent = '+' + formatNumber(points);
-    
-    // Position aléatoire
-    floater.style.left = (30 + Math.random() * 40) + '%';
-    floater.style.top = (20 + Math.random() * 30) + '%';
-    
-    clickArea.appendChild(floater);
-    
-    // Message bonus aléatoire (10% de chance)
-    if (Math.random() < 0.1 && typeof CLICK_MESSAGES !== 'undefined') {
+    floater.style.left = pt.x + 'px';
+    floater.style.top = pt.y + 'px';
+    floater.style.setProperty('--drift', ((Math.random() - 0.5) * 30).toFixed(0) + 'px');
+    pt.zone.appendChild(floater);
+    setTimeout(() => floater.remove(), 1100);
+
+    // Message bonus aléatoire (8 % de chance)
+    if (Math.random() < 0.08 && typeof CLICK_MESSAGES !== 'undefined') {
         const msg = document.createElement('div');
         msg.className = 'floating-message';
         msg.textContent = CLICK_MESSAGES[Math.floor(Math.random() * CLICK_MESSAGES.length)];
-        msg.style.left = (20 + Math.random() * 60) + '%';
-        clickArea.appendChild(msg);
+        msg.style.left = pt.x + 'px';
+        msg.style.top = (pt.y - 26) + 'px';
+        pt.zone.appendChild(msg);
         setTimeout(() => msg.remove(), 2000);
     }
-    
-    // Nettoyage
-    setTimeout(() => floater.remove(), 1000);
 }
 
 // ============================================
 // PARTICULES
 // ============================================
 
-/** @type {HTMLElement[]} Pool de particules pour réutilisation */
-var particlePool = [];
-
-/** @type {number} Nombre maximum de particules dans le pool */
-var MAX_PARTICLES = 50;
-
 /**
- * Crée des particules au clic (version optimisée avec pool)
+ * Émet des jetons depuis le point de clic (dessinés dans le canvas de scène)
+ * @param {MouseEvent} [event] - Événement de clic
  */
-function createParticles() {
+function createParticles(event) {
     if (!gameState.particlesEnabled) return;
-    
-    const clickArea = document.getElementById('click-area');
-    if (!clickArea) return;
-    
-    const colors = ['#4ade80', '#60a5fa', '#f472b6', '#facc15', '#a78bfa'];
-    
-    for (let i = 0; i < 5; i++) {
-        let particle;
-        
-        // Réutiliser une particule du pool si disponible
-        if (particlePool.length > 0) {
-            particle = particlePool.pop();
-            particle.style.display = 'block';
-        } else {
-            particle = document.createElement('div');
-            particle.className = 'particle';
-            clickArea.appendChild(particle);
-        }
-        
-        // Positionner la particule
-        particle.style.left = (40 + Math.random() * 20) + '%';
-        particle.style.top = (40 + Math.random() * 20) + '%';
-        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        particle.style.setProperty('--dx', (Math.random() - 0.5) * 100 + 'px');
-        particle.style.setProperty('--dy', (Math.random() - 0.5) * 100 + 'px');
-        
-        // Réinitialiser l'animation
-        particle.style.animation = 'none';
-        particle.offsetHeight; // Force reflow
-        particle.style.animation = '';
-        
-        // Retourner au pool après animation
-        setTimeout(() => {
-            particle.style.display = 'none';
-            if (particlePool.length < MAX_PARTICLES) {
-                particlePool.push(particle);
-            } else {
-                particle.remove();
-            }
-        }, 600);
-    }
+    const pt = getClickPoint(event);
+    if (!pt || typeof emitSparks !== 'function') return;
+    emitSparks(pt.x, pt.y, 5);
 }
 
 // ============================================
@@ -120,7 +96,7 @@ function createParticles() {
  * @param {number} count - Nombre de confettis
  */
 function createConfetti(count = 100) {
-    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff8800', '#88ff00'];
+    const colors = ['#8fd694', '#f0b450', '#e9e4d4', '#6fb7c9', '#e7795f'];
     
     for (let i = 0; i < count; i++) {
         setTimeout(() => {
@@ -154,8 +130,8 @@ function showLoadingScreen() {
         loadingEl.id = 'loading-screen';
         loadingEl.innerHTML = `
             <div class="loading-content">
-                <div class="loading-spinner">🖥️</div>
-                <p>Chargement du Village Numérique...</p>
+                <div class="loading-spinner">${icon('monitor')}</div>
+                <p>Chargement du village numérique…</p>
             </div>
         `;
         document.body.appendChild(loadingEl);
@@ -244,6 +220,7 @@ function flashScreen(color = 'white', duration = 100) {
 window.showClickFeedback = showClickFeedback;
 window.createFloatingNumber = createFloatingNumber;
 window.createParticles = createParticles;
+window.getClickPoint = getClickPoint;
 window.createConfetti = createConfetti;
 window.showLoadingScreen = showLoadingScreen;
 window.hideLoadingScreen = hideLoadingScreen;

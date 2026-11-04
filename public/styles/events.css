@@ -1,184 +1,199 @@
 /**
- * NIRD Clicker - Events & Notifications Styles
- * Événements, notifications, banners, floating numbers
+ * NIRD Clicker - Notifications et bannières
  */
 
-/* Event Banner */
+/* Bannière d'événement aléatoire */
 #event-banner {
     position: fixed;
-    top: 80px;
+    top: calc(var(--header-h) + 14px);
     left: 50%;
+    z-index: 900;
+    max-width: min(640px, calc(100vw - 32px));
     transform: translateX(-50%);
-    background: var(--gradient-main);
-    color: #000;
-    padding: 1rem 2rem;
-    border-radius: var(--border-radius);
-    font-weight: bold;
-    z-index: 200;
-    animation: slideDown 0.3s ease;
-    box-shadow: 0 5px 30px rgba(0, 212, 170, 0.5);
+    padding: 10px 16px;
+    border-radius: var(--radius);
+    border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--line));
+    background: var(--surface-3);
+    box-shadow: var(--shadow-pop);
 }
 
-#event-banner.hidden {
-    display: none;
-}
-
-/* Tip Banner */
-#tip-banner {
-    position: fixed;
-    bottom: 200px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg, rgba(0, 160, 255, 0.9), rgba(0, 100, 200, 0.9));
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: var(--border-radius);
+#event-text {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    z-index: 150;
-    animation: slideUp 0.3s ease;
-    box-shadow: 0 5px 20px rgba(0, 160, 255, 0.3);
-    max-width: 90%;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    font-size: 13px;
 }
 
-#tip-banner.hidden {
-    display: none;
+.event-icon {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--gold) 14%, transparent);
+    color: var(--gold);
+}
+
+.event-icon .ico {
+    width: 16px;
+    height: 16px;
+}
+
+#event-text strong {
+    font-family: var(--font-display);
+}
+
+.event-desc {
+    color: var(--text-2);
+}
+
+/* Astuce */
+#tip-banner {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    z-index: 800;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    max-width: 380px;
+    padding: 12px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line-strong);
+    background: var(--surface-3);
+    box-shadow: var(--shadow-pop);
+    font-size: 13px;
+    color: var(--text-2);
+    animation: slideInRight 0.3s ease-out;
 }
 
 #tip-banner .tip-icon {
-    font-size: 1.5rem;
+    color: var(--gold);
+}
+
+#tip-banner .tip-icon .ico {
+    width: 18px;
+    height: 18px;
 }
 
 #tip-banner .tip-text {
     flex: 1;
-    font-size: 0.9rem;
 }
 
 #tip-banner .tip-close {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 1.2rem;
-    opacity: 0.7;
-    transition: opacity var(--transition-fast);
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    color: var(--muted);
 }
 
 #tip-banner .tip-close:hover {
-    opacity: 1;
+    background: var(--surface-2);
+    color: var(--text);
 }
 
-/* Floating Numbers */
-.floating-number {
-    position: absolute;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--accent-primary);
-    pointer-events: none;
-    animation: floatUp 1s ease forwards;
-    text-shadow: 0 0 10px var(--accent-primary);
-    z-index: 50;
+#tip-banner .tip-close .ico {
+    width: 14px;
+    height: 14px;
 }
 
-.floating-message {
-    position: absolute;
-    font-size: 0.9rem;
-    color: var(--accent-secondary);
-    pointer-events: none;
-    animation: floatMessage 2s ease forwards;
-    white-space: nowrap;
-    z-index: 50;
-}
-
-/* Notifications */
+/* ============================================
+   NOTIFICATIONS (bas de l'écran, centrées)
+   ============================================ */
 #floating-notifications {
     position: fixed;
-    top: 100px;
-    right: 20px;
+    left: 50%;
+    bottom: 18px;
+    z-index: 950;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    z-index: 150;
+    align-items: center;
+    gap: 8px;
+    width: min(440px, calc(100vw - 32px));
+    transform: translateX(-50%);
+    pointer-events: none;
 }
 
 .notification {
-    padding: 1rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 500;
-    animation: slideIn 0.3s ease;
-    max-width: 350px;
-    pointer-events: none;
-    user-select: none;
+    --notif-color: var(--info);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 14px 10px 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line-strong);
+    border-left: 3px solid var(--notif-color);
+    background: var(--surface-3);
+    box-shadow: var(--shadow-pop);
+    font-size: 13px;
+    color: var(--text-2);
+    pointer-events: auto;
 }
 
-.notification-success {
-    background: rgba(68, 255, 68, 0.2);
-    border: 1px solid var(--accent-success);
-    color: var(--accent-success);
+.notif-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    color: var(--notif-color);
 }
 
-.notification-error {
-    background: rgba(255, 68, 68, 0.2);
-    border: 1px solid var(--accent-danger);
-    color: var(--accent-danger);
+.notif-icon .ico {
+    width: 18px;
+    height: 18px;
 }
 
-.notification-unlock {
-    background: rgba(255, 170, 0, 0.2);
-    border: 1px solid var(--accent-warning);
-    color: var(--accent-warning);
+.notif-text strong {
+    color: var(--text);
+}
+
+.notification-success,
+.notification-unlock,
+.notification-level-up,
+.notification-mission {
+    --notif-color: var(--accent);
 }
 
 .notification-achievement,
-.notification-level-up {
-    background: var(--gradient-main);
-    color: #000;
-    font-weight: bold;
+.notification-bonus,
+.notification-combo,
+.notification-prestige,
+.notification-offline,
+.notification-tip,
+.notification-event {
+    --notif-color: var(--gold);
 }
 
-.notification-combo {
-    background: linear-gradient(135deg, #ff4444, #ff8800);
-    color: white;
-}
-
-.notification-offline {
-    background: rgba(100, 100, 255, 0.2);
-    border: 1px solid #6666ff;
-    color: #aaaaff;
-}
-
-.notification-tip {
-    background: rgba(0, 160, 255, 0.2);
-    border: 1px solid var(--accent-secondary);
-    color: var(--fg-main);
-    max-width: 400px;
-}
-
-.notification-mission {
-    background: rgba(255, 170, 0, 0.2);
-    border: 1px solid var(--accent-warning);
-    color: var(--accent-warning);
-}
-
-.notification-prestige {
-    background: linear-gradient(135deg, rgba(255, 170, 0, 0.3), rgba(255, 100, 0, 0.3));
-    border: 1px solid #ff8800;
-    color: white;
+.notification-error,
+.notification-danger,
+.notification-warning {
+    --notif-color: var(--danger);
 }
 
 .notification.fade-out {
-    animation: fadeOut 0.5s ease forwards;
+    opacity: 0;
 }
 
-/* Confetti */
+/* Indicateur de sauvegarde (optionnel) */
+#auto-save-indicator {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+}
+
+/* Confettis */
 .confetti {
     position: fixed;
-    width: 10px;
-    height: 10px;
-    top: -10px;
-    border-radius: 50%;
-    animation: fall linear forwards;
-    z-index: 1500;
+    top: -12px;
+    z-index: 9999;
+    border-radius: 2px;
     pointer-events: none;
+    animation: confettiFall 3s linear forwards;
+}
+
+.screen-flash {
+    mix-blend-mode: screen;
 }

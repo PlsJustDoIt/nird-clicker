@@ -89,7 +89,7 @@ function updateComboDisplay() {
     const comboEl = document.getElementById('combo-display');
     if (comboEl) {
         if (gameState.currentCombo > 1) {
-            comboEl.textContent = `🔥 Combo x${gameState.currentCombo}`;
+            comboEl.innerHTML = `${icon('flame')}<span>Combo</span> <strong>x${gameState.currentCombo}</strong>`;
             comboEl.classList.add('active');
         } else {
             comboEl.textContent = '';
@@ -118,7 +118,11 @@ function updateGauge() {
     const gaugeLabel = document.getElementById('gauge-label');
     
     if (gaugeFill) gaugeFill.style.width = percentage + '%';
-    if (gaugeLabel) gaugeLabel.textContent = `${currentLevel.emoji} ${currentLevel.name}`;
+    if (gaugeLabel) {
+        gaugeLabel.innerHTML = nextLevel
+            ? `<span>Prochain palier : <strong>${nextLevel.name}</strong></span><span class="gauge-pct">${Math.floor(percentage)} %</span>`
+            : `<span><strong>Palier maximal atteint</strong></span><span class="gauge-pct">100 %</span>`;
+    }
 }
 
 /**
@@ -134,8 +138,8 @@ function updatePrestigeButton() {
     
     prestigeBtn.disabled = !canPrestigeNow;
     prestigeBtn.innerHTML = canPrestigeNow 
-        ? `🔄 Prestige (+${prestigePoints} pts)` 
-        : `🔄 Prestige (${formatNumber(threshold)} requis)`;
+        ? `${icon('cycle')}<span>Prestige</span><small>+${prestigePoints} pt${prestigePoints > 1 ? 's' : ''}</small>` 
+        : `${icon('cycle')}<span>Prestige</span><small>${formatNumber(threshold)} requis</small>`;
 }
 
 /**
@@ -160,7 +164,7 @@ function updateMissionsUI() {
     const container = document.getElementById('daily-missions');
     if (!container || !gameState.dailyMissions) return;
     
-    container.innerHTML = '<h3>🎯 Missions du jour</h3>';
+    container.innerHTML = `<h3 class="panel-title">${icon('target')}Missions du jour</h3>`;
     
     gameState.dailyMissions.forEach(mission => {
         const progress = Math.min(mission.progress || 0, mission.target);
@@ -171,12 +175,12 @@ function updateMissionsUI() {
         missionEl.innerHTML = `
             <div class="mission-header">
                 <span class="mission-name">${mission.name}</span>
-                <span class="mission-reward">+${mission.reward}</span>
+                <span class="mission-reward">${mission.completed ? icon('check') : '+' + formatNumber(mission.reward)}</span>
             </div>
             <div class="mission-progress-bar">
                 <div class="mission-progress-fill" style="width: ${percent}%"></div>
             </div>
-            <span class="mission-progress-text">${progress}/${mission.target}</span>
+            <span class="mission-progress-text">${formatNumber(progress)} / ${formatNumber(mission.target)}</span>
         `;
         container.appendChild(missionEl);
     });
@@ -191,12 +195,7 @@ function updateVillageVisual() {
     
     const level = VILLAGE_LEVELS[gameState.currentVillageLevel];
     if (level) {
-        villageContainer.innerHTML = `
-            <div class="village-level-${gameState.currentVillageLevel}">
-                <span class="village-emoji">${level.emoji}</span>
-                <p class="village-description">${level.description || ''}</p>
-            </div>
-        `;
+        renderVillageHeader(villageContainer, level);
     }
 }
 
