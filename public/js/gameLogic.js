@@ -12,7 +12,7 @@
 // Si core/ n'est pas chargé, on les définit ici en fallback
 // ============================================
 if (typeof gameState === 'undefined') {
-    console.warn('⚠️ core/state.js non chargé, utilisation du fallback');
+    console.warn('core/state.js non chargé, utilisation du fallback');
     var gameState = {
         score: 0,
         totalScore: 0,
@@ -64,10 +64,7 @@ function initGame() {
     applySkin(gameState.currentSkin);
     updateUI();
     
-    // Démarrer le tutoriel si première partie
-    if (!gameState.tutorialCompleted && gameState.totalClicks === 0) {
-        setTimeout(startTutorial, 1000);
-    }
+    // Le tutoriel de première partie est désormais l'écran d'accueil (main.js : showTutorial)
     
     // Planifier quiz et tips
     scheduleQuiz();
@@ -167,7 +164,7 @@ function calculateProductionPerSecond() {
  * Gère un clic sur le bouton principal
  * Ajoute les points, met à jour le combo, joue le son et met à jour l'UI
  */
-function handleClick() {
+function handleClick(event) {
     // Utiliser la vraie puissance de clic (avec bonus prestige)
     const points = getEffectiveClickPower();
     
@@ -194,11 +191,11 @@ function handleClick() {
     
     // Animation et feedback
     showClickFeedback(points);
-    createFloatingNumber(points);
+    createFloatingNumber(points, event);
     
     // Particules
     if (gameState.particlesEnabled) {
-        createParticles();
+        createParticles(event);
     }
     
     // Vérifier les succès et missions
@@ -374,7 +371,7 @@ function buySkin(skinId) {
         // Équiper le skin
         gameState.currentSkin = skinId;
         applySkin(skinId);
-        showNotification(`${skin.emoji} ${skin.name} équipé !`, 'success');
+        showNotification(`${skin.name} équipé`, 'success');
         renderSkins();
         return true;
     }
@@ -387,7 +384,7 @@ function buySkin(skinId) {
         applySkin(skinId);
         
         playSound('upgrade');
-        showNotification(`${skin.emoji} ${skin.name} acheté et équipé !`, 'success');
+        showNotification(`${skin.name} acheté et équipé`, 'success');
         checkAchievements();
         updateUI();
         renderSkins();
@@ -411,10 +408,7 @@ function applySkin(skinId) {
     }
     
     if (skin) {
-        const pcIcon = document.querySelector('.pc-icon');
-        if (pcIcon) {
-            pcIcon.textContent = skin.emoji;
-        }
+        if (typeof renderClickerSkin === 'function') renderClickerSkin(skin);
     }
 }
 
@@ -427,7 +421,7 @@ function checkUnlocks() {
         if (!upgrade.unlocked && upgrade.unlockAt && gameState.totalScore >= upgrade.unlockAt) {
             upgrade.unlocked = true;
             playSound('levelup');
-            showNotification(`🔓 Nouveau : ${upgrade.name} débloqué !`, 'unlock');
+            showNotification(`Nouveau bâtiment disponible : <strong>${upgrade.name}</strong>`, 'unlock');
         }
     });
     
@@ -444,7 +438,7 @@ function checkUnlocks() {
         gameState.currentVillageLevel = newLevel;
         const level = VILLAGE_LEVELS[newLevel];
         playSound('levelup');
-        showNotification(`🎉 Niveau atteint : ${level.emoji} ${level.name} !`, 'level-up');
+        showNotification(`Nouveau palier : <strong>${level.name}</strong>`, 'level-up');
         updateVillageVisual();
     }
 }
@@ -457,12 +451,7 @@ function updateVillageVisual() {
     const villageContainer = document.getElementById('village-visual');
     if (villageContainer) {
         const level = VILLAGE_LEVELS[gameState.currentVillageLevel];
-        villageContainer.innerHTML = `
-            <div class="village-level-${gameState.currentVillageLevel}">
-                <span class="village-emoji">${level.emoji}</span>
-                <p class="village-description">${level.description || ''}</p>
-            </div>
-        `;
+        if (typeof window.renderVillageHeader === 'function') window.renderVillageHeader(villageContainer, level);
     }
 }
 
@@ -475,7 +464,7 @@ function checkAchievements() {
         if (!achievement.unlocked && achievement.condition(gameState)) {
             achievement.unlocked = true;
             playSound('achievement');
-            showNotification(`🏆 Succès : ${achievement.icon || ''} ${achievement.name}`, 'achievement');
+            showNotification(`Succès débloqué : <strong>${achievement.name}</strong>`, 'achievement', 4000, achievement.icon);
         }
     });
 }
@@ -550,7 +539,7 @@ function doPrestigeDirectly() {
     // Garder les skins et achievements
     
     playSound('prestige');
-    showNotification(`🔄 Prestige ! +${pointsGained} points, bonus +${gameState.prestigeLevel * 10}%`, 'prestige');
+    showNotification(`Prestige ! +${pointsGained} points, bonus +${gameState.prestigeLevel * 10}%`, 'prestige');
     
     calculateProductionPerSecond();
     saveGame();
@@ -619,7 +608,7 @@ function buyPrestigeUpgrade(upgradeId) {
     }
     
     playSound('upgrade');
-    showNotification(`⭐ ${upgrade.name} acheté !`, 'success');
+    showNotification(`${upgrade.name} acheté !`, 'success');
     
     calculateProductionPerSecond();
     saveGame();
@@ -641,7 +630,7 @@ var currentQuiz = null;
  */
 function scheduleQuiz() {
     // Géré par core/loop.js - tickQuiz()
-    console.log('📝 Quiz scheduling géré par core/loop.js');
+    console.log('Quiz scheduling géré par core/loop.js');
 }
 
 /**
@@ -688,7 +677,8 @@ function _showQuizInternal() {
     modal.className = 'quiz-modal';
     modal.innerHTML = `
         <div class="quiz-content">
-            <h2>🧠 Quiz NIRD !</h2>
+            <span class="modal-kicker">Question NIRD</span>
+            <h2>Quiz</h2>
             <p class="quiz-question">${question.question}</p>
             <div class="quiz-answers">
                 ${shuffledAnswers.map((answer, i) => `
@@ -722,11 +712,11 @@ function handleQuizAnswer(e, question) {
         gameState.totalScore += bonus;
         
         playSound('achievement');
-        showNotification(`✅ Bonne réponse ! +${formatNumber(bonus)} points`, 'success');
+        showNotification(`Bonne réponse ! +${formatNumber(bonus)} points`, 'success');
         checkAchievements();
         checkDailyMissions();
     } else {
-        showNotification(`❌ Mauvaise réponse ! ${question.info}`, 'error');
+        showNotification(`Mauvaise réponse ! ${question.info}`, 'error');
     }
     
     closeQuiz();
@@ -817,7 +807,7 @@ function checkDailyMissions() {
             gameState.score += mission.reward;
             gameState.totalScore += mission.reward;
             playSound('achievement');
-            showNotification(`🎯 Mission complétée : ${mission.name} ! +${mission.reward}`, 'mission');
+            showNotification(`Mission complétée : ${mission.name} ! +${mission.reward}`, 'mission');
         }
     });
     
@@ -833,7 +823,7 @@ function checkDailyMissions() {
  */
 function scheduleTips() {
     // Géré par core/loop.js - tickTips()
-    console.log('💡 Tips scheduling géré par core/loop.js');
+    console.log('Tips scheduling géré par core/loop.js');
 }
 
 /**
@@ -881,10 +871,10 @@ function applyTheme(themeId) {
  */
 function startTutorial() {
     const steps = [
-        { target: '#main-clicker', message: '👆 Cliquez sur le PC pour gagner des points de souveraineté !' },
-        { target: '.upgrades-zone', message: '🛒 Achetez des améliorations pour produire automatiquement !' },
-        { target: '.resistance-gauge', message: '📊 Faites évoluer votre village vers l\'indépendance numérique !' },
-        { target: '.stats-panel', message: '📈 Suivez vos statistiques ici. Bon jeu ! 🎮' }
+        { target: '#main-clicker', message: 'Cliquez sur le PC pour gagner des points de souveraineté !' },
+        { target: '.upgrades-zone', message: 'Achetez des améliorations pour produire automatiquement !' },
+        { target: '.resistance-gauge', message: 'Faites évoluer votre village vers l\'indépendance numérique !' },
+        { target: '.stats-panel', message: 'Suivez vos statistiques ici. Bon jeu !' }
     ];
     
     let currentStep = 0;
@@ -935,7 +925,7 @@ function startTutorial() {
 // On garde un fallback si le module n'est pas chargé
 // ============================================
 if (typeof startGameLoop === 'undefined') {
-    console.warn('⚠️ core/loop.js non chargé, utilisation du fallback');
+    console.warn('core/loop.js non chargé, utilisation du fallback');
     
     /**
      *
@@ -1013,7 +1003,7 @@ function tryRandomEvent() {
  * @param event
  */
 function triggerEvent(event) {
-    showEventBanner(event.name, event.description);
+    showEventBanner(event.name, event.description, 5000, event.icon);
     
     if (event.effect === 'instant_bonus') {
         const bonus = gameState.productionPerSecond * event.bonusMultiplier;
@@ -1035,7 +1025,7 @@ function triggerEvent(event) {
 // On garde un fallback si le module n'est pas chargé
 // ============================================
 if (typeof saveGame === 'undefined') {
-    console.warn('⚠️ core/save.js non chargé, utilisation du fallback');
+    console.warn('core/save.js non chargé, utilisation du fallback');
     
     var isResetting = false;
     
@@ -1141,7 +1131,7 @@ if (typeof saveGame === 'undefined') {
                         gameState.score += offlineGain;
                         gameState.totalScore += offlineGain;
                         setTimeout(() => {
-                            showNotification(`🌙 Gains hors-ligne : +${formatNumber(offlineGain)} points !`, 'offline');
+                            showNotification(`Gains hors-ligne : +${formatNumber(offlineGain)} points !`, 'offline');
                         }, 1000);
                     }
                 }
@@ -1255,7 +1245,7 @@ async function submitScore(pseudo) {
             localStorage.setItem('nirdClicker_pseudo', pseudo);
             
             if (data.updated) {
-                showNotification('🏆 Score enregistré dans le leaderboard !', 'success');
+                showNotification('Score enregistré dans le leaderboard !', 'success');
             } else {
                 showNotification('Score déjà enregistré (meilleur existant)', 'info');
             }

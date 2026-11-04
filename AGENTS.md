@@ -37,8 +37,10 @@ public/
 │   ├── ui.js           # Interface : affichage, animations
 │   ├── events.js       # Événements spéciaux, combos
 │   ├── gamepad.js      # 🎮 Support manette (Xbox, PlayStation, etc.)
+│   ├── core/icons.js   # Icônes SVG (remplacent les emoji) : icon('penguin')
+│   ├── ui/scene.js     # Poste illustré, vitrine du village, infobulles, fil info
 │   └── main.js         # Initialisation
-└── images/             # Images et logos
+└── images/             # Images, logos et curseurs (images/cursors/)
 ```
 
 ## 🎮 Fonctionnalités implémentées
@@ -73,6 +75,13 @@ public/
 - Ajouter des sons (optionnel)
 - Améliorer le système de prestige
 - Ajouter un tableau des scores
+
+## 🎨 Charte graphique
+
+- **Pas d'emoji dans l'interface** : les champs `icon` des données (`balancing.js`) sont des noms d'icônes de `js/core/icons.js`. Pour une nouvelle icône, ajouter son tracé SVG (24×24, trait) dans `ICON_PATHS`.
+- **Couleurs** : uniquement via les variables CSS de `styles/base.css` (thèmes dans `styles/themes.css`).
+- **Polices** : Space Grotesk (titres, chiffres), Inter (texte), JetBrains Mono (prix, compteurs).
+- **Curseurs** : `images/cursors/*.svg`, déclarés dans `--cursor`, `--cursor-pointer`, `--cursor-press`.
 
 ## 🐛 Debug
 

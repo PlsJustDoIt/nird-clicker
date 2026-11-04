@@ -49,7 +49,7 @@ function queueEvent(type, data = null) {
     const hasSameType = eventQueue.some(e => e.type === type);
     if (!hasSameType) {
         eventQueue.push({ type, data });
-        console.log(`📋 Événement "${type}" ajouté à la queue. File d'attente: ${eventQueue.length}`);
+        console.log(`Événement "${type}" ajouté à la queue. File d'attente: ${eventQueue.length}`);
     }
 }
 
@@ -60,17 +60,17 @@ function processEventQueue() {
     // Attendre un court délai pour laisser les modales se fermer proprement
     setTimeout(() => {
         if (eventQueue.length === 0) {
-            console.log('📋 Queue d\'événements vide.');
+            console.log('Queue d\'événements vide.');
             return;
         }
         
         if (isEventActive()) {
-            console.log('📋 Un événement est encore actif, attente...');
+            console.log('Un événement est encore actif, attente...');
             return;
         }
         
         const event = eventQueue.shift();
-        console.log(`📋 Traitement de l'événement "${event.type}". Restants: ${eventQueue.length}`);
+        console.log(`Traitement de l'événement "${event.type}". Restants: ${eventQueue.length}`);
         
         isEventInProgress = true;
         
@@ -198,7 +198,7 @@ function openSnakeGame() {
     // Dessiner l'écran initial
     drawSnakeGame();
     
-    showNotification('🐍 Easter Egg découvert !', 'success');
+    showNotification('Easter Egg découvert !', 'success');
 }
 
 function closeSnakeGame() {
@@ -223,7 +223,7 @@ function startSnakeGame() {
     
     document.getElementById('snake-score').textContent = '0';
     document.getElementById('snake-start-btn').disabled = true;
-    document.getElementById('snake-start-btn').textContent = '🎮 En cours...';
+    document.getElementById('snake-start-btn').textContent = 'En cours...';
     
     spawnFood();
     
@@ -246,7 +246,7 @@ function stopSnakeGame() {
     const startBtn = document.getElementById('snake-start-btn');
     if (startBtn) {
         startBtn.disabled = false;
-        startBtn.textContent = '🎮 Rejouer';
+        startBtn.textContent = 'Rejouer';
     }
 }
 
@@ -367,28 +367,26 @@ function drawSnakeGame() {
         ctx.font = `${size - 2}px Arial`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('🍎', 
-            snakeGame.food.x * size + size / 2, 
-            snakeGame.food.y * size + size / 2
-        );
+        ctx.fillStyle = '#f0b450';
+        ctx.beginPath();
+        ctx.arc(snakeGame.food.x * size + size / 2, snakeGame.food.y * size + size / 2, size / 2 - 3, 0, Math.PI * 2);
+        ctx.fill();
     }
     
     // Dessiner le serpent
     snakeGame.snake.forEach((seg, i) => {
         if (i === 0) {
-            // Tête avec emoji
-            ctx.font = `${size - 2}px Arial`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('🐍', seg.x * size + size / 2, seg.y * size + size / 2);
+            // Tête
+            ctx.fillStyle = '#d7f5dc';
+            ctx.fillRect(seg.x * size + 1, seg.y * size + 1, size - 2, size - 2);
         } else {
             // Corps avec dégradé
             const gradient = ctx.createRadialGradient(
                 seg.x * size + size / 2, seg.y * size + size / 2, 0,
                 seg.x * size + size / 2, seg.y * size + size / 2, size / 2
             );
-            gradient.addColorStop(0, '#4ade80');
-            gradient.addColorStop(1, '#22c55e');
+            gradient.addColorStop(0, '#8fd694');
+            gradient.addColorStop(1, '#5fae6b');
             
             ctx.fillStyle = gradient;
             ctx.beginPath();
@@ -439,13 +437,13 @@ function gameOverSnake() {
     
     ctx.fillStyle = '#4ade80';
     ctx.font = '16px Roboto, sans-serif';
-    ctx.fillText(`Score: ${snakeGame.score} 🍎`, snakeGame.canvas.width / 2, snakeGame.canvas.height / 2 + 10);
+    ctx.fillText(`Score : ${snakeGame.score}`, snakeGame.canvas.width / 2, snakeGame.canvas.height / 2 + 10);
     
     ctx.fillStyle = '#facc15';
     ctx.fillText(`+${pointsEarned} Points de Souveraineté!`, snakeGame.canvas.width / 2, snakeGame.canvas.height / 2 + 40);
     
     if (pointsEarned > 0) {
-        showNotification(`🐍 Snake terminé ! +${pointsEarned} points !`, 'success');
+        showNotification(`Snake terminé ! +${pointsEarned} points !`, 'success');
     }
 }
 

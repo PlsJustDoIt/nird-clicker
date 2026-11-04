@@ -4,269 +4,287 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="NIRD Clicker - Libérez le numérique ! Un jeu incrémental pour sensibiliser à la souveraineté numérique.">
-    <title>NIRD Clicker - La Résistance s'organise | GPT MEN'S</title>
+    <meta name="theme-color" content="#121514">
+    <title>NIRD Clicker — La résistance numérique s'organise</title>
     <link rel="icon" href="./images/favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="./images/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="./styles/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/style.css">
 </head>
 <body class="theme-dark">
     <div id="app">
-        <!-- Header avec score et menus -->
+        <!-- ============ En-tête : marque, fil d'actualité, menu ============ -->
         <header id="game-header">
             <div class="logo">
-                <h1>🖥️ NIRD Clicker</h1>
-                <p class="subtitle">La Résistance Numérique s'organise !</p>
+                <svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
+                    <rect x="2" y="3" width="28" height="21" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/>
+                    <path d="m8 10 4 3.5L8 17M15 17h8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M11 29h10M16 24v5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                </svg>
+                <div class="logo-text">
+                    <h1>NIRD Clicker</h1>
+                    <p class="subtitle">La résistance numérique s'organise</p>
+                </div>
             </div>
-            <!-- Menu rapide -->
-            <nav class="quick-menu">
-                <button id="leaderboard-btn" class="menu-btn" title="Leaderboard">🏅</button>
-                <button id="stats-btn" class="menu-btn" title="Statistiques">📊</button>
-                <button id="achievements-btn" class="menu-btn" title="Succès">🏆</button>
-                <button id="encyclopedia-btn" class="menu-btn" title="Encyclopédie">📖</button>
-                <button id="settings-btn" class="menu-btn" title="Options">⚙️</button>
-                <button id="info-btn" class="menu-btn" title="Info">ℹ️</button>
+
+            <div id="news-ticker" class="news-ticker" aria-live="polite">
+                <span class="news-label">Fil info</span>
+                <div class="news-track"><span id="news-text"></span></div>
+            </div>
+
+            <nav class="quick-menu" aria-label="Menu">
+                <button id="stats-btn" class="menu-btn" title="Statistiques" aria-label="Statistiques" data-icon="chart"></button>
+                <button id="achievements-btn" class="menu-btn" title="Succès" aria-label="Succès" data-icon="trophy"></button>
+                <button id="leaderboard-btn" class="menu-btn" title="Classement" aria-label="Classement" data-icon="podium"></button>
+                <button id="encyclopedia-btn" class="menu-btn" title="Encyclopédie" aria-label="Encyclopédie" data-icon="book"></button>
+                <button id="info-btn" class="menu-btn" title="À propos" aria-label="À propos" data-icon="info"></button>
+                <button id="settings-btn" class="menu-btn" title="Options" aria-label="Options" data-icon="gear"></button>
             </nav>
-            <div class="score-display">
-                <div class="main-score">
-                    <span id="score">0</span>
-                    <span class="score-label">Points de Souveraineté</span>
-                </div>
-                <div class="score-per-sec">
-                    <span id="per-second">0</span>/sec
-                </div>
-            </div>
         </header>
 
-        <!-- Zone principale du jeu -->
+        <!-- ============ Zone principale : poste | village | boutique ============ -->
         <main id="game-container">
-            <!-- Zone de clic (gauche) -->
-            <section id="click-zone">
+            <!-- Colonne 1 : le poste à cliquer -->
+            <section id="click-zone" class="col col-clicker" aria-label="Poste">
+                <canvas id="bits-canvas" aria-hidden="true"></canvas>
+
+                <div class="score-display">
+                    <div class="main-score">
+                        <span id="score">0</span>
+                        <span class="score-label">points de souveraineté</span>
+                    </div>
+                    <div class="score-per-sec">
+                        <span id="per-second">0</span> par seconde
+                    </div>
+                </div>
+
                 <div id="click-area">
-                    <div id="main-clicker" title="Cliquez pour libérer des octets !">
-                        <div class="pc-icon">💻</div>
-                        <div class="click-effect"></div>
+                    <div class="clicker-stage">
+                        <div class="clicker-rays" aria-hidden="true"></div>
+                        <div id="main-clicker" role="button" tabindex="0" aria-label="Cliquer sur le poste" title="Cliquez pour libérer le poste">
+                            <div class="pc-icon"></div>
+                        </div>
                     </div>
-                    <p class="click-instruction">Cliquez pour installer Linux !</p>
                     <div id="click-multiplier">
-                        +<span id="click-power">1</span> par clic
+                        <span class="click-power-value">+<span id="click-power">1</span></span> par clic
                     </div>
-                    <!-- Affichage du combo -->
                     <div id="combo-display"></div>
+                    <p class="click-instruction">Espace ou Entrée pour cliquer au clavier</p>
                 </div>
 
-                <!-- Statistiques -->
-                <div id="stats-panel">
-                    <h3>📊 Statistiques</h3>
-                    <div class="stat-item">
-                        <span>Total de clics :</span>
-                        <span id="total-clicks">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span>PC Libérés :</span>
-                        <span id="pc-liberated">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span>Niveau Village :</span>
-                        <span id="village-level">1</span>
-                    </div>
-                </div>
-
-                <!-- Jauge de résistance avec visuel -->
-                <div id="resistance-gauge">
-                    <h3>🛡️ Jauge de Résistance</h3>
-                    <div class="gauge-container">
-                        <div id="gauge-fill" style="width: 0%"></div>
-                    </div>
-                    <p id="gauge-label">Village Débutant</p>
-                    <div id="village-visual"></div>
-                </div>
-
-                <!-- Missions quotidiennes -->
-                <div id="daily-missions">
-                    <h3>🎯 Missions du jour</h3>
-                    <!-- Généré par JS -->
-                </div>
-
-                <!-- Bouton Prestige -->
-                <div id="prestige-zone">
-                    <button id="prestige-btn" disabled>🔄 Prestige (100K requis)</button>
-                    <p class="prestige-desc">Reset + bonus permanent</p>
+                <div id="flux" class="flux" aria-hidden="true">
+                    <div class="flux-wave flux-wave-back"></div>
+                    <div class="flux-wave flux-wave-front"></div>
                 </div>
             </section>
 
-            <!-- Zone des upgrades (droite) -->
-            <section id="upgrades-zone">
-                <!-- Tabs de menu -->
-                <div class="menu-tabs">
-                    <button class="menu-tab active" data-tab="upgrades">🔧 Production</button>
-                    <button class="menu-tab" data-tab="clicks">⚡ Clics</button>
-                    <button class="menu-tab" data-tab="skins">🎨 Skins</button>
-                    <button class="menu-tab" data-tab="prestige" id="prestige-tab" style="display: none;">⭐ Prestige</button>
+            <!-- Colonne 2 : le village -->
+            <section id="village-zone" class="col col-village" aria-label="Village">
+                <div class="village-head">
+                    <div id="village-visual" class="village-visual"></div>
+                    <div id="prestige-zone">
+                        <button id="prestige-btn" disabled>Prestige</button>
+                    </div>
                 </div>
-                
-                <!-- Contenu Améliorations de Production -->
-                <div id="upgrades-content" class="menu-content active">
-                    <div class="upgrades-header">
-                        <h2>🔧 Améliorations de Production</h2>
-                        <div class="buy-mode-selector">
-                            <button class="buy-mode-btn active" data-mode="1" onclick="setBuyMode(1)">x1</button>
-                            <button class="buy-mode-btn" data-mode="10" onclick="setBuyMode(10)">x10</button>
-                            <button class="buy-mode-btn" data-mode="50" onclick="setBuyMode(50)">x50</button>
-                            <button class="buy-mode-btn" data-mode="max" onclick="setBuyMode('max')">MAX</button>
+
+                <div id="resistance-gauge">
+                    <div class="gauge-container">
+                        <div id="gauge-fill" style="width: 0%"></div>
+                    </div>
+                    <p id="gauge-label"></p>
+                </div>
+
+                <div id="showcase" class="showcase" aria-label="Bâtiments du village"></div>
+
+                <div class="village-panels">
+                    <div id="stats-panel" class="panel">
+                        <h3 class="panel-title" data-icon="chart">Statistiques</h3>
+                        <div class="stat-item">
+                            <span>Clics</span>
+                            <span id="total-clicks">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>PC libérés</span>
+                            <span id="pc-liberated">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Palier</span>
+                            <span id="village-level">1</span>
                         </div>
                     </div>
-                    <div id="upgrades-list">
-                        <!-- Les upgrades seront générées par JavaScript -->
+
+                    <div id="daily-missions" class="panel">
+                        <h3 class="panel-title" data-icon="target">Missions du jour</h3>
                     </div>
                 </div>
-                
-                <!-- Contenu Améliorations de Clic -->
+            </section>
+
+            <!-- Colonne 3 : la boutique -->
+            <section id="upgrades-zone" class="col col-store" aria-label="Boutique">
+                <div class="store-head">
+                    <h2 class="store-title">Boutique</h2>
+                    <div class="menu-tabs" role="tablist">
+                        <button class="menu-tab active" data-tab="upgrades" role="tab">Bâtiments</button>
+                        <button class="menu-tab" data-tab="clicks" role="tab">Clic</button>
+                        <button class="menu-tab" data-tab="skins" role="tab">Apparence</button>
+                        <button class="menu-tab" data-tab="prestige" id="prestige-tab" role="tab" style="display: none;">Prestige</button>
+                    </div>
+                </div>
+
+                <!-- Bâtiments -->
+                <div id="upgrades-content" class="menu-content active">
+                    <div class="upgrades-header">
+                        <span class="section-label">Acheter</span>
+                        <div class="buy-mode-selector" role="group" aria-label="Quantité">
+                            <button class="buy-mode-btn active" data-mode="1" onclick="setBuyMode(1)">×1</button>
+                            <button class="buy-mode-btn" data-mode="10" onclick="setBuyMode(10)">×10</button>
+                            <button class="buy-mode-btn" data-mode="50" onclick="setBuyMode(50)">×50</button>
+                            <button class="buy-mode-btn" data-mode="max" onclick="setBuyMode('max')">Max</button>
+                        </div>
+                    </div>
+                    <div id="upgrades-list"></div>
+                </div>
+
+                <!-- Améliorations de clic -->
                 <div id="clicks-content" class="menu-content">
                     <div class="upgrades-header">
-                        <h2>⚡ Améliorations de Clic</h2>
+                        <span class="section-label">Améliorations disponibles</span>
                     </div>
-                    <div id="click-upgrades-list">
-                        <!-- Les upgrades de clic seront générées par JavaScript -->
-                    </div>
+                    <div id="click-upgrades-list"></div>
                 </div>
-                
-                <!-- Contenu Prestige -->
+
+                <!-- Prestige -->
                 <div id="prestige-content" class="menu-content">
                     <div class="prestige-header">
-                        <h3>⭐ Points de Prestige : <span id="prestige-points-display">0</span></h3>
-                        <p>Multiplicateur actuel : x<span id="prestige-multiplier">1.0</span></p>
+                        <div class="prestige-stat">
+                            <span class="section-label">Points de prestige</span>
+                            <strong id="prestige-points-display">0</strong>
+                        </div>
+                        <div class="prestige-stat">
+                            <span class="section-label">Multiplicateur</span>
+                            <strong>×<span id="prestige-multiplier">1.0</span></strong>
+                        </div>
                     </div>
-                    <div id="prestige-upgrades-list">
-                        <!-- Généré par JS -->
-                    </div>
+                    <div id="prestige-upgrades-list"></div>
                 </div>
-                
-                <!-- Contenu Skins -->
+
+                <!-- Apparence du poste -->
                 <div id="skins-content" class="menu-content">
-                    <h3>🎨 Personnalisation du Clicker</h3>
-                    <div id="skins-list">
-                        <!-- Généré par JS -->
+                    <div class="upgrades-header">
+                        <span class="section-label">Apparence du poste</span>
                     </div>
+                    <div id="skins-list"></div>
                 </div>
             </section>
         </main>
 
-        <!-- Zone d'événements/messages -->
+        <!-- Bannière d'événement -->
         <div id="event-banner" class="hidden">
             <span id="event-text"></span>
         </div>
-        
-        <!-- Astuce du jour -->
+
+        <!-- Astuce -->
         <div id="tip-banner" class="hidden">
-            <span class="tip-icon">💡</span>
-            <span class="tip-text">Astuce...</span>
-            <button class="tip-close" onclick="this.parentElement.classList.add('hidden')">✕</button>
+            <span class="tip-icon" data-icon="lightbulb"></span>
+            <span class="tip-text">Astuce…</span>
+            <button class="tip-close" aria-label="Fermer" data-icon="x" onclick="this.parentElement.classList.add('hidden')"></button>
         </div>
 
-        <!-- Modal Boss GAFAM -->
+        <!-- Boss GAFAM (contenu généré par boss.js) -->
         <div id="boss-modal" class="modal-overlay hidden">
             <div class="boss-content modal-content">
                 <div class="boss-header">
-                    <span id="boss-icon" class="boss-logo">🪟</span>
+                    <span id="boss-icon" class="boss-logo"></span>
                     <h2 id="boss-name">Windows Update</h2>
                 </div>
-                <p id="boss-message" class="boss-message">Windows veut redémarrer votre ordinateur...</p>
+                <p id="boss-message" class="boss-message">Windows veut redémarrer votre ordinateur…</p>
                 <div class="boss-progress">
                     <div id="boss-progress-bar" class="progress-bar-fill"></div>
                 </div>
-                <p class="boss-clicks">Clics restants: <span id="boss-clicks-left">20</span></p>
-                <button id="boss-click-btn" class="boss-btn">❌ FERMER</button>
+                <p class="boss-clicks">Clics restants : <span id="boss-clicks-left">20</span></p>
+                <button id="boss-click-btn" class="boss-btn">Fermer</button>
             </div>
         </div>
-        
-        <!-- Modal Quiz NIRD -->
+
+        <!-- Quiz NIRD -->
         <div id="quiz-modal" class="modal-overlay hidden">
             <div class="quiz-content modal-content">
-                <h2>🧠 Quiz NIRD</h2>
-                <p id="quiz-question">Question...</p>
-                <div id="quiz-answers">
-                    <!-- Généré par JS -->
-                </div>
+                <h2>Quiz NIRD</h2>
+                <p id="quiz-question">Question…</p>
+                <div id="quiz-answers"></div>
                 <div id="quiz-result" class="hidden">
                     <p id="quiz-result-text"></p>
                     <button id="quiz-close-btn">Continuer</button>
                 </div>
             </div>
         </div>
-        
-        <!-- Modal Encyclopédie -->
+
+        <!-- Encyclopédie (version statique) -->
         <div id="encyclopedia-modal" class="modal-overlay hidden">
             <div class="encyclopedia-content modal-content">
-                <h2>📖 Encyclopédie NIRD</h2>
-                <button class="modal-close">✕</button>
+                <h2>Encyclopédie NIRD</h2>
+                <button class="modal-close" aria-label="Fermer" data-icon="x"></button>
                 <button id="easter-egg-btn" class="easter-egg-btn" title="???">?</button>
-                <div id="encyclopedia-list">
-                    <!-- Généré par JS -->
-                </div>
+                <div id="encyclopedia-list"></div>
             </div>
         </div>
-        
-        <!-- Modal Snake Easter Egg -->
+
+        <!-- Snake (easter egg) -->
         <div id="snake-modal" class="modal-overlay hidden">
             <div class="snake-content modal-content">
-                <h2>🐍 Snake NIRD</h2>
-                <p class="snake-subtitle">Mange des 🍎 pour gagner des Points de Souveraineté !</p>
-                <button class="modal-close" onclick="closeSnakeGame()">✕</button>
+                <span class="modal-kicker">Easter egg</span>
+                <h2>Snake NIRD</h2>
+                <p class="snake-subtitle">Chaque jeton mangé rapporte des Points de Souveraineté.</p>
+                <button class="modal-close" aria-label="Fermer" data-icon="x" onclick="closeSnakeGame()"></button>
                 <div class="snake-game-container">
                     <canvas id="snake-canvas" width="300" height="300"></canvas>
                     <div class="snake-controls">
-                        <div class="snake-score">Score: <span id="snake-score">0</span></div>
-                        <div class="snake-high-score">Record: <span id="snake-high-score">0</span></div>
+                        <div class="snake-score">Score <span id="snake-score">0</span></div>
+                        <div class="snake-high-score">Record <span id="snake-high-score">0</span></div>
                     </div>
                     <div class="snake-mobile-controls">
-                        <button class="snake-btn" onclick="setSnakeDirection('up')">▲</button>
+                        <button class="snake-btn" aria-label="Haut" data-icon="arrow-up" onclick="setSnakeDirection('up')"></button>
                         <div class="snake-btn-row">
-                            <button class="snake-btn" onclick="setSnakeDirection('left')">◀</button>
-                            <button class="snake-btn" onclick="setSnakeDirection('down')">▼</button>
-                            <button class="snake-btn" onclick="setSnakeDirection('right')">▶</button>
+                            <button class="snake-btn" aria-label="Gauche" data-icon="arrow-left" onclick="setSnakeDirection('left')"></button>
+                            <button class="snake-btn" aria-label="Bas" data-icon="arrow-down" onclick="setSnakeDirection('down')"></button>
+                            <button class="snake-btn" aria-label="Droite" data-icon="arrow-right" onclick="setSnakeDirection('right')"></button>
                         </div>
                     </div>
-                    <button id="snake-start-btn" class="snake-start-btn" onclick="startSnakeGame()">🎮 Jouer</button>
-                    <p class="snake-hint">Utilise les flèches ↑↓←→ ou ZQSD</p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Modal Succès -->
-        <div id="achievements-modal" class="modal-overlay hidden">
-            <div class="achievements-content modal-content">
-                <h2>🏆 Succès</h2>
-                <button class="modal-close">✕</button>
-                <div id="achievements-list">
-                    <!-- Généré par JS -->
+                    <button id="snake-start-btn" class="snake-start-btn" onclick="startSnakeGame()">Jouer</button>
+                    <p class="snake-hint">Flèches ou ZQSD pour diriger</p>
                 </div>
             </div>
         </div>
 
-        <!-- Modal Attaque Facebook Nucléaire -->
+        <!-- Succès (version statique) -->
+        <div id="achievements-modal" class="modal-overlay hidden">
+            <div class="achievements-content modal-content">
+                <h2>Succès</h2>
+                <button class="modal-close" aria-label="Fermer" data-icon="x"></button>
+                <div id="achievements-list"></div>
+            </div>
+        </div>
+
+        <!-- Attaque Facebook -->
         <div id="facebook-attack-modal" class="modal-overlay hidden">
             <div class="facebook-attack-overlay"></div>
-            
-            <!-- Écran d'alerte initial -->
+
             <div id="facebook-alert-screen" class="facebook-alert-screen">
                 <div class="alert-content">
                     <div class="alert-icon-container">
-                        <span class="alert-icon">📘</span>
-                        <span class="alert-danger">⚠️</span>
+                        <span class="alert-icon" data-icon="warning"></span>
                     </div>
-                    <h1 class="alert-title">ALERTE FACEBOOK !!!!</h1>
-                    <p class="alert-message">Une attaque de Zuckerberg a été détectée !</p>
-                    <p class="alert-submessage">Vos données sont en danger !</p>
-                    <button id="facebook-alert-btn" class="alert-launch-btn">🚨 VOIR L'ATTAQUE</button>
+                    <span class="alert-kicker">Intrusion détectée</span>
+                    <h1 class="alert-title">Alerte Facebook</h1>
+                    <p class="alert-message">Une attaque de Zuckerberg a été détectée.</p>
+                    <p class="alert-submessage">Vos données sont en danger.</p>
+                    <button id="facebook-alert-btn" class="alert-launch-btn">Voir l'attaque</button>
                 </div>
             </div>
-            
-            <!-- Contenu vidéo (caché initialement) -->
+
             <div id="facebook-video-screen" class="facebook-attack-content hidden">
-                <button id="facebook-close-x" class="facebook-close-x" onclick="closeFacebookAttack()">✕</button>
+                <button id="facebook-close-x" class="facebook-close-x" aria-label="Fermer" data-icon="x" onclick="closeFacebookAttack()"></button>
                 <div class="facebook-attack-video-container">
                     <video id="facebook-attack-video">
                         <source src="./videos/nuclear.mp4" type="video/mp4">
@@ -275,36 +293,34 @@
                     <div class="video-glitch-effect"></div>
                 </div>
                 <div class="facebook-attack-footer">
-                    <p class="attack-warning">🔴 RIPOSTE EN COURS...</p>
+                    <p class="attack-warning">Riposte en cours…</p>
                     <div class="attack-progress">
                         <div id="facebook-attack-progress-bar"></div>
                     </div>
-                    <button id="facebook-attack-close-btn" class="hidden" onclick="closeFacebookAttack()">🛡️ DONNÉES PROTÉGÉES - Continuer</button>
+                    <button id="facebook-attack-close-btn" class="hidden" onclick="closeFacebookAttack()">Données protégées — continuer</button>
                 </div>
             </div>
         </div>
 
-        <!-- Modal Attaque OpenAI -->
+        <!-- Attaque OpenAI -->
         <div id="openai-attack-modal" class="modal-overlay hidden">
             <div class="openai-attack-overlay"></div>
 
-            <!-- Écran d'alerte initial -->
             <div id="openai-alert-screen" class="openai-alert-screen facebook-alert-screen">
                 <div class="alert-content">
                     <div class="alert-icon-container">
-                        <span class="alert-icon">🤖</span>
-                        <span class="alert-danger">⚠️</span>
+                        <span class="alert-icon" data-icon="bot"></span>
                     </div>
-                    <h1 class="alert-title">ALERTE OPENAI !!!!</h1>
-                    <p class="alert-message">Une intrusion OpenAI a été détectée !</p>
-                    <p class="alert-submessage">Un modèle tente d'exfiltrer des données sensibles !</p>
-                    <button id="openai-alert-btn" class="alert-launch-btn">🚨 VOIR L'ATTAQUE</button>
+                    <span class="alert-kicker">Intrusion détectée</span>
+                    <h1 class="alert-title">Alerte OpenAI</h1>
+                    <p class="alert-message">Une intrusion OpenAI a été détectée.</p>
+                    <p class="alert-submessage">Un modèle tente d'exfiltrer des données sensibles.</p>
+                    <button id="openai-alert-btn" class="alert-launch-btn">Voir l'attaque</button>
                 </div>
             </div>
 
-            <!-- Contenu vidéo (caché initialement) -->
             <div id="openai-video-screen" class="openai-attack-content facebook-attack-content hidden">
-                <button id="openai-close-x" class="openai-close-x facebook-close-x" onclick="closeOpenaiAttack()">✕</button>
+                <button id="openai-close-x" class="openai-close-x facebook-close-x" aria-label="Fermer" data-icon="x" onclick="closeOpenaiAttack()"></button>
                 <div class="openai-attack-video-container facebook-attack-video-container">
                     <video id="openai-attack-video" class="facebook-attack-video">
                         <source src="./videos/openai.mp4" type="video/mp4">
@@ -313,32 +329,33 @@
                     <div class="video-glitch-effect"></div>
                 </div>
                 <div class="openai-attack-footer facebook-attack-footer">
-                    <p class="attack-warning">🔴 RIPOSTE EN COURS...</p>
+                    <p class="attack-warning">Riposte en cours…</p>
                     <div class="attack-progress">
                         <div id="openai-attack-progress-bar"></div>
                     </div>
-                    <button id="openai-attack-close-btn" class="hidden" onclick="closeOpenaiAttack()">🛡️ DONNÉES PROTÉGÉES - Continuer</button>
+                    <button id="openai-attack-close-btn" class="hidden" onclick="closeOpenaiAttack()">Données protégées — continuer</button>
                 </div>
             </div>
         </div>
 
-        <!-- Notifications flottantes -->
-        <div id="floating-notifications"></div>
+        <!-- Notifications -->
+        <div id="floating-notifications" aria-live="polite"></div>
 
-        <!-- Modal Info -->
+        <!-- À propos -->
         <div id="info-modal" class="modal-overlay hidden">
             <div class="modal-content">
-                <h2>ℹ️ À propos</h2>
-                <button class="modal-close">✕</button>
+                <span class="modal-kicker">À propos</span>
+                <h2>NIRD Clicker</h2>
+                <button class="modal-close" aria-label="Fermer" data-icon="x"></button>
                 <div class="info-content">
                     <h3>But du projet</h3>
                     <p>
-                        NIRD Clicker est un jeu ludique créé pour la Nuit de l'Info 2025. 
-                        Son but est de sensibiliser les joueurs à l'importance du logiciel libre et de l'open source 
-                        dans la quête de la souveraineté numérique. NIRD est l'acronyme de "Numérique, Indépendant, 
-                        Robuste et Durable".
+                        NIRD Clicker est un jeu créé pour la Nuit de l'Info 2025.
+                        Il sensibilise à l'importance du logiciel libre et de l'open source
+                        dans la quête de la souveraineté numérique. NIRD signifie « Numérique Inclusif,
+                        Responsable et Durable ».
                     </p>
-                    <h3>Mentions Légales</h3>
+                    <h3>Mentions légales</h3>
                     <p>
                         Ce site est un projet étudiant réalisé dans le cadre de la Nuit de l'Info.
                         Les informations présentes sur ce site sont fictives.
@@ -352,27 +369,29 @@
     <!-- Scripts du jeu - Ordre de chargement important ! -->
     <!-- 1. Utils & Core (pas de dépendances) -->
     <script src="./js/utils/helpers.js"></script>
+    <script src="./js/core/icons.js"></script>
     <script src="./js/core/state.js"></script>
     <script src="./js/core/audio.js"></script>
     <script src="./js/core/save.js"></script>
     <script src="./js/core/loop.js"></script>
-    
+
     <!-- 2. Données (dépend de utils) -->
     <script src="./js/balancing.js"></script>
-    
+
     <!-- 3. Logique & UI core (version allégée) -->
     <script src="./js/gameLogic.js"></script>
     <script src="./js/ui-lite.js"></script>
     <script src="./js/events.js"></script>
-    
+
     <!-- 4. UI Modules optimisés (écrasent les fonctions legacy si nécessaire) -->
     <script src="./js/ui/display.js"></script>
     <script src="./js/ui/animations.js"></script>
     <script src="./js/ui/notifications.js"></script>
     <script src="./js/ui/modals.js"></script>
     <script src="./js/ui/upgrades-ui.js"></script>
+    <script src="./js/ui/scene.js"></script>
     <script src="./js/ui/boss.js"></script>
-    
+
     <!-- 5. Gamepad & Point d'entrée -->
     <script src="./js/gamepad.js"></script>
     <script src="./js/main.js"></script>

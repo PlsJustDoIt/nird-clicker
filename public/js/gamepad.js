@@ -193,7 +193,7 @@ function initGamepad() {
     // Démarrer la boucle de polling
     requestAnimationFrame(gamepadLoop);
     
-    console.log('🎮 Support Gamepad initialisé');
+    console.log('Support Gamepad initialisé');
 }
 
 // Mettre à jour l'UI du status gamepad
@@ -220,8 +220,8 @@ function onGamepadConnected(event) {
     gamepadState.index = gamepad.index;
     gamepadState.vibrationSupported = 'vibrationActuator' in gamepad || 'hapticActuators' in gamepad;
     
-    console.log(`🎮 Manette connectée : ${gamepad.id}`);
-    showNotification(`🎮 Manette "${gamepad.id.split('(')[0].trim()}" connectée !`, 'success');
+    console.log(`Manette connectée : ${gamepad.id}`);
+    showNotification(`Manette "${gamepad.id.split('(')[0].trim()}" connectée !`, 'success');
     
     // Mettre à jour l'UI
     updateGamepadStatusUI();
@@ -239,8 +239,8 @@ function onGamepadDisconnected(event) {
         gamepadState.connected = false;
         gamepadState.index = null;
         
-        console.log('🎮 Manette déconnectée');
-        showNotification('🎮 Manette déconnectée', 'warning');
+        console.log('Manette déconnectée');
+        showNotification('Manette déconnectée', 'warning');
         
         // Mettre à jour l'UI
         updateGamepadStatusUI();
@@ -826,7 +826,8 @@ function showPrestigeConfirmPopup() {
     popup.className = 'prestige-confirm-popup';
     popup.innerHTML = `
         <div class="prestige-confirm-content">
-            <h2>🔄 PRESTIGE</h2>
+            <span class="modal-kicker">Renaissance</span>
+            <h2>Prestige</h2>
             <div class="prestige-info">
                 <p class="prestige-points">Vous allez gagner <strong>+${pointsGained}</strong> point(s) de prestige !</p>
                 <div class="prestige-gains">
@@ -834,18 +835,18 @@ function showPrestigeConfirmPopup() {
                 </div>
             </div>
             <div class="prestige-losses">
-                <p class="loss-title">⚠️ Vous allez perdre :</p>
+                <p class="loss-title">Vous allez perdre :</p>
                 <ul>
-                    <li>💰 ${formatNum(currentScore)} points</li>
-                    <li>⚡ ${formatNum(currentProduction)}/sec production</li>
-                    <li>🔧 ${totalUpgrades} améliorations</li>
+                    <li>${formatNum(currentScore)} points</li>
+                    <li>${formatNum(currentProduction)}/s de production</li>
+                    <li>${totalUpgrades} bâtiments</li>
                 </ul>
             </div>
             <div class="prestige-buttons">
-                <button class="prestige-cancel-btn gamepad-selected" data-action="cancel">❌ Annuler</button>
-                <button class="prestige-confirm-btn" data-action="confirm">✅ Confirmer</button>
+                <button class="prestige-cancel-btn gamepad-selected" data-action="cancel">Annuler</button>
+                <button class="prestige-confirm-btn" data-action="confirm">Confirmer</button>
             </div>
-            <p class="prestige-hint">🎮 ← → pour choisir, A/X pour valider, B pour annuler</p>
+            <p class="prestige-hint">← → pour choisir, A/X pour valider, B pour annuler</p>
         </div>
     `;
     
@@ -949,7 +950,7 @@ function executePrestige() {
     
     if (typeof playSound === 'function') playSound('prestige');
     if (typeof showNotification === 'function') {
-        showNotification(`🔄 Prestige ! +${pointsGained} points, bonus +${gameState.prestigeLevel * 10}%`, 'prestige');
+        showNotification(`Prestige ! +${pointsGained} points, bonus +${gameState.prestigeLevel * 10}%`, 'prestige');
     }
     
     if (typeof calculateProductionPerSecond === 'function') calculateProductionPerSecond();
@@ -1365,7 +1366,7 @@ function showGamepadIndicator(show) {
             indicator = document.createElement('div');
             indicator.id = 'gamepad-indicator';
             indicator.innerHTML = `
-                <span class="gamepad-icon">🎮</span>
+                <span class="gamepad-icon">${icon('gamepad')}</span>
                 <span class="gamepad-text">Manette connectée</span>
             `;
             document.body.appendChild(indicator);
@@ -1394,22 +1395,22 @@ function createClickEffect() {
 function showGamepadHelp() {
     const helpContent = `
         <div class="gamepad-help">
-            <h3>🎮 Contrôles Manette</h3>
+            <h3>Contrôles Manette</h3>
             <div class="gamepad-help-grid">
                 <div class="gamepad-help-item">
-                    <span class="btn-icon">🅰️</span>
+                    <span class="btn-icon">A</span>
                     <span>Clic (maintenir pour spam)</span>
                 </div>
                 <div class="gamepad-help-item">
-                    <span class="btn-icon">🅱️</span>
+                    <span class="btn-icon">B</span>
                     <span>Fermer / Retour</span>
                 </div>
                 <div class="gamepad-help-item">
-                    <span class="btn-icon">🅧</span>
+                    <span class="btn-icon">X</span>
                     <span>Acheter upgrade</span>
                 </div>
                 <div class="gamepad-help-item">
-                    <span class="btn-icon">🅨</span>
+                    <span class="btn-icon">Y</span>
                     <span>Paramètres</span>
                 </div>
                 <div class="gamepad-help-item">

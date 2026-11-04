@@ -12,75 +12,111 @@
 // Ce module fournit des versions optimisées des fonctions d'upgrades
 
 // ============================================
+// OUTILS COMMUNS
+// ============================================
+
+/**
+ * Calcule le coût affiché et la quantité selon le mode d'achat courant
+ * @param {Upgrade} upgrade - Bâtiment
+ * @returns {{cost: number, count: number}} Coût total et quantité achetée
+ */
+function getDisplayedPurchase(upgrade) {
+    if (buyMode === 'max') {
+        const maxInfo = typeof getMaxAffordable === 'function'
+            ? getMaxAffordable(upgrade)
+            : { count: 0, totalCost: 0 };
+        return {
+            count: maxInfo.count || 0,
+            cost: maxInfo.totalCost || (typeof getUpgradeCost === 'function' ? getUpgradeCost(upgrade) : upgrade.baseCost)
+        };
+    }
+    return {
+        count: buyMode,
+        cost: typeof getMultiUpgradeCost === 'function'
+            ? getMultiUpgradeCost(upgrade, buyMode)
+            : upgrade.baseCost * buyMode
+    };
+}
+
+/**
+ * Markup du prix (jeton + montant)
+ * @param {number} cost - Montant
+ * @param {string} [suffix=''] - Texte additionnel (ex. quantité)
+ * @returns {string} HTML
+ */
+function priceMarkup(cost, suffix = '') {
+    return `<span class="price">${icon('token', 'price-token')}<span class="price-value">${formatNumber(cost)}</span>${suffix ? `<span class="price-qty">${suffix}</span>` : ''}</span>`;
+}
+
+// ============================================
 // MISE À JOUR DE LA LISTE DES UPGRADES
 // ============================================
 
 /**
- * Met à jour ou reconstruit la liste des upgrades de production
+ * Met à jour ou reconstruit la liste des bâtiments (production)
  */
 function updateUpgradesList() {
     const container = document.getElementById('upgrades-list');
     if (!container || typeof UPGRADES === 'undefined') return;
-    
-    // Vérifier si on doit recréer la liste ou juste mettre à jour
-    const existingItems = container.querySelectorAll('.upgrade-item[data-upgrade-id]');
+
     const unlockedUpgrades = UPGRADES.filter(u => u.unlocked);
-    const shouldRebuild = existingItems.length === 0 || 
-        existingItems.length !== unlockedUpgrades.length;
-    
-    if (shouldRebuild) {
+    const nextLocked = UPGRADES.find(u => !u.unlocked);
+    const rebuildKey = unlockedUpgrades.map(u => u.id).join('|') + '#' + (nextLocked ? nextLocked.id : '') + '#' + buyMode;
+
+    if (container.dataset.key !== rebuildKey) {
+        container.dataset.key = rebuildKey;
         container.innerHTML = '';
-        
-        unlockedUpgrades.forEach(upgrade => {
-            const upgradeEl = createUpgradeElement(upgrade);
-            container.appendChild(upgradeEl);
-        });
+        unlockedUpgrades.forEach(upgrade => container.appendChild(createUpgradeElement(upgrade)));
+        if (nextLocked) container.appendChild(createMysteryElement(nextLocked));
     } else {
-        // Mettre à jour les éléments existants sans recréer le DOM
-        UPGRADES.forEach(upgrade => {
-            if (upgrade.unlocked) {
-                const el = container.querySelector(`.upgrade-item[data-upgrade-id="${upgrade.id}"]`);
-                if (el) {
-                    updateUpgradeElement(el, upgrade);
-                }
-            }
+        unlockedUpgrades.forEach(upgrade => {
+            const el = container.querySelector(`.upgrade-item[data-upgrade-id="${upgrade.id}"]`);
+            if (el) updateUpgradeElement(el, upgrade);
         });
     }
-    
-    // Mettre à jour les upgrades de clic dans leur propre tab
+
     updateClickUpgradesList();
+    if (typeof updateShowcase === 'function') updateShowcase();
 }
 
 /**
- * Met à jour la liste des upgrades de clic
- * Affiche : les achetées + les 3 prochaines non achetées
+ * Met à jour la liste des améliorations de clic
+ * Affiche les prochaines améliorations disponibles + un bandeau des améliorations acquises
  */
 function updateClickUpgradesList() {
     const container = document.getElementById('click-upgrades-list');
     if (!container || typeof CLICK_UPGRADES === 'undefined') return;
-    
-    // Filtrer : achetées + 3 prochaines non achetées
+
     const purchased = CLICK_UPGRADES.filter(u => u.purchased);
-    const notPurchased = CLICK_UPGRADES.filter(u => !u.purchased);
-    const nextThree = notPurchased.slice(0, 3);
-    const visibleUpgrades = [...purchased, ...nextThree];
-    
-    const existingItems = container.querySelectorAll('.upgrade-item[data-click-upgrade-id]');
-    const shouldRebuild = existingItems.length !== visibleUpgrades.length;
-    
-    if (shouldRebuild) {
+    const available = CLICK_UPGRADES.filter(u => !u.purchased).slice(0, 4);
+    const rebuildKey = purchased.map(u => u.id).join('|') + '#' + available.map(u => u.id).join('|');
+
+    if (container.dataset.key !== rebuildKey) {
+        container.dataset.key = rebuildKey;
         container.innerHTML = '';
-        
-        visibleUpgrades.forEach(upgrade => {
-            const upgradeEl = createClickUpgradeElement(upgrade);
-            container.appendChild(upgradeEl);
-        });
+
+        const grid = document.createElement('div');
+        grid.className = 'click-grid';
+        available.forEach(upgrade => grid.appendChild(createClickUpgradeElement(upgrade)));
+        if (available.length === 0) {
+            grid.innerHTML = '<p class="empty-note">Toutes les améliorations de clic sont acquises.</p>';
+        }
+        container.appendChild(grid);
+
+        const owned = document.createElement('div');
+        owned.className = 'owned-strip';
+        owned.innerHTML = `
+            <h4 class="section-label">Acquises <span>${purchased.length} / ${CLICK_UPGRADES.length}</span></h4>
+            <div class="owned-icons">
+                ${purchased.length
+                    ? purchased.map(u => `<span class="owned-icon" data-tip="click:${u.id}">${icon(u.icon)}</span>`).join('')
+                    : '<span class="empty-note">Aucune pour l\'instant.</span>'}
+            </div>`;
+        container.appendChild(owned);
     } else {
-        visibleUpgrades.forEach(upgrade => {
+        available.forEach(upgrade => {
             const el = container.querySelector(`.upgrade-item[data-click-upgrade-id="${upgrade.id}"]`);
-            if (el) {
-                updateClickUpgradeElement(el, upgrade);
-            }
+            if (el) updateClickUpgradeElement(el, upgrade);
         });
     }
 }
@@ -90,155 +126,133 @@ function updateClickUpgradesList() {
 // ============================================
 
 /**
- * Crée un élément DOM pour une upgrade de production
- * @param {Upgrade} upgrade - L'upgrade à afficher
- * @returns {HTMLElement} Élément DOM de l'upgrade
+ * Crée une ligne de boutique pour un bâtiment
+ * @param {Upgrade} upgrade - Le bâtiment à afficher
+ * @returns {HTMLElement} Élément DOM
  */
 function createUpgradeElement(upgrade) {
-    let displayCount = buyMode;
-    let cost;
-    
-    if (buyMode === 'max') {
-        const maxInfo = typeof getMaxAffordable === 'function' 
-            ? getMaxAffordable(upgrade) 
-            : { count: 0, totalCost: 0 };
-        displayCount = maxInfo.count || 0;
-        cost = maxInfo.totalCost || (typeof getUpgradeCost === 'function' ? getUpgradeCost(upgrade) : upgrade.baseCost);
-    } else {
-        displayCount = buyMode;
-        cost = typeof getMultiUpgradeCost === 'function' 
-            ? getMultiUpgradeCost(upgrade, buyMode) 
-            : upgrade.baseCost * buyMode;
-    }
-    
-    const canAfford = gameState.score >= cost && displayCount > 0;
-    
-    const upgradeEl = document.createElement('div');
-    upgradeEl.className = `upgrade-item ${canAfford ? 'can-afford' : 'cannot-afford'}`;
+    const { cost, count } = getDisplayedPurchase(upgrade);
+    const canAfford = gameState.score >= cost && count > 0;
+
+    const upgradeEl = document.createElement('button');
+    upgradeEl.type = 'button';
+    upgradeEl.className = `upgrade-item store-row ${canAfford ? 'can-afford' : 'cannot-afford'}`;
     upgradeEl.setAttribute('data-upgrade-id', upgrade.id);
+    upgradeEl.setAttribute('data-tip', `upgrade:${upgrade.id}`);
     upgradeEl.innerHTML = `
-        <div class="upgrade-icon">${upgrade.icon}</div>
-        <div class="upgrade-info">
-            <div class="upgrade-header">
-                <span class="upgrade-name">${upgrade.name}</span>
-                <span class="upgrade-owned">x${upgrade.owned}</span>
-            </div>
-            <p class="upgrade-desc">${upgrade.description}</p>
-            <div class="upgrade-footer">
-                <span class="upgrade-cost">${formatNumber(cost)} pts ${buyMode !== 1 ? `(x${displayCount})` : ''}</span>
-                <span class="upgrade-production">+${upgrade.baseProduction}/sec</span>
-            </div>
-            <p class="upgrade-tip">${upgrade.info || ''}</p>
-        </div>
+        <span class="upgrade-icon">${icon(upgrade.icon)}</span>
+        <span class="upgrade-info">
+            <span class="upgrade-name">${upgrade.name}</span>
+            <span class="upgrade-meta">
+                <span class="upgrade-cost">${priceMarkup(cost, buyMode !== 1 ? `×${count}` : '')}</span>
+                <span class="upgrade-production">+${formatRate(upgrade.baseProduction)}/s</span>
+            </span>
+            <span class="upgrade-desc">${upgrade.description}</span>
+        </span>
+        <span class="upgrade-owned">${upgrade.owned || ''}</span>
     `;
-    
+
     upgradeEl.addEventListener('click', () => {
         if (typeof buyUpgrade === 'function') buyUpgrade(upgrade.id);
+        if (typeof refreshTooltip === 'function') refreshTooltip();
     });
-    
+
     return upgradeEl;
 }
 
 /**
- * Met à jour un élément d'upgrade existant sans recréer le DOM
- * @param {HTMLElement} el - Élément DOM de l'upgrade
- * @param {Upgrade} upgrade - Données de l'upgrade
+ * Crée la ligne « mystère » du prochain bâtiment verrouillé
+ * @param {Upgrade} upgrade - Prochain bâtiment
+ * @returns {HTMLElement} Élément DOM
  */
-function updateUpgradeElement(el, upgrade) {
-    let displayCount = buyMode;
-    let cost;
-    
-    if (buyMode === 'max') {
-        const maxInfo = typeof getMaxAffordable === 'function' 
-            ? getMaxAffordable(upgrade) 
-            : { count: 0, totalCost: 0 };
-        displayCount = maxInfo.count || 0;
-        cost = maxInfo.totalCost || (typeof getUpgradeCost === 'function' ? getUpgradeCost(upgrade) : upgrade.baseCost);
-    } else {
-        displayCount = buyMode;
-        cost = typeof getMultiUpgradeCost === 'function' 
-            ? getMultiUpgradeCost(upgrade, buyMode) 
-            : upgrade.baseCost * buyMode;
-    }
-    
-    const canAfford = gameState.score >= cost && displayCount > 0;
-    
-    // Mettre à jour la classe sans toucher au reste
-    el.classList.toggle('can-afford', canAfford);
-    el.classList.toggle('cannot-afford', !canAfford);
-    
-    // Mettre à jour les valeurs
-    const ownedEl = el.querySelector('.upgrade-owned');
-    if (ownedEl) ownedEl.textContent = `x${upgrade.owned}`;
-    
-    const costEl = el.querySelector('.upgrade-cost');
-    if (costEl) costEl.textContent = `${formatNumber(cost)} pts ${buyMode !== 1 ? `(x${displayCount})` : ''}`;
+function createMysteryElement(upgrade) {
+    const el = document.createElement('div');
+    el.className = 'store-row mystery';
+    el.setAttribute('aria-hidden', 'true');
+    el.innerHTML = `
+        <span class="upgrade-icon">${icon(upgrade.icon)}</span>
+        <span class="upgrade-info">
+            <span class="upgrade-name">???</span>
+            <span class="upgrade-meta"><span class="upgrade-cost">Révélé à ${formatNumber(upgrade.unlockAt || 0)} pts cumulés</span></span>
+        </span>
+        <span class="upgrade-owned"></span>
+    `;
+    return el;
 }
 
 /**
- * Crée un élément DOM pour une upgrade de clic
- * @param {ClickUpgrade} upgrade - L'upgrade de clic à afficher
- * @returns {HTMLElement} Élément DOM de l'upgrade
+ * Met à jour une ligne de boutique existante sans recréer le DOM
+ * @param {HTMLElement} el - Élément DOM
+ * @param {Upgrade} upgrade - Données du bâtiment
+ */
+function updateUpgradeElement(el, upgrade) {
+    const { cost, count } = getDisplayedPurchase(upgrade);
+    const canAfford = gameState.score >= cost && count > 0;
+
+    el.classList.toggle('can-afford', canAfford);
+    el.classList.toggle('cannot-afford', !canAfford);
+
+    const ownedEl = el.querySelector('.upgrade-owned');
+    const ownedText = upgrade.owned ? String(upgrade.owned) : '';
+    if (ownedEl && ownedEl.textContent !== ownedText) {
+        ownedEl.textContent = ownedText;
+        ownedEl.classList.remove('bump');
+        void ownedEl.offsetWidth;
+        ownedEl.classList.add('bump');
+    }
+
+    const costEl = el.querySelector('.upgrade-cost');
+    if (costEl) {
+        const html = priceMarkup(cost, buyMode !== 1 ? `×${count}` : '');
+        if (costEl.innerHTML !== html) costEl.innerHTML = html;
+    }
+}
+
+/**
+ * Crée une carte d'amélioration de clic
+ * @param {ClickUpgrade} upgrade - L'amélioration à afficher
+ * @returns {HTMLElement} Élément DOM
  */
 function createClickUpgradeElement(upgrade) {
     const isPurchased = upgrade.purchased;
     const canAfford = !isPurchased && gameState.score >= upgrade.cost;
-    
-    const upgradeEl = document.createElement('div');
-    upgradeEl.className = `upgrade-item click-upgrade ${isPurchased ? 'purchased' : (canAfford ? 'can-afford' : 'cannot-afford')}`;
+
+    const upgradeEl = document.createElement('button');
+    upgradeEl.type = 'button';
+    upgradeEl.className = `upgrade-item store-row click-upgrade click-card ${isPurchased ? 'purchased' : (canAfford ? 'can-afford' : 'cannot-afford')}`;
     upgradeEl.setAttribute('data-click-upgrade-id', upgrade.id);
+    upgradeEl.setAttribute('data-tip', `click:${upgrade.id}`);
     upgradeEl.innerHTML = `
-        <div class="upgrade-icon">${upgrade.icon}</div>
-        <div class="upgrade-info">
-            <div class="upgrade-header">
-                <span class="upgrade-name">${upgrade.name}</span>
-                ${isPurchased ? '<span class="upgrade-status">ACTIVÉ</span>' : ''}
-            </div>
-            <p class="upgrade-desc">${upgrade.description}</p>
-            <div class="upgrade-footer${isPurchased ? ' purchased-footer' : ''}">
-                ${!isPurchased ? `<span class="upgrade-cost">${formatNumber(upgrade.cost)} pts</span>` : ''}
-                <span class="upgrade-bonus">+${upgrade.bonus} par clic</span>
-            </div>
-        </div>
+        <span class="upgrade-icon">${icon(upgrade.icon)}</span>
+        <span class="upgrade-info">
+            <span class="upgrade-name">${upgrade.name}</span>
+            <span class="upgrade-bonus">+${formatNumber(upgrade.bonus)} par clic</span>
+            <span class="upgrade-cost">${priceMarkup(upgrade.cost)}</span>
+        </span>
     `;
-    
+
     if (!isPurchased) {
         upgradeEl.addEventListener('click', () => {
             if (typeof buyClickUpgrade === 'function') buyClickUpgrade(upgrade.id);
+            if (typeof hideTooltip === 'function') hideTooltip();
         });
     }
-    
+
     return upgradeEl;
 }
 
 /**
- * Met à jour un élément d'upgrade de clic existant
- * @param el
- * @param upgrade
+ * Met à jour une carte d'amélioration de clic existante
+ * @param {HTMLElement} el - Élément DOM
+ * @param {ClickUpgrade} upgrade - Données
  */
 function updateClickUpgradeElement(el, upgrade) {
     const isPurchased = upgrade.purchased;
     const canAfford = !isPurchased && gameState.score >= upgrade.cost;
-    
+
     el.classList.toggle('purchased', isPurchased);
     el.classList.toggle('can-afford', canAfford);
     el.classList.toggle('cannot-afford', !isPurchased && !canAfford);
-    
-    // Mettre à jour le statut si acheté
-    const headerEl = el.querySelector('.upgrade-header');
-    if (headerEl && isPurchased && !headerEl.querySelector('.upgrade-status')) {
-        headerEl.innerHTML = `
-            <span class="upgrade-name">${upgrade.name}</span>
-            <span class="upgrade-status">ACTIVÉ</span>
-        `;
-    }
-    
-    const footerEl = el.querySelector('.upgrade-footer');
-    if (footerEl && isPurchased) {
-        footerEl.classList.add('purchased-footer');
-        const costEl = footerEl.querySelector('.upgrade-cost');
-        if (costEl) costEl.remove();
-    }
 }
 
 // ============================================
@@ -327,47 +341,35 @@ function getTotalCostForQuantity(upgrade, quantity) {
 // ============================================
 
 /**
- * Affiche la liste des upgrades de prestige
+ * Affiche la liste des améliorations de prestige
  */
 function renderPrestigeUpgrades() {
     const container = document.getElementById('prestige-upgrades-list');
     if (!container || typeof PRESTIGE_UPGRADES === 'undefined') return;
-    
+
     container.innerHTML = '';
-    
+
     PRESTIGE_UPGRADES.forEach(upgrade => {
         const owned = gameState.prestigeUpgrades && gameState.prestigeUpgrades[upgrade.id];
         const canAfford = gameState.prestigePoints >= upgrade.cost;
-        
+
         const el = document.createElement('div');
-        let classes = 'prestige-upgrade-item';
-        if (owned) {
-            classes += ' purchased';
-        } else if (canAfford) {
-            classes += ' can-afford';
-        } else {
-            classes += ' cannot-afford';
-        }
-        el.className = classes;
+        el.className = `prestige-upgrade-item store-row ${owned ? 'purchased' : (canAfford ? 'can-afford' : 'cannot-afford')}`;
         el.innerHTML = `
-            <div class="upgrade-icon">${upgrade.icon || '⭐'}</div>
-            <div class="upgrade-info">
-                <div class="upgrade-header">
-                    <span class="upgrade-name">${upgrade.name}</span>
-                </div>
-                <p class="upgrade-desc">${upgrade.description}</p>
-                <div class="upgrade-footer">
-                    <span class="upgrade-cost">${owned ? '✓ Acheté' : upgrade.cost + ' pts prestige'}</span>
-                </div>
-            </div>
+            <span class="upgrade-icon">${icon(upgrade.icon || 'star')}</span>
+            <span class="upgrade-info">
+                <span class="upgrade-name">${upgrade.name}</span>
+                <span class="upgrade-desc is-visible">${upgrade.description}</span>
+            </span>
+            <span class="upgrade-cost prestige-cost">${owned ? icon('check') : `${icon('star', 'price-token')}${upgrade.cost}`}</span>
         `;
-        
+
         if (!owned && canAfford) {
             el.addEventListener('click', () => {
                 if (typeof buyPrestigeUpgrade === 'function') buyPrestigeUpgrade(upgrade.id);
             });
         }
-        
+
         container.appendChild(el);
     });
 }
@@ -377,37 +379,44 @@ function renderPrestigeUpgrades() {
 // ============================================
 
 /**
- * Affiche la liste des skins disponibles
+ * Affiche la liste des apparences du poste
  */
 function renderSkins() {
     const container = document.getElementById('skins-list');
     if (!container || typeof SKINS === 'undefined') return;
-    
+
     container.innerHTML = '';
-    
+
     SKINS.forEach(skin => {
         const owned = gameState.skinsUnlocked && gameState.skinsUnlocked.includes(skin.id);
         const isActive = gameState.currentSkin === skin.id;
         const canAfford = owned || gameState.score >= (skin.cost || 0);
-        
-        // Si c'est un skin caché et pas encore débloqué, ne l'afficher que si on peut se le permettre
+
+        // Skin caché : visible uniquement s'il est abordable ou possédé
         if (skin.hidden && !owned && !canAfford) return;
-        
-        const el = document.createElement('div');
-        el.className = `skin-item ${isActive ? 'active' : ''} ${!canAfford && !owned ? 'locked' : ''} ${skin.hidden ? 'secret-skin' : ''}`;
-        
+
+        const el = document.createElement('button');
+        el.type = 'button';
+        el.className = `skin-item ${isActive ? 'active' : ''} ${owned ? 'owned' : ''} ${!canAfford && !owned ? 'locked' : ''} ${skin.hidden ? 'secret-skin' : ''}`;
+        el.style.setProperty('--skin-tint', skin.tint || 'var(--accent)');
+
         const displayName = owned && skin.unlockedName ? skin.unlockedName : skin.name;
-        const iconContent = owned && skin.image 
-            ? `<img src="${skin.image}" alt="${displayName}" class="skin-image">` 
-            : skin.emoji;
-        
+        const iconContent = owned && skin.image
+            ? `<img src="${skin.image}" alt="" class="skin-image">`
+            : icon(skin.icon);
+
+        let footer;
+        if (isActive) footer = '<span class="skin-state">Équipé</span>';
+        else if (owned) footer = '<span class="skin-state">Possédé</span>';
+        else footer = `<span class="skin-cost">${priceMarkup(skin.cost)}</span>`;
+
         el.innerHTML = `
-            <div class="skin-icon">${iconContent}</div>
-            <div class="skin-name">${displayName}</div>
-            ${!owned && skin.cost > 0 ? `<div class="skin-cost">${formatNumber(skin.cost)} pts</div>` : ''}
-            ${isActive ? '<div class="skin-badge">✓</div>' : ''}
+            <span class="skin-icon">${iconContent}</span>
+            <span class="skin-name">${displayName}</span>
+            ${footer}
+            ${isActive ? `<span class="skin-badge">${icon('check')}</span>` : ''}
         `;
-        
+
         el.addEventListener('click', () => {
             if (owned) {
                 if (typeof applySkin === 'function') applySkin(skin.id);
@@ -416,7 +425,7 @@ function renderSkins() {
                 if (typeof buySkin === 'function') buySkin(skin.id);
             }
         });
-        
+
         container.appendChild(el);
     });
 }
@@ -431,15 +440,15 @@ function renderSkins() {
 function renderEncyclopedia() {
     const container = document.getElementById('encyclopedia-list');
     if (!container || typeof ENCYCLOPEDIA === 'undefined') return;
-    
+
     container.innerHTML = '';
-    
+
     ENCYCLOPEDIA.forEach(entry => {
         const el = document.createElement('div');
         el.className = 'encyclopedia-entry';
         el.innerHTML = `
             <div class="entry-header">
-                <span class="entry-icon">${entry.icon}</span>
+                <span class="entry-icon">${icon(entry.icon)}</span>
                 <div>
                     <h3>${entry.title}</h3>
                     <span class="entry-subtitle">${entry.subtitle || ''}</span>
@@ -477,6 +486,8 @@ function updatePrestigeDisplay() {
 
 // Exposer globalement
 window.updateUpgradesList = updateUpgradesList;
+window.priceMarkup = priceMarkup;
+window.getDisplayedPurchase = getDisplayedPurchase;
 window.updateClickUpgradesList = updateClickUpgradesList;
 window.createUpgradeElement = createUpgradeElement;
 window.updateUpgradeElement = updateUpgradeElement;

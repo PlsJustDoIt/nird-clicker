@@ -22,6 +22,16 @@ function formatNumber(num) {
 }
 
 /**
+ * Formate un débit (production par seconde) en gardant une décimale pour les petites valeurs
+ * @param {number} num - Valeur à formater
+ * @returns {string} Valeur formatée (ex: "0.5", "7", "1.20K")
+ */
+function formatRate(num) {
+    if (num < 1000 && num % 1 !== 0) return num.toFixed(1).replace(/\.0$/, '');
+    return formatNumber(num);
+}
+
+/**
  * Formate une durée en secondes pour l'affichage
  * @param {number} seconds - Durée en secondes
  * @returns {string} Durée formatée (ex: "2h 30m")

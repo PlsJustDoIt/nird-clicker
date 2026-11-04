@@ -19,7 +19,7 @@
  * @property {number} owned - Nombre d'upgrades possédées
  * @property {boolean} unlocked - Si l'upgrade est débloquée
  * @property {number} [unlockAt] - Score requis pour débloquer (optionnel)
- * @property {string} icon - Emoji ou icône de l'upgrade
+ * @property {string} icon - Nom de l'icône SVG (voir js/core/icons.js)
  */
 
 /**
@@ -32,7 +32,7 @@
  * @property {number} bonus - Bonus de clic apporté
  * @property {boolean} purchased - Si l'upgrade a été achetée
  * @property {number} [unlockAt] - Score requis pour débloquer
- * @property {string} icon - Emoji ou icône
+ * @property {string} icon - Nom de l'icône SVG (voir js/core/icons.js)
  */
 
 /**
@@ -40,7 +40,7 @@
  * @property {string} id - Identifiant unique du boss
  * @property {string} name - Nom du boss
  * @property {string} description - Description du boss
- * @property {string} icon - Emoji du boss
+ * @property {string} icon - Nom de l'icône SVG du boss
  * @property {number} difficulty - Difficulté (1-10)
  * @property {number} reward - Récompense en points
  * @property {number} [unlockAt] - Score minimum pour apparition
@@ -51,7 +51,7 @@
  * @property {string} id - Identifiant unique de l'événement
  * @property {string} name - Nom de l'événement
  * @property {string} description - Description de l'événement
- * @property {string} icon - Emoji de l'événement
+ * @property {string} icon - Nom de l'icône SVG de l'événement
  * @property {number} duration - Durée en millisecondes
  * @property {string} effect - Type d'effet appliqué
  * @property {number} [chance] - Probabilité d'apparition (0-1)
@@ -73,7 +73,7 @@
  * @property {number} cost - Coût en points de prestige
  * @property {string} effect - Type d'effet
  * @property {number} value - Valeur de l'effet
- * @property {string} icon - Emoji
+ * @property {string} icon - Nom de l'icône SVG
  * @property {boolean} [purchased] - Si déjà acheté
  */
 
@@ -82,7 +82,7 @@
  * @property {string} name - Nom du niveau du village
  * @property {number} minScore - Score minimum pour atteindre ce niveau
  * @property {string} description - Description du niveau
- * @property {string} emoji - Emoji du niveau
+ * @property {string} icon - Nom de l'icône SVG du niveau
  */
 
 /**
@@ -92,7 +92,7 @@
  * @property {number} value - Valeur à atteindre
  * @property {string} title - Titre du milestone
  * @property {string} description - Description
- * @property {string} icon - Emoji
+ * @property {string} icon - Nom de l'icône SVG
  * @property {number} [reward] - Récompense optionnelle
  */
 
@@ -110,7 +110,7 @@
  * @property {string} id - Identifiant unique
  * @property {string} name - Nom du succès
  * @property {string} description - Description
- * @property {string} icon - Emoji
+ * @property {string} icon - Nom de l'icône SVG
  * @property {string} condition - Type de condition ('score', 'clicks', etc.)
  * @property {number} value - Valeur à atteindre
  * @property {boolean} [unlocked] - Si débloqué
@@ -141,7 +141,8 @@
  * @property {string} id - Identifiant unique du skin
  * @property {string} name - Nom du skin
  * @property {string} description - Description
- * @property {string} icon - Emoji
+ * @property {string} icon - Nom de l'icône SVG
+ * @property {string} [tint] - Couleur de l'écran du poste pour ce skin
  * @property {number} [cost] - Coût en points (si achetable)
  * @property {string} [unlockCondition] - Condition de déblocage
  */
