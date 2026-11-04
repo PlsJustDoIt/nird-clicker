@@ -9,31 +9,36 @@ const MILESTONE_EVENTS = [
     {
         score: 100,
         triggered: false,
-        title: '🎓 Premier Éveil !',
+        title: 'Premier Éveil !',
+        icon: 'sprout',
         message: 'Vous avez sensibilisé votre premier élève à la souveraineté numérique !'
     },
     {
         score: 1000,
         triggered: false,
-        title: '🏫 La Classe s\'éveille !',
+        title: 'La Classe s\'éveille !',
+        icon: 'school',
         message: 'Toute une classe est maintenant convertie au logiciel libre !'
     },
     {
         score: 10000,
         triggered: false,
-        title: '🏘️ Le Village est né !',
+        title: 'Le Village est né !',
+        icon: 'houses',
         message: 'Votre établissement est devenu un véritable Village Numérique Responsable !'
     },
     {
         score: 100000,
         triggered: false,
-        title: '🌟 Reconnaissance Nationale !',
+        title: 'Reconnaissance Nationale !',
+        icon: 'landmark',
         message: 'Le ministère vous cite en exemple ! Votre projet inspire la France entière !'
     },
     {
         score: 1000000,
         triggered: false,
-        title: '🏆 LIBÉRATION TOTALE !',
+        title: 'Libération totale !',
+        icon: 'flag',
         message: 'Félicitations ! Vous avez atteint l\'indépendance numérique complète !'
     }
 ];
@@ -63,7 +68,7 @@ function showMilestoneModal(event) {
         <div class="milestone-content">
             <h2>${event.title}</h2>
             <p>${event.message}</p>
-            <div class="milestone-celebration">🎉🎊🎉</div>
+            <div class="milestone-celebration">${typeof icon === 'function' ? icon(event.icon || 'trophy') : ''}</div>
             <button class="milestone-close-btn">Continuer</button>
         </div>
     `;
@@ -130,26 +135,26 @@ function checkComboBonuses(combo) {
         gameState.score += bonus;
         gameState.totalScore += bonus;
         playSound('achievement');
-        showNotification(`🔥 Combo x10 ! +${bonus} points !`, 'combo');
+        showNotification(`Combo x10 ! +${bonus} points !`, 'combo');
     } else if (combo === 25) {
         const bonus = 200;
         gameState.score += bonus;
         gameState.totalScore += bonus;
         playSound('achievement');
-        showNotification(`🔥🔥 Combo x25 ! +${bonus} points !`, 'combo');
+        showNotification(`Combo x25 ! +${bonus} points !`, 'combo');
         checkDailyMissions();
     } else if (combo === 50) {
         const bonus = 1000;
         gameState.score += bonus;
         gameState.totalScore += bonus;
         playSound('achievement');
-        showNotification(`🔥🔥🔥 MEGA COMBO ! +${bonus} points !`, 'combo');
+        showNotification(`MEGA COMBO ! +${bonus} points !`, 'combo');
     } else if (combo === 100) {
         const bonus = 5000;
         gameState.score += bonus;
         gameState.totalScore += bonus;
         playSound('prestige');
-        showNotification(`💀 COMBO LÉGENDAIRE ! +${bonus} points !`, 'combo');
+        showNotification(`COMBO LÉGENDAIRE ! +${bonus} points !`, 'combo');
         createConfetti();
     }
 }
@@ -227,7 +232,7 @@ document.addEventListener('keydown', (e) => {
 
 function activateKonamiCode() {
     playSound('prestige');
-    showNotification('🎮 KONAMI CODE ACTIVÉ ! +10000 points !', 'achievement');
+    showNotification('KONAMI CODE ACTIVÉ ! +10000 points !', 'achievement');
     gameState.score += 10000;
     gameState.totalScore += 10000;
     updateUI();
@@ -236,7 +241,7 @@ function activateKonamiCode() {
 
 function activateNirdCode() {
     playSound('achievement');
-    showNotification('🌱 CODE NIRD ! Double production pendant 30s !', 'achievement');
+    showNotification('CODE NIRD ! Double production pendant 30s !', 'achievement');
     gameState.activeEffects.push({
         type: 'production_doubled',
         endTime: Date.now() + 30000
@@ -248,7 +253,7 @@ function activateNirdCode() {
 function activateLinuxCode() {
     playSound('achievement');
     const bonus = gameState.productionPerSecond * 60;
-    showNotification(`🐧 VIVE LINUX ! +${formatNumber(bonus)} points !`, 'achievement');
+    showNotification(`VIVE LINUX ! +${formatNumber(bonus)} points !`, 'achievement');
     gameState.score += bonus;
     gameState.totalScore += bonus;
     updateUI();
@@ -260,13 +265,13 @@ setInterval(() => {
     const lastSaveAgo = Math.floor((Date.now() - gameState.lastSave) / 1000);
     const autoSaveIndicator = document.getElementById('auto-save-indicator');
     if (autoSaveIndicator) {
-        autoSaveIndicator.textContent = `💾 Sauvegardé il y a ${lastSaveAgo}s`;
+        autoSaveIndicator.textContent = `Sauvegardé il y a ${lastSaveAgo}s`;
     }
 }, 1000);
 
 // Debug console
 
-console.log('%c🖥️ NIRD Clicker - Console Debug', 'font-size: 20px; color: #00d4aa;');
+console.log('%cNIRD Clicker - Console Debug', 'font-size: 20px; color: #00d4aa;');
 console.log('%cUtilisez window.DEBUG pour accéder aux commandes de débogage.', 'color: #aaa;');
 console.log('%cExemple: window.DEBUG.addScore(1000)', 'color: #888; font-style: italic;');
 
@@ -341,7 +346,7 @@ function triggerFacebookAttack() {
     
     // Montrer une notification
     if (typeof showNotification === 'function') {
-        showNotification('⚠️ ALERTE : Facebook tente une intrusion !', 'danger');
+        showNotification('ALERTE : Facebook tente une intrusion !', 'danger');
     }
     
     // Quand l'utilisateur clique sur le bouton d'alerte
@@ -363,7 +368,7 @@ function startFacebookVideo() {
     // Reset
     progressBar.style.width = '0%';
     closeBtn.classList.add('hidden');
-    warningText.textContent = '🔴 RIPOSTE EN COURS...';
+    warningText.textContent = 'RIPOSTE EN COURS...';
     
     // Jouer la vidéo (maintenant c'est après un clic utilisateur, donc l'audio marche)
     video.currentTime = 0;
@@ -371,7 +376,7 @@ function startFacebookVideo() {
     video.volume = 1;
     video.play().catch(err => console.log('Video play error:', err));
     
-    // Démarrer les vibrations sur mobile 📳
+    // Démarrer les vibrations sur mobile 
     startVideoVibration();
     
     // Jouer le son d'alerte si disponible
@@ -392,7 +397,7 @@ function startFacebookVideo() {
             gameState.totalScore += bonus;
             
             if (typeof showNotification === 'function') {
-                showNotification(`🛡️ Facebook repoussé ! +${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points !`, 'success');
+                showNotification(`Facebook repoussé ! +${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points !`, 'success');
             }
             
             if (typeof createConfetti === 'function') {
@@ -418,7 +423,7 @@ function finishFacebookAttack() {
     
     progressBar.style.width = '100%';
     closeBtn.classList.remove('hidden');
-    warningText.textContent = '🟢 PROTECTION ACTIVÉE !';
+    warningText.textContent = 'PROTECTION ACTIVÉE !';
     
     // Donner le bonus (une seule fois)
     if (!facebookBonusGiven) {
@@ -429,7 +434,7 @@ function finishFacebookAttack() {
             playSound('achievement');
         }
         
-        warningText.innerHTML = `✅ DONNÉES PROTÉGÉES ! <span style="color: #00d4aa;">+${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points</span>`;
+        warningText.innerHTML = `DONNÉES PROTÉGÉES ! <span class="attack-bonus">+${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points</span>`;
     }
 }
 
@@ -472,7 +477,7 @@ function closeFacebookAttack() {
         gameState.totalScore += bonus;
         
         if (typeof showNotification === 'function') {
-            showNotification(`🛡️ Facebook repoussé ! +${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points !`, 'success');
+            showNotification(`Facebook repoussé ! +${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points !`, 'success');
         }
         
         if (typeof createConfetti === 'function') {
@@ -536,7 +541,7 @@ function triggerRandomEvent(event) {
     
     // Afficher la notification
     if (typeof showNotification === 'function') {
-        showNotification(`${event.name} - ${event.description}`, 'event');
+        showNotification(`<strong>${event.name}</strong> ${event.description}`, 'event', 4000, event.icon);
     }
     
     // Jouer le son
@@ -703,7 +708,7 @@ function triggerOpenaiAttack() {
     document.body.classList.add('modal-open');
 
     if (typeof showNotification === 'function') {
-        showNotification('⚠️ ALERTE : OpenAI tente une intrusion !', 'danger');
+        showNotification('ALERTE : OpenAI tente une intrusion !', 'danger');
     }
 
     alertBtn.onclick = startOpenaiVideo;
@@ -722,7 +727,7 @@ function startOpenaiVideo() {
 
     progressBar.style.width = '0%';
     closeBtn.classList.add('hidden');
-    warningText.textContent = '🔴 RIPOSTE EN COURS...';
+    warningText.textContent = 'RIPOSTE EN COURS...';
 
     video.currentTime = 0;
     video.muted = false;
@@ -744,7 +749,7 @@ function startOpenaiVideo() {
             gameState.score += bonus;
             gameState.totalScore += bonus;
             if (typeof showNotification === 'function') {
-                showNotification(`🛡️ OpenAI repoussé ! +${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points !`, 'success');
+                showNotification(`OpenAI repoussé ! +${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points !`, 'success');
             }
             if (typeof createConfetti === 'function') createConfetti();
         }
@@ -766,13 +771,13 @@ function finishOpenaiAttack() {
 
     progressBar.style.width = '100%';
     closeBtn.classList.remove('hidden');
-    warningText.textContent = '🟢 PROTECTION ACTIVÉE !';
+    warningText.textContent = 'PROTECTION ACTIVÉE !';
 
     if (!openaiBonusGiven) {
         openaiBonusGiven = true;
         const bonus = Math.floor(gameState.productionPerSecond * 30 + 600);
         if (typeof playSound === 'function') playSound('achievement');
-        warningText.innerHTML = `✅ DONNÉES PROTÉGÉES ! <span style="color: #00d4aa;">+${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points</span>`;
+        warningText.innerHTML = `DONNÉES PROTÉGÉES ! <span class="attack-bonus">+${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points</span>`;
     }
 }
 
@@ -807,7 +812,7 @@ function closeOpenaiAttack() {
         const bonus = Math.floor(gameState.productionPerSecond * 30 + 600);
         gameState.score += bonus;
         gameState.totalScore += bonus;
-        if (typeof showNotification === 'function') showNotification(`🛡️ OpenAI repoussé ! +${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points !`, 'success');
+        if (typeof showNotification === 'function') showNotification(`OpenAI repoussé ! +${typeof formatNumber === 'function' ? formatNumber(bonus) : bonus} points !`, 'success');
         if (typeof createConfetti === 'function') createConfetti();
     }
 

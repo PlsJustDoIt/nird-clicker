@@ -123,10 +123,10 @@ function generateBossHTML() {
     const mechanicHint = getMechanicHint(bossState.activeMechanic);
     
     return `
-        <button id="boss-skip-btn" class="boss-skip-btn hidden" title="Quitter le boss">✕</button>
+        <button id="boss-skip-btn" class="boss-skip-btn hidden" title="Quitter le boss" aria-label="Quitter">${icon('x')}</button>
         <div class="boss-header" style="background-color: ${currentBoss.color}">
-            <span class="boss-icon" id="boss-icon-main">${currentBoss.icon}</span>
-            <h2>${currentBoss.name}</h2>
+            <span class="boss-icon" id="boss-icon-main">${icon(currentBoss.icon)}</span>
+            <div class="boss-titles"><span class="boss-kicker">Fenêtre intrusive</span><h2>${currentBoss.name}</h2></div>
         </div>
         <p class="boss-message" id="boss-message">${currentBoss.message}</p>
         <p class="boss-mechanic-hint" id="mechanic-hint">${mechanicHint}</p>
@@ -135,12 +135,12 @@ function generateBossHTML() {
         </div>
         <div class="boss-status" id="boss-status"></div>
         <p class="boss-clicks">Clics restants: <span id="boss-clicks-left">${bossClicksRemaining}</span></p>
-        ${currentBoss.mechanic === 'timer' ? `<p class="boss-timer" id="boss-timer">⏱️ <span id="boss-timer-value">${(currentBoss.mechanicParams.timeLimit / 1000).toFixed(1)}</span>s</p>` : ''}
+        ${currentBoss.mechanic === 'timer' ? `<p class="boss-timer" id="boss-timer">${icon('hourglass')} <span id="boss-timer-value">${(currentBoss.mechanicParams.timeLimit / 1000).toFixed(1)}</span>s</p>` : ''}
         ${currentBoss.mechanic === 'pattern' ? `<div class="boss-pattern" id="boss-pattern"></div>` : ''}
         <div class="boss-popups-container" id="boss-popups"></div>
         <div class="boss-click-zone" id="boss-click-zone">
             <button id="boss-click-btn" class="boss-btn" style="background-color: ${currentBoss.color}">
-                ❌ FERMER ${currentBoss.icon}
+                ${icon('x')}<span>Fermer</span>
             </button>
         </div>
     `;
@@ -153,22 +153,22 @@ function generateBossHTML() {
  */
 function getMechanicHint(mechanic) {
     const hints = {
-        'classic': '👆 Cliquez pour fermer !',
-        'regen': '⚠️ Cliquez vite, sinon il se régénère !',
-        'invisible': '👁️ Il disparaît par moments...',
-        'popups': '📢 Fermez les pubs qui apparaissent !',
-        'timer': '⏰ Vite ! Le temps presse !',
-        'pattern': '🎮 Reproduisez le pattern !',
-        'lag': '🔄 Connexion lente... clics retardés',
-        'moving': '🎯 Il bouge ! Suivez-le !',
-        'shield': '🛡️ Attendez que le bouclier tombe !',
-        'phases': '⚡ Plusieurs phases à affronter !',
-        'chaos': '💀 CHAOS : Tout peut arriver !',
+        'classic': 'Cliquez pour fermer !',
+        'regen': 'Cliquez vite, sinon il se régénère !',
+        'invisible': 'Il disparaît par moments...',
+        'popups': 'Fermez les pubs qui apparaissent !',
+        'timer': 'Vite ! Le temps presse !',
+        'pattern': 'Reproduisez le pattern !',
+        'lag': 'Connexion lente... clics retardés',
+        'moving': 'Il bouge ! Suivez-le !',
+        'shield': 'Attendez que le bouclier tombe !',
+        'phases': 'Plusieurs phases à affronter !',
+        'chaos': 'CHAOS : Tout peut arriver !',
         // === MÉCANIQUES WTF ===
-        'randomClickValue': '🌀 Chaque clic a une valeur aléatoire !',
-        'multiplierRandom': '🛸 Parfois vos clics sont multipliés x10 !',
-        'buggyClicks': '👾 Certains clics sont annulés ou doublés !',
-        'rootRandom': '🗝️ 1% de tout perdre, 1% de jackpot !'
+        'randomClickValue': 'Chaque clic a une valeur aléatoire !',
+        'multiplierRandom': 'Parfois vos clics sont multipliés x10 !',
+        'buggyClicks': 'Certains clics sont annulés ou doublés !',
+        'rootRandom': '1% de tout perdre, 1% de jackpot !'
     };
     return hints[mechanic] || hints['classic'];
 }
@@ -249,7 +249,7 @@ function startRegenMechanic(params) {
 function startInvisibleMechanic(params) {
     const visibleDuration = params.visibleDuration || 2000;
     const invisibleDuration = params.invisibleDuration || 1500;
-    const invisibleMessage = params.invisibleMessage || '👁️ Invisible !';
+    const invisibleMessage = params.invisibleMessage || 'Invisible !';
     
     const setVisible = (visible) => {
         bossState.invisible = !visible;
@@ -266,7 +266,7 @@ function startInvisibleMechanic(params) {
             if (icon) icon.style.opacity = '1';
             if (btn) btn.classList.remove('boss-invisible');
             if (clickZone) clickZone.classList.remove('boss-invisible');
-            showBossStatus('👁️ Visible !', 'success');
+            showBossStatus('Visible !', 'success');
         }
     };
     
@@ -303,7 +303,7 @@ function createBossPopup(params) {
     const container = document.getElementById('boss-popups');
     if (!container) return;
     
-    const popupTexts = params.popupTexts || ['📢 PUB!', '🔔 NOTIF!', '💰 SPAM!', '⚠️ ALERTE!'];
+    const popupTexts = params.popupTexts || ['PUB!', 'NOTIF!', 'SPAM!', 'ALERTE!'];
     const popupDuration = params.popupDuration || 2500;
     const stolenClicks = params.stolenClicks || 3;
     
@@ -313,7 +313,7 @@ function createBossPopup(params) {
     popup.className = 'boss-popup boss-popup-blocking';
     popup.innerHTML = `
         <span class="popup-text">${popupTexts[Math.floor(Math.random() * popupTexts.length)]}</span>
-        <button class="popup-close">✕</button>
+        <button class="popup-close" aria-label="Fermer">${icon('x')}</button>
     `;
     
     const spreadFactor = Math.max(0, 30 - existingPopups * 5);
@@ -335,7 +335,7 @@ function createBossPopup(params) {
         if (popup.parentNode) {
             bossClicksRemaining = Math.min(bossMaxClicks, bossClicksRemaining + stolenClicks);
             updateBossUI();
-            showBossStatus('📢 Pub non fermée ! +' + stolenClicks + ' clics', 'danger');
+            showBossStatus('Pub non fermée ! +' + stolenClicks + ' clics', 'danger');
             popup.remove();
         }
     }, popupDuration);
@@ -361,7 +361,7 @@ function startTimerMechanic(params) {
         
         if (timeRemaining <= 0) {
             clearAllBossTimers();
-            failBoss('⏰ Temps écoulé ! Le boss s\'est échappé...');
+            failBoss('Temps écoulé ! Le boss s\'est échappé...');
         }
     }, 100);
 }
@@ -414,9 +414,9 @@ function handlePatternKey(e) {
     if (!currentBoss || currentBoss.mechanic !== 'pattern') return;
     
     const keyMap = {
-        'ArrowUp': '⬆️', 'ArrowDown': '⬇️', 'ArrowLeft': '⬅️', 'ArrowRight': '➡️',
-        'z': '⬆️', 'Z': '⬆️', 's': '⬇️', 'S': '⬇️', 'q': '⬅️', 'Q': '⬅️', 'd': '➡️', 'D': '➡️',
-        'w': '⬆️', 'W': '⬆️', 'a': '⬅️', 'A': '⬅️'
+        'ArrowUp': '↑', 'ArrowDown': '↓', 'ArrowLeft': '←', 'ArrowRight': '→',
+        'z': '↑', 'Z': '↑', 's': '↓', 'S': '↓', 'q': '←', 'Q': '←', 'd': '→', 'D': '→',
+        'w': '↑', 'W': '↑', 'a': '←', 'A': '←'
     };
     
     const pressed = keyMap[e.key];
@@ -444,7 +444,7 @@ function processPatternInput(pressed) {
             const damage = Math.ceil(bossMaxClicks / 4);
             bossClicksRemaining = Math.max(0, bossClicksRemaining - damage);
             updateBossUI();
-            showBossStatus('✅ Pattern réussi ! -' + damage + ' clics', 'success');
+            showBossStatus('Pattern réussi ! -' + damage + ' clics', 'success');
             
             if (bossClicksRemaining <= 0) {
                 closeBoss(true);
@@ -455,7 +455,7 @@ function processPatternInput(pressed) {
     } else {
         bossState.patternIndex = 0;
         displayPattern();
-        showBossStatus('❌ Mauvaise touche !', 'danger');
+        showBossStatus('Mauvaise touche !', 'danger');
         if (typeof playSound === 'function') playSound('boss');
     }
 }
@@ -465,7 +465,7 @@ function processPatternInput(pressed) {
  * @param direction
  */
 function handlePatternGamepad(direction) {
-    const directionMap = { 'up': '⬆️', 'down': '⬇️', 'left': '⬅️', 'right': '➡️' };
+    const directionMap = { 'up': '↑', 'down': '↓', 'left': '←', 'right': '→' };
     const pressed = directionMap[direction];
     if (pressed) processPatternInput(pressed);
 }
@@ -539,7 +539,7 @@ function startShieldMechanic(params) {
             showBossStatus(params.shieldMessage, 'warning');
         } else {
             if (btn) btn.classList.remove('boss-shielded');
-            showBossStatus('🎯 Bouclier désactivé !', 'success');
+            showBossStatus('Bouclier désactivé !', 'success');
         }
         
         const delay = bossState.shieldActive ? params.shieldDuration : params.shieldCooldown;
@@ -602,7 +602,7 @@ function startChaosMechanic(params) {
         bossState.activeMechanic = randomMechanic;
         
         const hint = document.getElementById('mechanic-hint');
-        if (hint) hint.textContent = '💀 ' + getMechanicHint(randomMechanic);
+        if (hint) hint.textContent = getMechanicHint(randomMechanic);
         
         const defaultParams = getDefaultMechanicParams(randomMechanic);
         
@@ -626,17 +626,17 @@ function startChaosMechanic(params) {
  */
 function getDefaultMechanicParams(mechanic) {
     const defaults = {
-        'regen': { regenDelay: 2000, regenAmount: 5, regenMessage: '⚠️ Régénération !' },
-        'popups': { popupInterval: 2000, popupDuration: 2500, stolenClicks: 3, popupTexts: ['📢 PUB!', '🔔 NOTIF!', '💰 SPAM!'] },
-        'shield': { shieldDuration: 1500, shieldCooldown: 2000, shieldMessage: '🛡️ Bouclier !' },
-        'moving': { moveInterval: 1000, moveMessage: '🎯 Il bouge !' },
-        'lag': { lagDelay: 500, lagMessage: '🔄 LAG !' },
-        'invisible': { visibleDuration: 2000, invisibleDuration: 1500, invisibleMessage: '👁️ Invisible !' },
+        'regen': { regenDelay: 2000, regenAmount: 5, regenMessage: 'Régénération !' },
+        'popups': { popupInterval: 2000, popupDuration: 2500, stolenClicks: 3, popupTexts: ['PUB!', 'NOTIF!', 'SPAM!'] },
+        'shield': { shieldDuration: 1500, shieldCooldown: 2000, shieldMessage: 'Bouclier !' },
+        'moving': { moveInterval: 1000, moveMessage: 'Il bouge !' },
+        'lag': { lagDelay: 500, lagMessage: 'LAG !' },
+        'invisible': { visibleDuration: 2000, invisibleDuration: 1500, invisibleMessage: 'Invisible !' },
         // === MÉCANIQUES WTF ===
-        'randomClickValue': { min: 1, max: 5, message: '🌀 Valeur aléatoire !' },
-        'multiplierRandom': { chance: 0.1, multiplier: 5, message: '🛸 Multiplicateur !' },
-        'buggyClicks': { cancelChance: 0.15, doubleChance: 0.1, message: '👾 Clics buggés !' },
-        'rootRandom': { wipeChance: 0.01, jackpotChance: 0.01, message: '🗝️ Root aléatoire !' }
+        'randomClickValue': { min: 1, max: 5, message: 'Valeur aléatoire !' },
+        'multiplierRandom': { chance: 0.1, multiplier: 5, message: 'Multiplicateur !' },
+        'buggyClicks': { cancelChance: 0.15, doubleChance: 0.1, message: 'Clics buggés !' },
+        'rootRandom': { wipeChance: 0.01, jackpotChance: 0.01, message: 'Root aléatoire !' }
     };
     return defaults[mechanic] || {};
 }
@@ -653,7 +653,7 @@ function getDefaultMechanicParams(mechanic) {
 function startRandomClickValueMechanic(params) {
     bossState.randomClickMin = params.min || 1;
     bossState.randomClickMax = params.max || 5;
-    showBossStatus(params.message || '🌀 Valeur aléatoire !', 'info');
+    showBossStatus(params.message || 'Valeur aléatoire !', 'info');
 }
 
 // === MÉCANIQUE : MULTIPLIER RANDOM (Illuminati) ===
@@ -664,7 +664,7 @@ function startRandomClickValueMechanic(params) {
 function startMultiplierRandomMechanic(params) {
     bossState.multiplierChance = params.chance || 0.1;
     bossState.multiplierValue = params.multiplier || 5;
-    showBossStatus(params.message || '🛸 Multiplicateur secret !', 'info');
+    showBossStatus(params.message || 'Multiplicateur secret !', 'info');
 }
 
 // === MÉCANIQUE : BUGGY CLICKS (Théorie de la Simulation) ===
@@ -675,7 +675,7 @@ function startMultiplierRandomMechanic(params) {
 function startBuggyClicksMechanic(params) {
     bossState.cancelChance = params.cancelChance || 0.2;
     bossState.doubleChance = params.doubleChance || 0.1;
-    showBossStatus(params.message || '👾 Clics buggés !', 'warning');
+    showBossStatus(params.message || 'Clics buggés !', 'warning');
 }
 
 // === MÉCANIQUE : ROOT RANDOM (Accès Root Universel) ===
@@ -686,7 +686,7 @@ function startBuggyClicksMechanic(params) {
 function startRootRandomMechanic(params) {
     bossState.wipeChance = params.wipeChance || 0.01;
     bossState.jackpotChance = params.jackpotChance || 0.01;
-    showBossStatus(params.message || '🗝️ Root aléatoire !', 'danger');
+    showBossStatus(params.message || 'Root aléatoire !', 'danger');
 }
 
 // ============================================
@@ -700,19 +700,19 @@ function handleBossClick() {
     const popupContainer = document.getElementById('boss-popups');
     const activePopups = popupContainer ? popupContainer.querySelectorAll('.boss-popup').length : 0;
     if (activePopups > 0) {
-        showBossStatus('📢 Fermez les pubs d\'abord !', 'warning');
+        showBossStatus('Fermez les pubs d\'abord !', 'warning');
         if (typeof playSound === 'function') playSound('boss');
         return;
     }
     
     if (bossState.shieldActive) {
-        showBossStatus('🛡️ Bouclier actif !', 'danger');
+        showBossStatus('Bouclier actif !', 'danger');
         if (typeof playSound === 'function') playSound('boss');
         return;
     }
     
     if (bossState.invisible) {
-        showBossStatus('👁️ Cible invisible !', 'danger');
+        showBossStatus('Cible invisible !', 'danger');
         if (typeof playSound === 'function') playSound('boss');
         return;
     }
@@ -723,7 +723,7 @@ function handleBossClick() {
     }
     
     if (currentBoss.mechanic === 'pattern') {
-        showBossStatus('🎮 Utilisez les flèches !', 'info');
+        showBossStatus('Utilisez les flèches !', 'info');
         return;
     }
     
@@ -733,13 +733,13 @@ function handleBossClick() {
     // Mécanique: Delayed Clicks (Terre Plate)
     if (mechanic === 'delayedClicks') {
         const delay = bossState.delayedClicksDelay || 1000;
-        showBossStatus('🌍 Clic en attente...', 'info');
+        showBossStatus('Clic en attente...', 'info');
         setTimeout(() => {
             if (bossClicksRemaining > 0) {
                 bossClicksRemaining--;
                 updateBossUI();
                 if (typeof playSound === 'function') playSound('click');
-                showBossStatus('🌍 Clic arrivé !', 'success');
+                showBossStatus('Clic arrivé !', 'success');
                 if (bossClicksRemaining <= 0) closeBoss(true);
             }
         }, delay);
@@ -752,15 +752,15 @@ function handleBossClick() {
         
         // 1% de chance de tout perdre
         if (roll < bossState.wipeChance) {
-            showBossStatus('💀 WIPE ! Vous avez tout perdu...', 'danger');
+            showBossStatus('WIPE ! Vous avez tout perdu...', 'danger');
             if (typeof playSound === 'function') playSound('boss');
-            failBoss('💀 Le root vous a effacé... Boss perdu !');
+            failBoss('Le root vous a effacé... Boss perdu !');
             return;
         }
         
         // 1% de chance de jackpot (victoire instantanée)
         if (roll < bossState.wipeChance + bossState.jackpotChance) {
-            showBossStatus('🎰 JACKPOT ! Victoire instantanée !', 'success');
+            showBossStatus('JACKPOT ! Victoire instantanée !', 'success');
             bossClicksRemaining = 0;
             updateBossUI();
             if (typeof playSound === 'function') playSound('achievement');
@@ -775,7 +775,7 @@ function handleBossClick() {
         
         // Chance d'annuler le clic
         if (roll < bossState.cancelChance) {
-            showBossStatus('❌ Clic annulé par la matrice !', 'danger');
+            showBossStatus('Clic annulé par la matrice !', 'danger');
             if (typeof playSound === 'function') playSound('boss');
             return;
         }
@@ -783,7 +783,7 @@ function handleBossClick() {
         // Chance de doubler le clic
         if (roll < bossState.cancelChance + bossState.doubleChance) {
             bossClicksRemaining -= 2;
-            showBossStatus('✨ Clic doublé !', 'success');
+            showBossStatus('Clic doublé !', 'success');
             if (typeof playSound === 'function') playSound('achievement');
             updateBossUI();
             if (bossClicksRemaining <= 0) closeBoss(true);
@@ -797,7 +797,7 @@ function handleBossClick() {
         const max = bossState.randomClickMax || 5;
         const damage = Math.floor(Math.random() * (max - min + 1)) + min;
         bossClicksRemaining -= damage;
-        showBossStatus(`🌀 Clic de valeur ${damage} !`, damage > (max / 2) ? 'success' : 'info');
+        showBossStatus(`Clic de valeur ${damage} !`, damage > (max / 2) ? 'success' : 'info');
         if (typeof playSound === 'function') playSound('click');
         updateBossUI();
         if (bossState.onHit) bossState.onHit();
@@ -810,7 +810,7 @@ function handleBossClick() {
         let damage = 1;
         if (Math.random() < bossState.multiplierChance) {
             damage = bossState.multiplierValue || 5;
-            showBossStatus(`🛸 x${damage} ! Multiplicateur secret !`, 'success');
+            showBossStatus(`x${damage} ! Multiplicateur secret !`, 'success');
             if (typeof playSound === 'function') playSound('achievement');
         } else {
             if (typeof playSound === 'function') playSound('click');
@@ -950,7 +950,7 @@ function closeBoss(victory = true) {
         
         if (typeof playSound === 'function') playSound('achievement');
         if (typeof showNotification === 'function') {
-            showNotification(`🎉 ${bossInfo.name} fermé ! +${formatNumber(bonus)} points bonus !`, 'success');
+            showNotification(`${bossInfo.name} fermé ! +${formatNumber(bonus)} points bonus !`, 'success');
         }
         
         if (typeof checkAchievements === 'function') checkAchievements();

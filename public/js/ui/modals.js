@@ -32,46 +32,46 @@ function openSettingsMenu() {
     modal.className = 'settings-modal modal-overlay';
     modal.innerHTML = `
         <div class="modal-content settings-content">
-            <h2>⚙️ Options</h2>
-            <p class="gamepad-hint">🎮 D-Pad: naviguer • A: activer • B: fermer</p>
+            <h2>Options</h2>
+            <p class="gamepad-hint">${icon('gamepad')} D-Pad : naviguer · A : activer · B : fermer</p>
             
             <div class="setting-item gamepad-selectable" data-index="0">
-                <span>🔊 Sons</span>
+                <span>${icon('volume')}Sons</span>
                 <button id="sound-toggle-btn" class="${gameState.soundEnabled ? 'active' : ''}">
                     ${gameState.soundEnabled ? 'ON' : 'OFF'}
                 </button>
             </div>
             
             <div class="setting-item gamepad-selectable" data-index="1">
-                <span>✨ Particules</span>
+                <span>${icon('sparkles')}Particules</span>
                 <button id="particles-toggle-btn" class="${gameState.particlesEnabled ? 'active' : ''}">
                     ${gameState.particlesEnabled ? 'ON' : 'OFF'}
                 </button>
             </div>
             
             <div class="setting-item gamepad-selectable" data-index="2">
-                <span>🎨 Thème</span>
+                <span>${icon('palette')}Thème</span>
                 <div class="theme-selector-gamepad">
-                    <button class="theme-arrow" id="theme-prev">◀</button>
+                    <button class="theme-arrow" id="theme-prev" aria-label="Thème précédent">${icon('chevron-left')}</button>
                     <span class="theme-name" id="theme-current">${currentTheme.name}</span>
-                    <button class="theme-arrow" id="theme-next">▶</button>
+                    <button class="theme-arrow" id="theme-next" aria-label="Thème suivant">${icon('chevron-right')}</button>
                 </div>
             </div>
             
             <hr>
             
             <div class="setting-item gamepad-selectable" data-index="3">
-                <span>💾 Exporter</span>
-                <button id="export-btn">📤 Exporter</button>
+                <span>${icon('download')}Exporter la sauvegarde</span>
+                <button id="export-btn">Exporter</button>
             </div>
             
             <div class="setting-item gamepad-selectable" data-index="4">
-                <span>💾 Importer</span>
-                <button id="import-btn">📥 Importer</button>
+                <span>${icon('upload')}Importer une sauvegarde</span>
+                <button id="import-btn">Importer</button>
             </div>
             
             <div class="setting-item danger gamepad-selectable" data-index="5">
-                <span>🗑️ Reset</span>
+                <span>${icon('trash')}Réinitialiser</span>
                 <button id="reset-btn" class="danger-btn">Recommencer</button>
             </div>
             
@@ -93,7 +93,7 @@ function openSettingsMenu() {
     modal.querySelector('#export-btn').addEventListener('click', exportSave);
     modal.querySelector('#import-btn').addEventListener('click', importSave);
     modal.querySelector('#reset-btn').addEventListener('click', () => {
-        if (confirm('⚠️ Voulez-vous vraiment tout recommencer ?')) {
+        if (confirm('Voulez-vous vraiment tout recommencer ?')) {
             if (typeof resetGame === 'function') resetGame();
         }
     });
@@ -213,7 +213,7 @@ function openAchievementsMenu() {
     if (typeof ACHIEVEMENTS !== 'undefined') {
         achievementsList = ACHIEVEMENTS.map(a => `
             <div class="achievement-item ${a.unlocked ? 'unlocked' : 'locked'}">
-                <span class="achievement-icon">${a.icon || '🏆'}</span>
+                <span class="achievement-icon">${icon(a.unlocked ? (a.icon || 'trophy') : 'lock')}</span>
                 <div class="achievement-info">
                     <span class="achievement-name">${a.unlocked ? a.name : '???'}</span>
                     <span class="achievement-desc">${a.unlocked ? a.description : 'Succès verrouillé'}</span>
@@ -227,7 +227,7 @@ function openAchievementsMenu() {
     
     modal.innerHTML = `
         <div class="modal-content achievements-content">
-            <h2>🏆 Succès</h2>
+            <h2>Succès</h2>
             <p class="achievements-count">${unlockedCount} / ${totalCount} débloqués</p>
             <div class="achievements-list">${achievementsList}</div>
             <button onclick="this.parentElement.parentElement.remove()" class="close-btn">Fermer</button>
@@ -256,7 +256,7 @@ function openEncyclopedia() {
         entries = ENCYCLOPEDIA.map(e => `
             <div class="encyclopedia-entry">
                 <div class="entry-header">
-                    <span class="entry-icon">${e.icon}</span>
+                    <span class="entry-icon">${icon(e.icon)}</span>
                     <div>
                         <h3>${e.title}</h3>
                         <span class="entry-subtitle">${e.subtitle || ''}</span>
@@ -269,7 +269,7 @@ function openEncyclopedia() {
     
     modal.innerHTML = `
         <div class="modal-content encyclopedia-content">
-            <h2>📖 Encyclopédie NIRD</h2>
+            <h2>Encyclopédie NIRD</h2>
             <button class="easter-egg-btn" title="???" onclick="if(typeof openSnakeGame==='function')openSnakeGame(); this.closest('.modal-overlay').remove();">?</button>
             <div class="encyclopedia-list">${entries}</div>
             <button onclick="this.parentElement.parentElement.remove()" class="close-btn">Fermer</button>
@@ -300,7 +300,7 @@ function openStatsMenu() {
     modal.className = 'stats-modal modal-overlay';
     modal.innerHTML = `
         <div class="modal-content stats-content">
-            <h2>📊 Statistiques</h2>
+            <h2>Statistiques</h2>
             <div class="stats-grid">
                 <div class="stat-item">
                     <span class="stat-label">Score actuel</span>
@@ -365,13 +365,13 @@ async function openLeaderboard() {
     modal.className = 'leaderboard-modal modal-overlay';
     modal.innerHTML = `
         <div class="modal-content leaderboard-content">
-            <h2>🏆 Leaderboard</h2>
-            <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+            <h2>Classement</h2>
+            <button class="modal-close" aria-label="Fermer" onclick="this.closest('.modal-overlay').remove()">${icon('x')}</button>
             
             <div class="leaderboard-submit">
                 <input type="text" id="leaderboard-pseudo" placeholder="Ton pseudo..." maxlength="50" 
                     value="${localStorage.getItem('nirdClicker_pseudo') || ''}">
-                <button onclick="submitToLeaderboard()">📤 Soumettre mon score</button>
+                <button onclick="submitToLeaderboard()">Soumettre mon score</button>
             </div>
             
             <div class="leaderboard-stats">
@@ -418,14 +418,14 @@ async function refreshLeaderboard() {
     leaderboard.forEach((player, index) => {
         const rank = index + 1;
         const isMe = savedPseudo && player.pseudo === savedPseudo;
-        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+        const medal = rank;
         
         html += `
             <div class="leaderboard-row ${isMe ? 'is-me' : ''} ${rank <= 3 ? 'top-3' : ''}">
                 <span class="rank">${medal}</span>
                 <span class="pseudo">${escapeHtml(player.pseudo)}</span>
                 <span class="score">${formatNumber(player.score)}</span>
-                <span class="prestige">⭐${player.prestige_level}</span>
+                <span class="prestige">${icon('star')}${player.prestige_level}</span>
             </div>
         `;
     });
@@ -508,6 +508,7 @@ function applyTheme(themeName) {
     document.body.className = document.body.className.replace(/theme-\w+/g, '');
     document.body.classList.add(`theme-${themeName}`);
     gameState.currentTheme = themeName;
+    if (typeof refreshBitsColor === 'function') refreshBitsColor();
     
     document.querySelectorAll('.theme-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.theme === themeName);
@@ -526,14 +527,7 @@ function applySkin(skinId) {
     const skin = SKINS.find(s => s.id === skinId);
     if (skin) {
         gameState.currentSkin = skinId;
-        const clicker = document.querySelector('#main-clicker .pc-icon');
-        if (clicker) {
-            if (skin.image) {
-                clicker.innerHTML = `<img src="${skin.image}" alt="${skin.unlockedName || skin.name}" class="clicker-skin-image">`;
-            } else {
-                clicker.textContent = skin.emoji;
-            }
-        }
+        if (typeof renderClickerSkin === 'function') renderClickerSkin(skin);
         if (typeof saveGame === 'function') saveGame();
     }
 }
@@ -555,7 +549,7 @@ function exportSave() {
     a.download = 'nird-clicker-save.json';
     a.click();
     if (typeof showNotification === 'function') {
-        showNotification('💾 Sauvegarde exportée !', 'success');
+        showNotification('Sauvegarde exportée !', 'success');
     }
 }
 
@@ -574,12 +568,12 @@ function importSave() {
                 JSON.parse(event.target.result);
                 localStorage.setItem('nirdClicker_save', event.target.result);
                 if (typeof showNotification === 'function') {
-                    showNotification('✅ Sauvegarde importée ! Rechargement...', 'success');
+                    showNotification('Sauvegarde importée ! Rechargement...', 'success');
                 }
                 setTimeout(() => location.reload(), 1500);
             } catch (err) {
                 if (typeof showNotification === 'function') {
-                    showNotification('❌ Fichier de sauvegarde invalide', 'error');
+                    showNotification('Fichier de sauvegarde invalide', 'error');
                 }
             }
         };

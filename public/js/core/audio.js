@@ -16,9 +16,9 @@ function initAudio() {
     
     try {
         audioContext = new (window.AudioContext || window.AudioContext)();
-        console.log('🔊 Audio initialisé');
+        console.log('Audio initialisé');
     } catch (e) {
-        console.log('🔇 Audio non supporté:', e.message);
+        console.log('Audio non supporté:', e.message);
     }
 }
 

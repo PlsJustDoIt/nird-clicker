@@ -1,6 +1,7 @@
 /**
  * NIRD Clicker - Styles du jeu
- * Design attractif pour un jeu incrémental sur la souveraineté numérique
+ * Système de design : tokens dans base.css, thèmes dans themes.css.
+ * Aucune couleur « en dur » dans les composants : utiliser les variables CSS.
  * Licence MIT - GPT MEN'S - Nuit de l'Info 2025
  * 
  * Ce fichier importe tous les modules CSS séparés.
@@ -12,13 +13,13 @@
 /* Animations: Toutes les @keyframes */
 @import url('./animations.css');
 
-/* Layout: Header, structure, sponsors */
+/* Layout: En-tête, grille 3 colonnes, page 404 */
 @import url('./layout.css');
 
-/* Clicker: Zone de clic, stats, jauge */
+/* Clicker: Poste cliquable, flux, village, vitrine, missions */
 @import url('./clicker.css');
 
-/* Upgrades: Onglets, upgrades, prestige, skins */
+/* Upgrades: Boutique, onglets, prestige, apparences, infobulles */
 @import url('./upgrades.css');
 
 /* Events: Notifications, banners, floating */

@@ -7,7 +7,7 @@
 
 // Attendre le chargement du DOM
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🖥️ NIRD Clicker v2.0 - Initialisation...');
+    console.log('NIRD Clicker v2.0 - Initialisation...');
     
     // Afficher un écran de chargement
     showLoadingScreen();
@@ -19,9 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
         initNewSystems();
         hideLoadingScreen();
         
-        console.log('✅ NIRD Clicker - Prêt !');
-        console.log('💡 Astuce : Tapez le Konami Code pour un bonus secret !');
-        console.log('🎮 Nouvelles features : Prestige, Quiz, Missions, Skins, Thèmes !');
+        console.log('NIRD Clicker - Prêt !');
+        console.log('Astuce : Tapez le Konami Code pour un bonus secret !');
+        console.log('Nouvelles features : Prestige, Quiz, Missions, Skins, Thèmes !');
         
         // Message de bienvenue ou tutoriel
         if (!localStorage.getItem('nirdClicker_welcomed')) {
@@ -40,17 +40,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Initialiser les nouveaux systèmes
 function initNewSystems() {
-    console.log('🔧 Initialisation des nouveaux systèmes...');
+    console.log('Initialisation des nouveaux systèmes...');
     
     // Appliquer le thème sauvegardé
     if (gameState.currentTheme) {
         applyTheme(gameState.currentTheme);
     }
     
-    // Appliquer le skin sauvegardé
-    if (gameState.currentSkin) {
-        applySkin(gameState.currentSkin);
-    }
+    // Appliquer le skin sauvegardé (ou le poste par défaut)
+    applySkin(gameState.currentSkin || 'default');
+
+    // Scène : icônes, infobulles, fil d'actualité, pluie de jetons
+    if (typeof initScene === 'function') initScene();
     
     // Générer les missions quotidiennes
     generateDailyMissions();
@@ -60,7 +61,7 @@ function initNewSystems() {
     
     // Initialiser les particules si activées
     if (gameState.particlesEnabled) {
-        console.log('✨ Particules activées');
+        console.log('Particules activées');
     }
     
     // Charger le menu par défaut
@@ -69,7 +70,7 @@ function initNewSystems() {
     // Event listeners pour les nouveaux éléments
     initNewEventListeners();
     
-    console.log('✅ Nouveaux systèmes initialisés');
+    console.log('Nouveaux systèmes initialisés');
 }
 
 // Event listeners pour les nouvelles features
@@ -158,13 +159,12 @@ function showLoadingScreen() {
     loader.id = 'loading-screen';
     loader.innerHTML = `
         <div class="loader-content">
-            <div class="loader-icon">🐧</div>
+            <div class="loader-icon">${icon('terminal')}</div>
             <h2>NIRD Clicker</h2>
-            <p>Chargement de la résistance...</p>
+            <p>Initialisation du village…</p>
             <div class="loader-bar">
                 <div class="loader-progress"></div>
             </div>
-            <p style="font-size: 0.8em; margin-top: 1em; opacity: 0.7">v2.0 - Toutes les features !</p>
         </div>
     `;
     document.body.appendChild(loader);
@@ -178,51 +178,35 @@ function hideLoadingScreen() {
     }
 }
 
-// Tutoriel interactif
+// Écran d'accueil (première partie)
 function showTutorial() {
+    const steps = [
+        ['pointer', 'Cliquez sur le poste', 'Chaque clic installe un logiciel libre et rapporte des Points de Souveraineté.'],
+        ['houses', 'Construisez le village', 'Les bâtiments de la boutique produisent des points automatiquement, même sans cliquer.'],
+        ['window', 'Fermez les fenêtres GAFAM', 'Des fenêtres intrusives apparaissent : fermez-les pour gagner des bonus.'],
+        ['target', 'Missions et quiz', 'Relevez les missions du jour et répondez aux quiz NIRD pour des récompenses.'],
+        ['cycle', 'Prestige', 'Recommencez avec un bonus permanent une fois le village bien établi.']
+    ];
     const tutorial = document.createElement('div');
     tutorial.className = 'welcome-modal tutorial';
     tutorial.innerHTML = `
         <div class="welcome-content">
-            <h2>🖥️ Bienvenue dans NIRD Clicker v2.0 !</h2>
-            <p><strong>Votre mission :</strong> Libérer le numérique de l'emprise des Big Tech !</p>
-            
+            <span class="modal-kicker">Bienvenue</span>
+            <h2>Libérez le numérique de votre établissement</h2>
+            <p class="welcome-lead">Votre mission : rendre le village numérique indépendant des Big Tech, un poste à la fois.</p>
             <div class="welcome-instructions">
-                <div class="instruction">
-                    <span class="instruction-icon">👆</span>
-                    <span>Cliquez sur l'ordinateur pour gagner des Points de Souveraineté</span>
-                </div>
-                <div class="instruction">
-                    <span class="instruction-icon">🔧</span>
-                    <span>Achetez des améliorations pour automatiser votre production</span>
-                </div>
-                <div class="instruction">
-                    <span class="instruction-icon">👹</span>
-                    <span>Affrontez les 5 Boss GAFAM : Microsoft, Google, Apple, Meta, Amazon</span>
-                </div>
-                <div class="instruction">
-                    <span class="instruction-icon">🎯</span>
-                    <span>Complétez des missions quotidiennes pour des bonus</span>
-                </div>
-                <div class="instruction">
-                    <span class="instruction-icon">🧠</span>
-                    <span>Répondez aux quiz NIRD pour gagner des récompenses</span>
-                </div>
-                <div class="instruction">
-                    <span class="instruction-icon">⭐</span>
-                    <span>Faites un Prestige pour des bonus permanents !</span>
-                </div>
+                ${steps.map(([ic, title, text]) => `
+                    <div class="instruction">
+                        <span class="instruction-icon">${icon(ic)}</span>
+                        <span><strong>${title}</strong>${text}</span>
+                    </div>`).join('')}
             </div>
-            
             <p class="welcome-nird">
-                <small>
-                    🌱 Ce jeu s'inscrit dans la démarche <strong>NIRD</strong> (Numérique Inclusif, Responsable et Durable) 
-                    pour sensibiliser à la souveraineté numérique.
-                </small>
+                Ce jeu s'inscrit dans la démarche <strong>NIRD</strong> (Numérique Inclusif, Responsable et Durable)
+                pour sensibiliser à la souveraineté numérique.
             </p>
-            
-            <button onclick="this.parentElement.parentElement.remove(); gameState.tutorialComplete = true;">
-                🚀 Commencer la Résistance !
+            <button class="btn-primary" onclick="this.parentElement.parentElement.remove(); gameState.tutorialCompleted = true;">
+                Commencer
             </button>
         </div>
     `;
@@ -265,15 +249,16 @@ function checkOfflineGains() {
                 offlineModal.className = 'welcome-modal offline-gains';
                 offlineModal.innerHTML = `
                     <div class="welcome-content">
-                        <h2>🌙 Gains Hors-Ligne</h2>
+                        <span class="modal-kicker">Pendant votre absence</span>
+                        <h2>Gains hors ligne</h2>
                         <p>Pendant votre absence (${formatTime(offlineTime)}), vos militants ont continué le combat !</p>
                         <div class="offline-reward">
                             <span class="reward-amount">+${formatNumber(offlineGain)}</span>
                             <span class="reward-label">Points de Souveraineté</span>
                         </div>
-                        ${gameState.prestigeLevel > 0 ? `<p class="prestige-bonus">✨ Bonus Prestige x${(1 + gameState.prestigeLevel * 0.1).toFixed(1)}</p>` : ''}
-                        <button onclick="this.parentElement.parentElement.remove()">
-                            Super !
+                        ${gameState.prestigeLevel > 0 ? `<p class="prestige-bonus">Bonus prestige ×${(1 + gameState.prestigeLevel * 0.1).toFixed(1)}</p>` : ''}
+                        <button class="btn-primary" onclick="this.parentElement.parentElement.remove()">
+                            Continuer
                         </button>
                     </div>
                 `;
@@ -368,8 +353,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    console.log('💡 Conseil développeur : utilisez window.DEBUG pour déboguer le jeu');
-    console.log('📚 Commandes : DEBUG.getState(), DEBUG.addScore(n), DEBUG.triggerBoss(), DEBUG.triggerQuiz()');
-    console.log('🎨 Thèmes : DEBUG.switchTheme("dark"|"light"|"retro"|"nature")');
-    console.log('👾 Boss : DEBUG.triggerBossWindows(), DEBUG.triggerBossGoogle(), DEBUG.triggerBossFacebook(), etc.');
+    console.log('Conseil développeur : utilisez window.DEBUG pour déboguer le jeu');
+    console.log('Commandes : DEBUG.getState(), DEBUG.addScore(n), DEBUG.triggerBoss(), DEBUG.triggerQuiz()');
+    console.log('Thèmes : DEBUG.switchTheme("dark"|"light"|"retro"|"nature")');
+    console.log('Boss : DEBUG.triggerBossWindows(), DEBUG.triggerBossGoogle(), DEBUG.triggerBossFacebook(), etc.');
 });

@@ -1,100 +1,277 @@
 /**
- * NIRD Clicker - Base Styles
- * Variables CSS, reset et utilitaires
+ * NIRD Clicker - Base
+ * Design tokens, reset, typographie, curseurs, boutons et utilitaires
  */
 
-/* Variables CSS */
+/* ============================================
+   DESIGN TOKENS (thème « Nuit » par défaut)
+   ============================================ */
 :root {
-    --bg-main: #0a0a1a;
-    --bg-secondary: #12122a;
-    --bg-card: #1a1a3a;
-    --fg-main: #e0e0e0;
-    --fg-secondary: #a0a0a0;
-    --accent-primary: #00d4aa;
-    --accent-secondary: #00a0ff;
-    --accent-warning: #ffaa00;
-    --accent-danger: #ff4444;
-    --accent-success: #44ff44;
-    --gradient-main: linear-gradient(135deg, #00d4aa 0%, #00a0ff 100%);
-    --shadow-glow: 0 0 20px rgba(0, 212, 170, 0.3);
-    --border-radius: 12px;
+    /* Surfaces */
+    --bg: #121514;
+    --bg-deep: #0c0e0d;
+    --surface: #171b19;
+    --surface-2: #1d2220;
+    --surface-3: #252b28;
+    --line: #2a312d;
+    --line-strong: #3a433e;
+
+    /* Texte */
+    --text: #ecebe4;
+    --text-2: #b4b9b0;
+    --muted: #7f877f;
+
+    /* Accents */
+    --accent: #8fd694;          /* vert « phosphore » : actions, progression */
+    --accent-strong: #b2e8b5;
+    --accent-ink: #0e1a10;      /* texte posé sur l'accent */
+    --gold: #f0b450;            /* monnaie, récompenses */
+    --danger: #e7795f;
+    --info: #6fb7c9;
+
+    /* Rangées de la vitrine */
+    --row-1: #8fd694;
+    --row-2: #f0b450;
+    --row-3: #6fb7c9;
+    --row-4: #d99ad3;
+    --row-5: #e7795f;
+
+    /* Typographie */
+    --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+    /* Formes */
+    --radius-lg: 14px;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow-pop: 0 18px 40px -12px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.3);
+    --header-h: 60px;
+
+    /* Curseurs personnalisés */
+    --cursor: url('../images/cursors/cursor.svg') 5 3, auto;
+    --cursor-pointer: url('../images/cursors/pointer.svg') 13 3, pointer;
+    --cursor-press: url('../images/cursors/press.svg') 13 8, pointer;
+
+    /* Compatibilité : anciens noms de variables encore utilisés */
+    --bg-main: var(--bg);
+    --bg-secondary: var(--surface);
+    --bg-card: var(--surface-2);
+    --fg-main: var(--text);
+    --fg-secondary: var(--text-2);
+    --accent-primary: var(--accent);
+    --accent-secondary: var(--info);
+    --accent-warning: var(--gold);
+    --accent-danger: var(--danger);
+    --accent-success: var(--accent);
+    --gradient-main: var(--accent);
+    --shadow-glow: var(--shadow-pop);
+    --border-radius: var(--radius);
     --transition-fast: 0.15s ease;
     --transition-normal: 0.3s ease;
 }
 
-/* Reset & Base */
-* {
+/* ============================================
+   RESET
+   ============================================ */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-/* Empêcher la sélection de texte sur les éléments cliquables */
+html {
+    -webkit-text-size-adjust: 100%;
+    cursor: var(--cursor);
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.45;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+}
+
+strong { font-weight: 600; }
+
+img, svg { display: block; }
+
 button,
-.btn,
-.upgrade-card,
-.click-upgrade-card,
-.prestige-upgrade,
-.buy-multiplier-btn,
-.tab-btn,
-.close-btn,
-.clicker-container,
-.event-accept-btn,
-.event-decline-btn,
-.boss-attack-btn,
-.boss-skip-btn,
-.achievement-card,
-.leaderboard-tab {
+input,
+select {
+    font: inherit;
+    color: inherit;
+}
+
+button {
+    background: none;
+    border: none;
+    cursor: var(--cursor-pointer);
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:disabled { cursor: not-allowed; }
+
+a,
+[role="button"],
+[data-tip] {
+    cursor: var(--cursor-pointer);
+}
+
+input[type="text"] { cursor: text; }
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+::selection {
+    background: var(--accent);
+    color: var(--accent-ink);
+}
+
+/* Empêcher la sélection de texte sur les éléments interactifs */
+button,
+.store-row,
+.skin-item,
+.menu-tab,
+#main-clicker,
+.showcase,
+.boss-btn,
+.close-btn {
     -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
 }
 
-/* Utility class - Hidden */
+/* ============================================
+   ICÔNES SVG
+   ============================================ */
+.ico {
+    width: 1.15em;
+    height: 1.15em;
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+/* ============================================
+   BOUTONS
+   ============================================ */
+.btn-primary,
+.btn,
+.close-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border-radius: var(--radius);
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.08s ease, color 0.15s ease;
+}
+
+.btn-primary,
+.btn-confirm {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border: 1px solid transparent;
+}
+
+.btn-primary:hover,
+.btn-confirm:hover {
+    background: var(--accent-strong);
+}
+
+.btn-primary:active,
+.btn:active,
+.close-btn:active {
+    transform: translateY(1px);
+}
+
+.close-btn,
+.btn-cancel {
+    background: var(--surface-2);
+    border: 1px solid var(--line-strong);
+    color: var(--text);
+}
+
+.close-btn:hover,
+.btn-cancel:hover {
+    background: var(--surface-3);
+}
+
+/* ============================================
+   UTILITAIRES
+   ============================================ */
 .hidden {
     display: none !important;
 }
 
-body {
-    font-family: 'Roboto', sans-serif;
-    background: var(--bg-main);
-    color: var(--fg-main);
-    min-height: 100vh;
-    overflow-x: hidden;
-    background-image: 
-        radial-gradient(circle at 20% 80%, rgba(0, 212, 170, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(0, 160, 255, 0.1) 0%, transparent 50%);
+.section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
 }
 
-/* Bloquer le scroll quand un modal/boss/event est actif */
+.section-label span {
+    font-family: var(--font-mono);
+    letter-spacing: 0;
+    color: var(--text-2);
+}
+
+.empty-note {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* Bloquer le scroll quand une modale est ouverte */
 body.modal-open {
     overflow: hidden;
-    position: fixed;
-    width: 100%;
-    height: 100%;
 }
 
-/* Scrollbar personnalisée */
+/* Barres de défilement */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+}
+
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 10px;
+    height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--accent-primary);
-    border-radius: 4px;
+    background: var(--line-strong);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-secondary);
-}
-
-/* Night Mode */
-.night-mode {
-    --bg-main: #000005;
-    --bg-secondary: #080810;
-    --bg-card: #101020;
+    background-color: var(--muted);
 }

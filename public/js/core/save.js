@@ -60,7 +60,7 @@ function saveGame() {
         gameState.lastSave = Date.now();
         
         // Log discret (pas à chaque sauvegarde auto)
-        // console.log('💾 Partie sauvegardée');
+        // console.log('Partie sauvegardée');
     } catch (e) {
         console.error('Erreur de sauvegarde:', e);
     }
@@ -78,7 +78,7 @@ function loadGame() {
     try {
         const savedData = localStorage.getItem(SAVE_KEY);
         if (!savedData) {
-            console.log('🆕 Nouvelle partie');
+            console.log('Nouvelle partie');
             return;
         }
         
@@ -142,7 +142,7 @@ function loadGame() {
             }
         }
         
-        console.log('📂 Partie chargée');
+        console.log('Partie chargée');
         
     } catch (e) {
         console.error('Erreur de chargement:', e);
@@ -155,7 +155,7 @@ function loadGame() {
  * @param {boolean} confirm - Si true, demande confirmation
  */
 function resetGame(confirm = true) {
-    if (confirm && !window.confirm('⚠️ Voulez-vous vraiment tout recommencer ? Cette action est irréversible !')) {
+    if (confirm && !window.confirm('Voulez-vous vraiment tout recommencer ? Cette action est irréversible !')) {
         return false;
     }
     
@@ -202,7 +202,7 @@ function exportSave() {
         URL.revokeObjectURL(url);
         
         if (typeof showNotification === 'function') {
-            showNotification('💾 Sauvegarde exportée !', 'success');
+            showNotification('Sauvegarde exportée !', 'success');
         }
     } catch (e) {
         console.error('Erreur export:', e);
@@ -230,7 +230,7 @@ function importSave(file) {
             localStorage.setItem(SAVE_KEY, event.target.result);
             
             if (typeof showNotification === 'function') {
-                showNotification('📂 Sauvegarde importée ! Rechargement...', 'success');
+                showNotification('Sauvegarde importée ! Rechargement...', 'success');
             }
             
             setTimeout(() => window.location.reload(), 1000);
@@ -238,7 +238,7 @@ function importSave(file) {
         } catch (e) {
             console.error('Erreur import:', e);
             if (typeof showNotification === 'function') {
-                showNotification('❌ Fichier de sauvegarde invalide', 'error');
+                showNotification('Fichier de sauvegarde invalide', 'error');
             }
         }
     };

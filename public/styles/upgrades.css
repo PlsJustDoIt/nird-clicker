@@ -1,606 +1,641 @@
 /**
- * NIRD Clicker - Upgrades Styles
- * Upgrades, tabs menu, prestige, skins, missions
+ * NIRD Clicker - Boutique
+ * Onglets, lignes de bâtiments, améliorations de clic, prestige, apparences, infobulles
  */
 
-/* Upgrades Zone */
-#upgrades-zone {
-    background: var(--bg-card);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    border: 1px solid rgba(0, 160, 255, 0.2);
-    height: auto;
-    min-height: 100vh;
-    width: 100%;
-    min-width: 450px;
-    overflow: visible;
+.col-store {
     display: flex;
     flex-direction: column;
+    background: var(--surface);
+    border-left: 1px solid var(--line);
 }
 
-.menu-content.active {
-    flex: 1;
-    overflow: visible;
+.store-head {
+    padding: 16px 16px 4px;
 }
 
-/* Menu Tabs System */
+.store-title {
+    font-size: 20px;
+    margin-bottom: 12px;
+}
+
+/* Onglets : contrôle segmenté */
 .menu-tabs {
     display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-    flex-wrap: wrap;
+    gap: 2px;
+    padding: 3px;
+    border-radius: var(--radius);
+    background: var(--bg-deep);
+    border: 1px solid var(--line);
 }
 
 .menu-tab {
-    padding: 0.5rem 1rem;
-    background: var(--bg-secondary);
-    border: none;
-    border-radius: 8px 8px 0 0;
-    color: var(--fg-secondary);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    font-size: 0.85rem;
-    font-weight: bold;
+    flex: 1;
+    padding: 7px 8px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
 .menu-tab:hover {
-    background: rgba(0, 212, 170, 0.2);
-    color: var(--fg-main);
+    color: var(--text);
 }
 
 .menu-tab.active {
-    background: var(--accent-primary);
-    color: var(--bg-main);
+    background: var(--surface-3);
+    color: var(--text);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .menu-content {
     display: none;
     flex: 1;
+    flex-direction: column;
+    min-height: 0;
     overflow-y: auto;
+    padding: 12px 16px 24px;
 }
 
 .menu-content.active {
     display: flex;
-    flex-direction: column;
-    animation: fadeIn 0.3s ease;
 }
 
-/* Upgrades Header */
 .upgrades-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
-    position: sticky;
-    top: 0;
-    background: var(--bg-card);
-    padding: 0.75rem 1rem;
-    z-index: 10;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    backdrop-filter: none;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 2px 0 10px;
 }
 
-#upgrades-zone h2 {
-    color: var(--accent-secondary);
-    margin: 0;
-}
-
+/* Sélecteur de quantité */
 .buy-mode-selector {
     display: flex;
-    gap: 0.25rem;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 8px;
+    background: var(--bg-deep);
+    border: 1px solid var(--line);
 }
 
 .buy-mode-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
-    font-weight: bold;
-    background: var(--bg-secondary);
-    color: var(--fg-secondary);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all var(--transition-fast);
+    padding: 4px 9px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
 .buy-mode-btn:hover {
-    background: rgba(0, 212, 170, 0.2);
-    border-color: var(--accent-primary);
-    color: var(--fg-main);
+    color: var(--text);
 }
 
 .buy-mode-btn.active {
-    background: var(--gradient-main);
-    color: #000;
-    border-color: var(--accent-primary);
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 700;
 }
 
-#upgrades-list,
-#click-upgrades-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-/* Upgrade Item */
-.upgrade-item {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    border: 2px solid transparent;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+/* ============================================
+   LIGNE DE BOUTIQUE
+   ============================================ */
+.store-row {
     position: relative;
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 6px;
+    padding: 9px 14px 9px 9px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--text);
+    text-align: left;
     overflow: hidden;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.08s ease, opacity 0.2s ease;
 }
 
-.upgrade-item:hover {
-    border-color: var(--accent-primary);
+.store-row::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.15s ease;
 }
 
-.upgrade-item.can-afford {
-    border-color: rgba(0, 212, 170, 0.3);
+.store-row.can-afford::before {
+    opacity: 1;
 }
 
-.upgrade-item.can-afford:hover {
-    background: rgba(0, 212, 170, 0.1);
-    box-shadow: var(--shadow-glow);
+.store-row.can-afford:hover {
+    background: var(--surface-3);
+    border-color: var(--line-strong);
 }
 
-.upgrade-item.cannot-afford {
-    opacity: 0.6;
+.store-row.can-afford:active {
+    transform: scale(0.99);
+}
+
+.store-row.cannot-afford {
+    cursor: var(--cursor);
+}
+
+.store-row.cannot-afford .upgrade-icon,
+.store-row.cannot-afford .upgrade-name,
+.store-row.cannot-afford .upgrade-owned {
+    opacity: 0.5;
 }
 
 .upgrade-icon {
-    font-size: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 60px;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    background: var(--bg-deep);
+    border: 1px solid var(--line);
+    color: var(--accent);
+    transition: color 0.15s ease;
+}
+
+.upgrade-icon .ico {
+    width: 28px;
+    height: 28px;
 }
 
 .upgrade-info {
-    flex: 1;
-}
-
-.upgrade-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.3rem;
+    flex-direction: column;
+    min-width: 0;
 }
 
 .upgrade-name {
-    font-weight: bold;
-    color: var(--fg-main);
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.upgrade-owned {
-    color: var(--accent-primary);
-    font-weight: bold;
-}
-
-.upgrade-desc {
-    font-size: 0.85rem;
-    color: var(--fg-secondary);
-    margin-bottom: 0.5rem;
-}
-
-.upgrade-footer {
+.upgrade-meta {
     display: flex;
-    justify-content: space-between;
-    font-size: 0.9rem;
+    align-items: center;
+    gap: 10px;
+    margin-top: 3px;
 }
 
-.upgrade-footer.purchased-footer {
-    justify-content: flex-end;
+.price {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--gold);
 }
 
-.upgrade-cost {
-    color: var(--accent-warning);
-    font-weight: bold;
+.price .price-token {
+    width: 14px;
+    height: 14px;
+}
+
+.price-qty {
+    margin-left: 2px;
+    font-weight: 500;
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.cannot-afford .price {
+    color: var(--danger);
 }
 
 .upgrade-production {
-    color: var(--accent-success);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
 }
 
-.upgrade-bonus {
-    color: var(--accent-secondary);
-    font-size: 0.85rem;
+.upgrade-desc {
+    display: none;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
 }
 
-.upgrade-status {
-    background: var(--accent-success);
-    color: #000;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: bold;
+.upgrade-desc.is-visible {
+    display: block;
 }
 
-/* Upgrade achetée/activée */
-.upgrade-item.purchased {
-    background: linear-gradient(135deg, rgba(0, 212, 170, 0.15) 0%, rgba(0, 160, 255, 0.1) 100%);
-    border: 2px solid var(--accent-success);
-    cursor: default;
+/* Sur écran tactile, pas d'infobulle : on affiche la description */
+@media (hover: none) {
+    .store-row .upgrade-desc {
+        display: block;
+    }
+}
+
+.upgrade-owned {
+    min-width: 2ch;
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    color: var(--text);
     opacity: 0.9;
 }
 
-.upgrade-item.purchased:hover {
-    transform: none;
-    box-shadow: 0 0 15px rgba(0, 212, 170, 0.3);
+.upgrade-owned.bump {
+    animation: bump 0.35s ease-out;
 }
 
-.upgrade-item.purchased .upgrade-cost {
-    color: var(--accent-success);
+/* Prochain bâtiment verrouillé (silhouette) */
+.store-row.mystery {
+    opacity: 0.55;
+    border-style: dashed;
+    background: transparent;
+    cursor: var(--cursor);
 }
 
-.upgrade-tip {
-    font-size: 0.75rem;
-    color: var(--accent-secondary);
-    margin-top: 0.5rem;
-    padding: 0.5rem;
-    background: rgba(0, 160, 255, 0.1);
-    border-radius: 4px;
-    border-left: 3px solid var(--accent-secondary);
+.store-row.mystery .upgrade-icon {
+    color: var(--line-strong);
 }
 
-.upgrade-separator {
-    margin: 1.5rem 0 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+.store-row.mystery .upgrade-name {
+    color: var(--muted);
+    letter-spacing: 0.2em;
 }
 
-.upgrade-separator h3 {
-    color: var(--accent-warning);
-    font-size: 0.9rem;
-}
-
-.no-upgrades {
-    text-align: center;
-    padding: 2rem;
-    color: var(--accent-primary);
-    font-size: 1.1rem;
-    opacity: 0.8;
+.store-row.mystery .upgrade-cost {
+    font-size: 11.5px;
+    color: var(--muted);
 }
 
 /* ============================================
-   HOLD TO BUY - Système de maintien gamepad
+   AMÉLIORATIONS DE CLIC
    ============================================ */
-.hold-progress-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, 
-        rgba(0, 212, 170, 0.3) 0%, 
-        rgba(0, 212, 170, 0.5) 100%);
-    transition: width 0.05s linear;
-    pointer-events: none;
-    z-index: 0;
+.click-grid {
+    display: grid;
+    gap: 6px;
 }
 
-.upgrade-item.hold-to-buy-active {
-    border-color: var(--accent-primary) !important;
-    box-shadow: 0 0 15px rgba(0, 212, 170, 0.4);
+.click-card {
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: start;
 }
 
-.upgrade-item.hold-to-buy-active .upgrade-icon,
-.upgrade-item.hold-to-buy-active .upgrade-info,
-.upgrade-item.hold-to-buy-active .upgrade-buy-btn {
-    position: relative;
-    z-index: 1;
+.click-card .upgrade-icon {
+    width: 44px;
+    height: 44px;
 }
 
-.upgrade-item.hold-to-buy-success {
-    animation: holdBuySuccess 0.3s ease-out;
+.click-card .upgrade-icon .ico {
+    width: 24px;
+    height: 24px;
 }
 
-.upgrade-item.hold-to-buy-cancel {
-    animation: holdBuyCancel 0.2s ease-out;
+.click-card .upgrade-info {
+    gap: 2px;
 }
 
-/* Hold to Buy pour Prestige et Skins */
-.prestige-upgrade-item,
-.skin-item {
-    position: relative;
-    overflow: hidden;
+.upgrade-bonus {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--accent);
 }
 
-.prestige-upgrade-item .hold-progress-bar,
-.skin-item .hold-progress-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, 
-        rgba(0, 212, 170, 0.3) 0%, 
-        rgba(0, 212, 170, 0.5) 100%);
-    transition: width 0.05s linear;
-    pointer-events: none;
-    z-index: 0;
+.click-card .upgrade-cost {
+    margin-top: 2px;
 }
 
-.prestige-upgrade-item.hold-to-buy-active,
-.skin-item.hold-to-buy-active {
-    border-color: var(--accent-primary) !important;
-    box-shadow: 0 0 15px rgba(0, 212, 170, 0.4);
+.owned-strip {
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
 }
 
-.prestige-upgrade-item.hold-to-buy-success,
-.skin-item.hold-to-buy-success {
-    animation: holdBuySuccess 0.3s ease-out;
+.owned-strip .section-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
 }
 
-.prestige-upgrade-item.hold-to-buy-cancel,
-.skin-item.hold-to-buy-cancel {
-    animation: holdBuyCancel 0.2s ease-out;
+.owned-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.owned-icon {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--accent);
+}
+
+.owned-icon .ico {
+    width: 20px;
+    height: 20px;
+}
+
+.owned-icon:hover {
+    border-color: var(--accent);
 }
 
 /* ============================================
-   PRESTIGE CONTENT
+   PRESTIGE
    ============================================ */
-#prestige-content .prestige-header {
-    text-align: center;
-    padding: 1rem;
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1));
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    border: 1px solid rgba(255, 215, 0, 0.3);
+.prestige-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
 }
 
-#prestige-content .prestige-header h3 {
-    color: #ffd700;
-    margin-bottom: 0.5rem;
-}
-
-#prestige-upgrades-list {
+.prestige-stat {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 2px;
+    padding: 12px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+}
+
+.prestige-stat strong {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--gold);
 }
 
 .prestige-upgrade-item {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    border: 2px solid rgba(255, 215, 0, 0.2);
-    position: relative;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
 }
 
-.prestige-upgrade-item:hover {
-    border-color: #ffd700;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+.prestige-upgrade-item .upgrade-icon {
+    width: 44px;
+    height: 44px;
+    color: var(--gold);
 }
 
-.prestige-upgrade-item.gamepad-selected {
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 15px rgba(0, 212, 170, 0.4);
+.prestige-upgrade-item .upgrade-icon .ico {
+    width: 24px;
+    height: 24px;
 }
 
-/* Prestige acheté - style lumineux distinctif */
+.prestige-upgrade-item::before {
+    background: var(--gold);
+}
+
+.prestige-cost {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+.prestige-cost .ico {
+    width: 14px;
+    height: 14px;
+}
+
 .prestige-upgrade-item.purchased {
-    opacity: 1;
-    border-color: #00d4aa;
-    background: linear-gradient(145deg, rgba(0, 212, 170, 0.15), rgba(0, 100, 80, 0.2));
-    box-shadow: 0 0 20px rgba(0, 212, 170, 0.3), inset 0 0 15px rgba(0, 212, 170, 0.1);
-    cursor: default;
+    background: transparent;
 }
 
-.prestige-upgrade-item.purchased:hover {
-    border-color: #00ffcc;
-    box-shadow: 0 0 25px rgba(0, 212, 170, 0.5), inset 0 0 20px rgba(0, 212, 170, 0.15);
+.prestige-upgrade-item.purchased .prestige-cost {
+    color: var(--accent);
 }
 
-.prestige-upgrade-item.purchased.gamepad-selected {
-    border-color: #00ffcc;
-    box-shadow: 0 0 30px rgba(0, 255, 204, 0.6), inset 0 0 20px rgba(0, 212, 170, 0.2);
-}
-
-.prestige-upgrade-item.purchased::before {
-    content: '✓';
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1.2rem;
-    color: #00d4aa;
-    text-shadow: 0 0 10px rgba(0, 212, 170, 0.8);
-}
-
-/* Prestige qu'on ne peut pas acheter */
-.prestige-upgrade-item.cannot-afford {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.prestige-upgrade-item.cannot-afford:hover {
-    border-color: rgba(255, 215, 0, 0.2);
-    box-shadow: none;
+.prestige-upgrade-item.cannot-afford .prestige-cost {
+    color: var(--muted);
 }
 
 /* ============================================
-   SKINS CONTENT
+   APPARENCES DU POSTE
    ============================================ */
-#skins-content h3 {
-    color: var(--accent-secondary);
-    margin-bottom: 1rem;
-}
-
 #skins-list {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
 }
 
 .skin-item {
+    --skin-tint: var(--accent);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 8px 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface-2);
     text-align: center;
-    padding: 1rem;
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    border: 2px solid transparent;
-    border-left: 3px solid var(--accent-secondary);
+    transition: background 0.15s ease, border-color 0.15s ease, opacity 0.2s ease;
 }
 
 .skin-item:hover {
-    transform: scale(1.05);
-    border-color: var(--accent-primary);
+    background: var(--surface-3);
 }
 
-.skin-item.gamepad-selected {
-    transform: scale(1.05);
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 15px rgba(0, 212, 170, 0.4);
+.skin-icon {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background:
+        radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--skin-tint) 22%, transparent), transparent 70%),
+        #0a0d0b;
+    border: 1px solid color-mix(in srgb, var(--skin-tint) 35%, var(--line));
+    color: var(--skin-tint);
+}
+
+.skin-icon .ico {
+    width: 26px;
+    height: 26px;
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--skin-tint) 60%, transparent));
+}
+
+.skin-image {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+.skin-name {
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.skin-state {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.skin-cost .price {
+    font-size: 11px;
 }
 
 .skin-item.active {
-    border-color: var(--accent-primary);
-    background: rgba(0, 212, 170, 0.1);
+    border-color: var(--skin-tint);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--skin-tint) 18%, transparent);
+}
+
+.skin-item.active .skin-state {
+    color: var(--skin-tint);
 }
 
 .skin-item.locked {
-    opacity: 0.5;
-    cursor: not-allowed;
+    opacity: 0.45;
+    cursor: var(--cursor);
 }
 
-.skin-item .skin-icon {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
+.skin-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--skin-tint);
+    color: #0b0d0c;
 }
 
-.skin-item .skin-name {
-    font-size: 0.85rem;
-    color: var(--fg-main);
-}
-
-.skin-item .skin-cost {
-    font-size: 0.75rem;
-    color: var(--accent-warning);
-    margin-top: 0.25rem;
-}
-
-.skin-item.secret-skin {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    border: 2px solid gold;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-}
-
-.skin-item.secret-skin:hover {
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
-}
-
-.skin-item .skin-icon .skin-image {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
-    border-radius: 4px;
-}
-
-.skin-item.equipped {
-    border-left-color: var(--accent-success);
-    background: rgba(68, 255, 68, 0.1) !important;
-}
-
-.equipped-badge {
-    color: var(--accent-success);
-    font-size: 0.8rem;
+.skin-badge .ico {
+    width: 12px;
+    height: 12px;
+    stroke-width: 3;
 }
 
 /* ============================================
-   MISSIONS CONTENT
+   INFOBULLE
    ============================================ */
-#missions-content h3 {
-    color: var(--accent-secondary);
-    margin-bottom: 1rem;
+#tooltip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9000;
+    width: 330px;
+    padding: 14px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-strong);
+    background: color-mix(in srgb, var(--bg-deep) 96%, transparent);
+    box-shadow: var(--shadow-pop);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s ease;
 }
 
-#missions-list {
+#tooltip.visible {
+    opacity: 1;
+}
+
+.tt-head {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+}
+
+.tt-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 9px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--accent);
+}
+
+.tt-icon .ico {
+    width: 22px;
+    height: 22px;
+}
+
+.tt-title {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    min-width: 0;
 }
 
-.mission-item {
+.tt-title strong {
+    font-family: var(--font-display);
+    font-size: 15px;
+    line-height: 1.2;
+}
+
+.tt-title span {
+    font-size: 11.5px;
+    color: var(--muted);
+}
+
+.tt-owned {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+}
+
+.tt-desc {
+    margin: 10px 0 8px;
+    font-size: 13px;
+    color: var(--text-2);
+}
+
+.tt-stats {
+    list-style: none;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: var(--bg-secondary);
+    flex-direction: column;
+    gap: 3px;
+    padding: 8px 10px;
     border-radius: 8px;
-    border-left: 4px solid var(--accent-warning);
+    background: var(--surface-2);
+    font-size: 12px;
+    color: var(--text-2);
 }
 
-.mission-item.completed {
-    border-left-color: var(--accent-success);
-    opacity: 0.7;
-    background: rgba(68, 255, 68, 0.1);
-    border: 1px solid var(--accent-success);
+.tt-stats strong {
+    font-family: var(--font-mono);
+    color: var(--text);
 }
 
-.mission-info {
-    flex: 1;
+.tt-stats em {
+    font-style: normal;
+    color: var(--muted);
 }
 
-.mission-info h4 {
-    color: var(--fg-main);
-    margin-bottom: 0.25rem;
-}
-
-.mission-progress {
-    font-size: 0.85rem;
-    color: var(--fg-secondary);
-}
-
-.mission-reward {
-    text-align: right;
-    color: var(--accent-warning);
-    font-weight: bold;
-}
-
-.mission-header {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-.mission-name {
-    font-weight: bold;
-}
-
-.mission-progress-bar {
-    height: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.mission-progress-fill {
-    height: 100%;
-    background: var(--gradient-main);
-    transition: width var(--transition-normal);
-}
-
-.mission-progress-text {
-    font-size: 0.8rem;
-    color: var(--fg-secondary);
+.tt-quote {
+    margin-top: 10px;
+    padding-left: 10px;
+    border-left: 2px solid var(--accent);
+    font-size: 12px;
+    font-style: italic;
+    color: var(--muted);
 }
